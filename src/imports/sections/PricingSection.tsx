@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Check } from "lucide-react";
+import { useNavigate } from "react-router";
 import { supabase } from "../../lib/supabase";
 
 const plans = [
@@ -30,7 +31,7 @@ const plans = [
   },
 ];
 
-function PricingCard({ plan, isYearly, isActive, onActivate, isLoggedIn }: { plan: typeof plans[0]; isYearly: boolean; isActive: boolean; onActivate: () => void; isLoggedIn: boolean }) {
+function PricingCard({ plan, isYearly, isActive, onActivate, isLoggedIn, onGetStarted }: { plan: typeof plans[0]; isYearly: boolean; isActive: boolean; onActivate: () => void; isLoggedIn: boolean; onGetStarted: () => void }) {
   const price = isYearly ? plan.yearlyPrice : plan.monthlyPrice;
   const active = isActive;
 
@@ -95,7 +96,7 @@ function PricingCard({ plan, isYearly, isActive, onActivate, isLoggedIn }: { pla
         whileTap={{ scale: 0.98 }}
         onClick={(e) => {
           e.stopPropagation();
-          window.location.href = isLoggedIn ? "/pricing" : "/signup";
+          onGetStarted();
         }}
         className={`w-full rounded-full py-3.5 font-semibold transition-colors duration-500 ${
           active
@@ -115,6 +116,7 @@ export function PricingSection() {
   const [isYearly, setIsYearly] = useState(false);
   const [activeCard, setActiveCard] = useState<number | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -188,7 +190,7 @@ export function PricingSection() {
               key={i}
               variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
             >
-              <PricingCard plan={plan} isYearly={isYearly} isActive={activeCard === i} onActivate={() => setActiveCard(i)} isLoggedIn={isLoggedIn} />
+              <PricingCard plan={plan} isYearly={isYearly} isActive={activeCard === i} onActivate={() => setActiveCard(i)} isLoggedIn={isLoggedIn} onGetStarted={() => navigate(isLoggedIn ? "/pricing" : "/signup")} />
             </motion.div>
           ))}
         </motion.div>
