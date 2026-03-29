@@ -4291,9 +4291,9 @@ function FooterColumnLinks() {
       <div className="flex flex-col justify-center relative shrink-0 w-full">
         <p className="leading-[24px]">Learn</p>
       </div>
-      <div className="flex flex-col justify-center relative shrink-0 w-full">
+      <a href="/pricing" className="flex flex-col justify-center relative shrink-0 w-full cursor-pointer hover:text-[#2a6ff3] transition-colors">
         <p className="leading-[24px]">Pricing</p>
-      </div>
+      </a>
     </div>
   );
 }
@@ -4335,12 +4335,12 @@ function FooterColumn2() {
 function FooterColumnLinks2() {
   return (
     <div className="content-stretch flex flex-col font-['Inter:Regular',sans-serif] font-normal gap-[16px] items-start leading-[0] relative shrink-0 text-[#474747] text-[14px] w-full" data-name="Footer Column Links">
-      <div className="flex flex-col justify-center relative shrink-0 w-full">
+      <a href="/terms-and-conditions" className="flex flex-col justify-center relative shrink-0 w-full cursor-pointer hover:text-[#2a6ff3] transition-colors">
         <p className="leading-[24px]">Privacy Policy</p>
-      </div>
-      <div className="flex flex-col justify-center relative shrink-0 w-full">
+      </a>
+      <a href="/terms-and-conditions" className="flex flex-col justify-center relative shrink-0 w-full cursor-pointer hover:text-[#2a6ff3] transition-colors">
         <p className="leading-[24px]">{`Terms & Conditions`}</p>
-      </div>
+      </a>
     </div>
   );
 }

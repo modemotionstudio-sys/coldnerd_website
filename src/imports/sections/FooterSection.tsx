@@ -6,7 +6,7 @@ import { useState } from "react";
 const footerLinks = {
   Product: [
     { label: "Features", href: "#features" },
-    { label: "Pricing", href: "#pricing" },
+    { label: "Pricing", href: "/pricing" },
     { label: "How It Works", href: "#how-it-works" },
     { label: "Dashboard", href: "#dashboard" },
     { label: "Blog", href: "/blog" },
@@ -14,8 +14,8 @@ const footerLinks = {
   Company: [
     { label: "About Us", href: "#" },
     { label: "Careers", href: "#" },
-    { label: "Privacy Policy", href: "#" },
-    { label: "Terms of Service", href: "#" },
+    { label: "Privacy Policy", href: "/terms-and-conditions" },
+    { label: "Terms of Service", href: "/terms-and-conditions" },
     { label: "Contact", href: "#contact" },
   ],
   Resources: [
