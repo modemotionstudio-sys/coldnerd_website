@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { Link } from "react-router";
 import { ArrowRight } from "lucide-react";
+import { useState } from "react";
 
 import blog1 from "../../assets/blog1.png";
 import blog2 from "../../assets/blog2.png";
@@ -48,6 +49,58 @@ const articles = [
   },
 ];
 
+// Swap middle two cards (index 2 & 3) for mobile view
+const mobileArticles = [
+  articles[0],
+  articles[1],
+  articles[3], // swapped: blue card moved to left
+  articles[2], // swapped: white card moved to right
+  articles[4],
+  articles[5],
+];
+
+function MobileBlogCard({ article, index }: { article: typeof articles[0]; index: number }) {
+  const [tapped, setTapped] = useState(false);
+  return (
+    <motion.div
+      variants={{
+        hidden: { opacity: 0, y: 40 },
+        visible: {
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.5 },
+        },
+      }}
+      onTouchStart={() => setTapped(true)}
+      onTouchEnd={() => setTimeout(() => setTapped(false), 300)}
+    >
+      <Link to="/blog" className="block group no-underline">
+        <motion.div
+          animate={tapped ? { y: -6, scale: 1.03 } : { y: 0, scale: 1 }}
+          whileHover={{ y: -6, scale: 1.03 }}
+          transition={{ type: "spring", stiffness: 300 }}
+          className={`${article.bg} rounded-2xl overflow-hidden shadow-sm active:shadow-lg transition-shadow duration-300 h-full flex flex-col`}
+        >
+          <div className="relative h-32 sm:h-56 flex items-center justify-center p-3 sm:p-6 pt-4 sm:pt-8 overflow-hidden">
+            <img
+              src={article.image}
+              alt={article.title}
+              className={`max-h-full max-w-full object-contain drop-shadow-lg transition-transform duration-500 ${tapped ? "scale-105" : ""}`}
+            />
+          </div>
+          <div className="px-3 sm:px-6 pb-3 sm:pb-6 pt-0 mt-auto">
+            <h3
+              className={`text-sm sm:text-lg font-semibold ${article.textColor} leading-snug line-clamp-3`}
+            >
+              {article.title}
+            </h3>
+          </div>
+        </motion.div>
+      </Link>
+    </motion.div>
+  );
+}
+
 export function BlogSection() {
   return (
     <section className="py-16 lg:py-24 bg-gray-50">
@@ -71,7 +124,7 @@ export function BlogSection() {
           </p>
         </motion.div>
 
-        {/* Blog Grid */}
+        {/* Blog Grid - Desktop (lg+) */}
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -80,7 +133,7 @@ export function BlogSection() {
             hidden: {},
             visible: { transition: { staggerChildren: 0.1 } },
           }}
-          className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-8"
+          className="hidden lg:grid grid-cols-3 gap-8"
         >
           {articles.map((article, i) => (
             <motion.div
@@ -100,19 +153,16 @@ export function BlogSection() {
                   transition={{ type: "spring", stiffness: 300 }}
                   className={`${article.bg} rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300 h-full flex flex-col`}
                 >
-                  {/* Image */}
-                  <div className="relative h-32 sm:h-56 flex items-center justify-center p-3 sm:p-6 pt-4 sm:pt-8 overflow-hidden">
+                  <div className="relative h-56 flex items-center justify-center p-6 pt-8 overflow-hidden">
                     <img
                       src={article.image}
                       alt={article.title}
                       className="max-h-full max-w-full object-contain drop-shadow-lg group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
-
-                  {/* Title */}
-                  <div className="px-3 sm:px-6 pb-3 sm:pb-6 pt-0 mt-auto">
+                  <div className="px-6 pb-6 pt-0 mt-auto">
                     <h3
-                      className={`text-sm sm:text-lg font-semibold ${article.textColor} leading-snug line-clamp-3`}
+                      className={`text-lg font-semibold ${article.textColor} leading-snug line-clamp-3`}
                     >
                       {article.title}
                     </h3>
@@ -120,6 +170,22 @@ export function BlogSection() {
                 </motion.div>
               </Link>
             </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Blog Grid - Mobile (< lg) with swapped middle cards + tap hover */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.1 } },
+          }}
+          className="grid grid-cols-2 gap-3 sm:gap-6 lg:hidden"
+        >
+          {mobileArticles.map((article, i) => (
+            <MobileBlogCard key={i} article={article} index={i} />
           ))}
         </motion.div>
 

@@ -161,8 +161,8 @@ function Navbar() {
               className="w-10 h-10 rounded-full bg-[#2a6ff3] flex items-center justify-center text-white font-bold text-sm hover:bg-[#1f5ccf] transition-colors overflow-hidden"
               title={user.email || "Account"}
             >
-              {user.user_metadata?.avatar_url ? (
-                <img src={user.user_metadata.avatar_url} alt="" className="w-full h-full object-cover rounded-full" />
+              {(user.user_metadata?.avatar_url || user.user_metadata?.picture) ? (
+                <img src={user.user_metadata.avatar_url || user.user_metadata.picture} alt="" className="w-full h-full object-cover rounded-full" referrerPolicy="no-referrer" />
               ) : (
                 (user.user_metadata?.full_name || user.email || "U").charAt(0).toUpperCase()
               )}
@@ -233,8 +233,8 @@ function Navbar() {
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-3 py-2">
               <div className="w-9 h-9 rounded-full bg-[#2a6ff3] flex items-center justify-center text-white font-bold text-sm overflow-hidden">
-                {user.user_metadata?.avatar_url ? (
-                  <img src={user.user_metadata.avatar_url} alt="" className="w-full h-full object-cover rounded-full" />
+                {(user.user_metadata?.avatar_url || user.user_metadata?.picture) ? (
+                  <img src={user.user_metadata.avatar_url || user.user_metadata.picture} alt="" className="w-full h-full object-cover rounded-full" referrerPolicy="no-referrer" />
                 ) : (
                   (user.user_metadata?.full_name || user.email || "U").charAt(0).toUpperCase()
                 )}
@@ -441,8 +441,12 @@ function HeroImages() {
       className="relative w-full flex justify-end lg:flex-none lg:absolute lg:right-[-8%] xl:right-[-5%] 2xl:right-[-2%] lg:top-[55%] lg:-translate-y-1/2 -mr-4 sm:-mr-2 lg:mr-0 mt-14 sm:mt-16 lg:mt-0"
     >
       <div className="relative w-[360px] h-[360px] sm:w-[420px] sm:h-[420px] lg:w-[540px] lg:h-[540px] xl:w-[580px] xl:h-[580px] 2xl:w-[640px] 2xl:h-[640px]">
-        {/* Blue circle */}
-        <BgShape />
+        {/* Blue circle - CSS fallback for mobile */}
+        <div className="absolute inset-0 rounded-full bg-[#2A6FF3] lg:hidden" />
+        {/* Blue circle - SVG for desktop */}
+        <div className="hidden lg:block">
+          <BgShape />
+        </div>
 
         {/* Dashboard (main large image) */}
         <motion.div
@@ -2063,7 +2067,7 @@ function Feature() {
       <Frame16 />
       {/* 3-card grid */}
       <StaggerContainer
-        className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mt-10 max-w-[1280px] mx-auto"
+        className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mt-10 max-w-[1280px] mx-auto px-4 sm:px-2 md:px-0"
         staggerDelay={0.15}
       >
         <FeatureCard
@@ -4550,7 +4554,7 @@ function ProblemSolutionMobile() {
   };
 
   return (
-    <section className="py-12 bg-white overflow-hidden">
+    <section className="py-12 pb-24 bg-white overflow-hidden">
       {/* Centered pill label */}
       <div className="flex justify-center mb-4">
         <motion.div
@@ -4567,29 +4571,22 @@ function ProblemSolutionMobile() {
       </div>
 
       {/* Scaled Figma container */}
-      <div className="relative mx-auto w-full overflow-hidden" style={{ maxWidth: 430, aspectRatio: "430 / 1300" }}>
-        <div className="absolute inset-0" style={{ width: 430, height: 1300 }}>
+      <div className="relative mx-auto w-full overflow-hidden" style={{ maxWidth: 430, aspectRatio: "430 / 1280" }}>
+        <div className="absolute inset-0" style={{ width: 430, height: 1450 }}>
 
-          {/* RED ARC - Problem section (top) */}
+          {/* RED ARC - Problem section (top) - slides from LEFT */}
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            initial={{ opacity: 0, x: -200 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="absolute flex items-center justify-center"
-            style={{ left: 51, top: 30, width: 454, height: 453 }}
+            style={{ left: 40, top: -25, width: 454, height: 453 }}
           >
-            <div className="flex-none" style={{ transform: "rotate(-66.13deg) skewX(0.01deg)" }}>
+            <div className="flex-none" style={{ transform: "rotate(-76.13deg) skewX(0.3deg)" }}>
               <div className="relative" style={{ width: 343, height: 344 }}>
                 <svg className="absolute" style={{ left: "-0.77%", top: "-0.77%", width: "101.54%", height: "54.51%" }} viewBox="0 0 340.404 187.65" fill="none" preserveAspectRatio="none">
-                  <motion.path
-                    d={arcPaths.redArc}
-                    fill="#F31705"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1, ease: "easeOut" }}
-                  />
+                  <path d={arcPaths.redArc} fill="#F31705" />
                 </svg>
               </div>
             </div>
@@ -4602,46 +4599,39 @@ function ProblemSolutionMobile() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.4 }}
             className="absolute"
-            style={{ left: 110, top: 145, width: 40, height: 33 }}
+            style={{ left: 175, top: 120, width: 40, height: 33 }}
           >
             <svg className="block w-full h-full" fill="none" viewBox="0 0 40 33.1213">
               <path clipRule="evenodd" d={arcPaths.warningTriangle} fill="#EB4335" fillRule="evenodd" />
             </svg>
           </motion.div>
 
-          {/* Problem text */}
+          {/* Problem text - positioned on RIGHT side */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.3 }}
             className="absolute flex flex-col items-start"
-            style={{ left: 110, top: 180, width: 237, paddingBottom: 19 }}
+            style={{ left: 175, top: 160, width: 237, paddingBottom: 10 }}
           >
-            <p className="font-['Inter',sans-serif] font-medium text-[#0d0d0d] text-[24px] leading-[78px] w-full">Problem</p>
-            <p className="font-['Inter',sans-serif] font-normal text-[#5e5e5e] text-[15px] leading-[30px] opacity-70" style={{ width: 229 }}>Manual Instagram outreach is time-consuming, inconsistent, and hard to scale.</p>
+            <p className="font-['Inter',sans-serif] font-medium text-[#0d0d0d] text-[24px] leading-[40px] w-full">Problem</p>
+            <p className="font-['Inter',sans-serif] font-normal text-[#5e5e5e] text-[15px] leading-[22px] opacity-70 mt-1" style={{ width: 229 }}>Manual Instagram outreach is time-consuming, inconsistent, and hard to scale.</p>
           </motion.div>
 
-          {/* BLUE ARC 1 - Solution 1 area */}
+          {/* BLUE ARC 1 - Solution 1 area - slides from RIGHT */}
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.5 }}
+            initial={{ opacity: 0, x: 200 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 1, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="absolute flex items-center justify-center"
-            style={{ left: 4, top: 336, width: 435, height: 435 }}
+            style={{ left: 5, top: 295, width: 435, height: 435 }}
           >
-            <div className="flex-none" style={{ transform: "rotate(120.76deg) skewX(0.01deg)" }}>
+            <div className="flex-none" style={{ transform: "rotate(115.76deg) skewX(2.0deg)" }}>
               <div className="relative" style={{ width: 317, height: 318 }}>
-                <svg className="absolute" style={{ left: "-0.83%", top: "-0.83%", width: "86.49%", height: "65.35%" }} viewBox="0 0 273.914 207.953" fill="none" preserveAspectRatio="none">
-                  <motion.path
-                    d={arcPaths.blueArc1}
-                    fill="#2196F3"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1, delay: 0.6, ease: "easeOut" }}
-                  />
+                <svg className="absolute" style={{ left: "-0.83%", top: "1.83%", width: "86.49%", height: "65.35%" }} viewBox="0 0 273.914 207.953" fill="none" preserveAspectRatio="none">
+                  <path d={arcPaths.blueArc1} fill="#2196F3" />
                 </svg>
               </div>
             </div>
@@ -4654,7 +4644,7 @@ function ProblemSolutionMobile() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.8 }}
             className="absolute"
-            style={{ left: 80, top: 458, width: 40, height: 29 }}
+            style={{ left: 80, top: 420, width: 40, height: 29 }}
           >
             <svg className="block w-full h-full" fill="none" viewBox="0 0 40.3333 29.1164">
               <path d={arcPaths.chatIcon} fill="#2196F3" />
@@ -4669,32 +4659,25 @@ function ProblemSolutionMobile() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.6 }}
             className="absolute flex flex-col items-start"
-            style={{ left: 80, top: 490, width: 339, paddingBottom: 19 }}
+            style={{ left: 80, top: 450, width: 339, paddingBottom: 10 }}
           >
-            <p className="font-['Inter',sans-serif] font-medium text-[#0d0d0d] text-[24px] leading-[78px] w-full">Solution 1</p>
-            <p className="font-['Inter',sans-serif] font-normal text-[#5e5e5e] text-[15px] leading-[30px] opacity-70" style={{ width: 245 }}>Identify ideal prospects from followers, likers, and hashtags.</p>
+            <p className="font-['Inter',sans-serif] font-medium text-[#0d0d0d] text-[24px] leading-[40px] w-full">Solution 1</p>
+            <p className="font-['Inter',sans-serif] font-normal text-[#5e5e5e] text-[15px] leading-[22px] opacity-70 mt-1" style={{ width: 245 }}>Identify ideal prospects from followers, likers, and hashtags.</p>
           </motion.div>
 
-          {/* BLUE ARC 2 - Solution 2 area */}
+          {/* BLUE ARC 2 - Solution 2 area - slides from LEFT */}
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.8 }}
+            initial={{ opacity: 0, x: -200 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 1, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="absolute flex items-center justify-center"
-            style={{ left: 74, top: 629, width: 433, height: 432 }}
+            style={{ left: 74, top: 579, width: 433, height: 432 }}
           >
             <div className="flex-none" style={{ transform: "rotate(-60.42deg) skewX(0.01deg)" }}>
               <div className="relative" style={{ width: 317, height: 318 }}>
                 <svg className="absolute" style={{ left: "-0.83%", top: "-0.83%", width: "91.26%", height: "65.35%" }} viewBox="0 0 289.03 207.953" fill="none" preserveAspectRatio="none">
-                  <motion.path
-                    d={arcPaths.blueArc2}
-                    fill="#2196F3"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1, delay: 0.9, ease: "easeOut" }}
-                  />
+                  <path d={arcPaths.blueArc2} fill="#2196F3" />
                 </svg>
               </div>
             </div>
@@ -4707,7 +4690,7 @@ function ProblemSolutionMobile() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 1.1 }}
             className="absolute"
-            style={{ left: 200, top: 760, width: 35, height: 28 }}
+            style={{ left: 200, top: 730, width: 35, height: 28 }}
           >
             <svg className="block w-full h-full" fill="none" viewBox="0 0 35 28.2341">
               <path d={arcPaths.starIcon} fill="#2196F3" />
@@ -4721,32 +4704,25 @@ function ProblemSolutionMobile() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.9 }}
             className="absolute flex flex-col items-start"
-            style={{ left: 200, top: 790, width: 220, paddingBottom: 19 }}
+            style={{ left: 200, top: 760, width: 220, paddingBottom: 10 }}
           >
-            <p className="font-['Inter',sans-serif] font-medium text-[#0d0d0d] text-[24px] leading-[78px] w-full">Solution 2</p>
-            <p className="font-['Inter',sans-serif] font-normal text-[#5e5e5e] text-[15px] leading-[30px] opacity-70" style={{ width: 245 }}>Monitor campaign activity and response rates instantly.</p>
+            <p className="font-['Inter',sans-serif] font-medium text-[#0d0d0d] text-[24px] leading-[40px] w-full">Solution 2</p>
+            <p className="font-['Inter',sans-serif] font-normal text-[#5e5e5e] text-[15px] leading-[22px] opacity-70 mt-1" style={{ width: 220 }}>Monitor campaign activity and response rates instantly.</p>
           </motion.div>
 
-          {/* BLUE ARC 3 - Solution 3 area */}
+          {/* BLUE ARC 3 - Solution 3 area - slides from RIGHT */}
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 1.1 }}
+            initial={{ opacity: 0, x: 200 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 1, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="absolute flex items-center justify-center"
-            style={{ left: 0, top: 920, width: 435, height: 435 }}
+            style={{ left: 0, top: 870, width: 435, height: 435 }}
           >
             <div className="flex-none" style={{ transform: "rotate(120.76deg) skewX(0.01deg)" }}>
               <div className="relative" style={{ width: 317, height: 318 }}>
                 <svg className="absolute" style={{ left: "-0.83%", top: "-0.83%", width: "97.67%", height: "65.35%" }} viewBox="0 0 309.393 207.952" fill="none" preserveAspectRatio="none">
-                  <motion.path
-                    d={arcPaths.blueArc3}
-                    fill="#2196F3"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1, delay: 1.2, ease: "easeOut" }}
-                  />
+                  <path d={arcPaths.blueArc3} fill="#2196F3" />
                 </svg>
               </div>
             </div>
@@ -4759,7 +4735,7 @@ function ProblemSolutionMobile() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 1.4 }}
             className="absolute"
-            style={{ left: 80, top: 1050, width: 39, height: 35 }}
+            style={{ left: 80, top: 1010, width: 39, height: 35 }}
           >
             <svg className="block w-full h-full" fill="none" viewBox="0 0 39 35">
               <path d={arcPaths.msgIcon} fill="#2196F3" />
@@ -4773,10 +4749,10 @@ function ProblemSolutionMobile() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 1.2 }}
             className="absolute flex flex-col items-start"
-            style={{ left: 80, top: 1080, width: 339, paddingBottom: 19 }}
+            style={{ left: 80, top: 1040, width: 339, paddingBottom: 10 }}
           >
-            <p className="font-['Inter',sans-serif] font-medium text-[#0d0d0d] text-[24px] leading-[78px] w-full">Solution 3</p>
-            <p className="font-['Inter',sans-serif] font-normal text-[#5e5e5e] text-[15px] leading-[30px] opacity-70" style={{ width: 245 }}>Automate personalized DMs with smart follow-ups</p>
+            <p className="font-['Inter',sans-serif] font-medium text-[#0d0d0d] text-[24px] leading-[40px] w-full">Solution 3</p>
+            <p className="font-['Inter',sans-serif] font-normal text-[#5e5e5e] text-[15px] leading-[22px] opacity-70 mt-1" style={{ width: 245 }}>Automate personalized DMs with smart follow-ups</p>
           </motion.div>
 
         </div>
