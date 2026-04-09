@@ -34,7 +34,7 @@ const plans = [
   },
 ];
 
-function PricingCard({ plan, isYearly, isActive, onActivate }: { plan: typeof plans[0]; isYearly: boolean; isActive: boolean; onActivate: () => void }) {
+function PricingCard({ plan, isYearly, isActive, onActivate, onBuyNow }: { plan: typeof plans[0]; isYearly: boolean; isActive: boolean; onActivate: () => void; onBuyNow: () => void }) {
   const price = isYearly ? plan.yearlyPrice : plan.monthlyPrice;
   const active = isActive;
 
@@ -97,6 +97,7 @@ function PricingCard({ plan, isYearly, isActive, onActivate }: { plan: typeof pl
       <motion.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
+        onClick={(e) => { e.stopPropagation(); onBuyNow(); }}
         className={`w-full rounded-full py-3.5 font-semibold transition-colors duration-500 ${
           active
             ? "bg-white text-[#2a6ff3] hover:bg-gray-100"
@@ -128,6 +129,12 @@ export default function Pricing() {
     });
     return () => subscription.unsubscribe();
   }, []);
+
+  const WHOP_CHECKOUT_URL = "https://whop.com/cold-nerd/cold-nerd-3c/";
+
+  const handleBuyNow = () => {
+    window.open(WHOP_CHECKOUT_URL, "_blank", "noopener,noreferrer");
+  };
 
   if (loading) {
     return (
@@ -218,7 +225,7 @@ export default function Pricing() {
                 key={i}
                 variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
               >
-                <PricingCard plan={plan} isYearly={isYearly} isActive={activeCard === i} onActivate={() => setActiveCard(i)} />
+                <PricingCard plan={plan} isYearly={isYearly} isActive={activeCard === i} onActivate={() => setActiveCard(i)} onBuyNow={handleBuyNow} />
               </motion.div>
             ))}
           </motion.div>

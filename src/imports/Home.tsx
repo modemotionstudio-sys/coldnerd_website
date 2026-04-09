@@ -4581,7 +4581,7 @@ function ProblemSolutionMobile() {
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="absolute flex items-center justify-center"
-            style={{ left: 40, top: -25, width: 454, height: 453 }}
+            style={{ left: 15, top: -25, width: 454, height: 453 }}
           >
             <div className="flex-none" style={{ transform: "rotate(-76.13deg) skewX(0.3deg)" }}>
               <div className="relative" style={{ width: 343, height: 344 }}>
@@ -4626,11 +4626,11 @@ function ProblemSolutionMobile() {
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 1, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="absolute flex items-center justify-center"
-            style={{ left: 5, top: 295, width: 435, height: 435 }}
+            style={{ left: -20, top: 295, width: 435, height: 435 }}
           >
-            <div className="flex-none" style={{ transform: "rotate(115.76deg) skewX(2.0deg)" }}>
+            <div className="flex-none" style={{ transform: "rotate(115.76deg) skewX(2.9deg)" }}>
               <div className="relative" style={{ width: 317, height: 318 }}>
-                <svg className="absolute" style={{ left: "-0.83%", top: "1.83%", width: "86.49%", height: "65.35%" }} viewBox="0 0 273.914 207.953" fill="none" preserveAspectRatio="none">
+                <svg className="absolute" style={{ left: "-0.83%", top: "1.83%", width: "86.49%", height: "65.35%" }} viewBox="0 0 270.100  205.953" fill="none" preserveAspectRatio="none">
                   <path d={arcPaths.blueArc1} fill="#2196F3" />
                 </svg>
               </div>
@@ -4672,9 +4672,9 @@ function ProblemSolutionMobile() {
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 1, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="absolute flex items-center justify-center"
-            style={{ left: 74, top: 579, width: 433, height: 432 }}
+            style={{ left: 50, top: 579, width: 433, height: 432 }}
           >
-            <div className="flex-none" style={{ transform: "rotate(-60.42deg) skewX(0.01deg)" }}>
+            <div className="flex-none" style={{ transform: "rotate(-60.42deg) skewX(1.3deg)" }}>
               <div className="relative" style={{ width: 317, height: 318 }}>
                 <svg className="absolute" style={{ left: "-0.83%", top: "-0.83%", width: "91.26%", height: "65.35%" }} viewBox="0 0 289.03 207.953" fill="none" preserveAspectRatio="none">
                   <path d={arcPaths.blueArc2} fill="#2196F3" />
@@ -4717,9 +4717,9 @@ function ProblemSolutionMobile() {
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 1, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="absolute flex items-center justify-center"
-            style={{ left: 0, top: 870, width: 435, height: 435 }}
+            style={{ left: -25, top: 868, width: 435, height: 435 }}
           >
-            <div className="flex-none" style={{ transform: "rotate(120.76deg) skewX(0.01deg)" }}>
+            <div className="flex-none" style={{ transform: "rotate(120.76deg) skewX(0.5deg)" }}>
               <div className="relative" style={{ width: 317, height: 318 }}>
                 <svg className="absolute" style={{ left: "-0.83%", top: "-0.83%", width: "97.67%", height: "65.35%" }} viewBox="0 0 309.393 207.952" fill="none" preserveAspectRatio="none">
                   <path d={arcPaths.blueArc3} fill="#2196F3" />
