@@ -130,7 +130,7 @@ export default function Pricing() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const WHOP_CHECKOUT_URL = "https://whop.com/cold-nerd/cold-nerd-3c/";
+  const WHOP_CHECKOUT_URL = "https://whop.com/coldnerd/cold-nerd-3c/";
 
   const handleBuyNow = () => {
     window.open(WHOP_CHECKOUT_URL, "_blank", "noopener,noreferrer");
