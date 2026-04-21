@@ -79,16 +79,27 @@ export function FooterSection() {
     if (!contactName.trim() || !contactEmail.trim() || !contactQueries.trim()) return;
     setSending(true);
     try {
-      // Send via mailto as a fallback-safe method
-      const subject = encodeURIComponent(`Contact from ${contactName}`);
-      const body = encodeURIComponent(
-        `Name: ${contactName}\nEmail: ${contactEmail}\n\nQuery:\n${contactQueries}`
-      );
-      window.open(`mailto:coldnerdai@gmail.com?subject=${subject}&body=${body}`, "_blank");
-      setSent(true);
-      setTimeout(() => setShowContactModal(false), 2000);
+      const res = await fetch("https://coldnerdserver.vercel.app/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: contactName,
+          email: contactEmail,
+          queries: contactQueries,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSent(true);
+        setTimeout(() => {
+          setShowContactModal(false);
+          setContactQueries("");
+        }, 2000);
+      } else {
+        alert("Failed to send message. Please try again.");
+      }
     } catch {
-      // Fallback handled
+      alert("Network error. Please try again.");
     } finally {
       setSending(false);
     }

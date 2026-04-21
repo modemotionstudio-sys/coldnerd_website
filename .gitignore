@@ -3,3 +3,4 @@ app/node_modules/
 .env
 .env.local
 *.log
+public/*.zip

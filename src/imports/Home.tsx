@@ -173,12 +173,13 @@ function Navbar() {
                 <p className="text-sm font-medium text-gray-900 truncate">{user.user_metadata?.full_name || "User"}</p>
                 <p className="text-xs text-gray-500 truncate">{user.email}</p>
               </div>
-              <Link
-                to="/dashboard"
+              <a
+                href="/ColdNerd_Tool.zip"
+                download
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 no-underline transition-colors"
               >
-                Dashboard
-              </Link>
+                Download App
+              </a>
               <button
                 onClick={async () => {
                   await supabase.auth.signOut();
@@ -244,7 +245,7 @@ function Navbar() {
                 <p className="text-xs text-gray-500 truncate">{user.email}</p>
               </div>
             </div>
-            <Link to="/dashboard" onClick={closeMobile} className="text-center py-2.5 rounded-full bg-[#2a6ff3] text-white font-semibold text-sm no-underline hover:bg-[#1f5ccf] transition-colors">Dashboard</Link>
+            <a href="/ColdNerd_Tool.zip" download className="text-center py-2.5 rounded-full bg-[#2a6ff3] text-white font-semibold text-sm no-underline hover:bg-[#1f5ccf] transition-colors">Download App</a>
             <button
               onClick={async () => { await supabase.auth.signOut(); setUser(null); closeMobile(); }}
               className="py-2.5 rounded-full border border-red-300 text-red-600 font-semibold text-sm hover:bg-red-50 transition-colors"
@@ -383,9 +384,9 @@ function ButtonContainer() {
       className="content-stretch flex flex-col h-[50px] items-center pb-[6px] relative shrink-0 w-[224px]"
       data-name="Button Container"
     >
-      <button onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })} className="bg-[#2a6ff3] content-stretch flex h-[44px] items-center justify-center relative rounded-[8px] shrink-0 w-[217px] hover:bg-[#1f5ccf] transition-colors cursor-pointer" data-name="Button">
+      <a href="/ColdNerd_Tool.zip" download className="bg-[#2a6ff3] content-stretch flex h-[44px] items-center justify-center relative rounded-[8px] shrink-0 w-[217px] hover:bg-[#1f5ccf] transition-colors cursor-pointer no-underline" data-name="Button">
         <Container2 />
-      </button>
+      </a>
     </motion.div>
   );
 }
