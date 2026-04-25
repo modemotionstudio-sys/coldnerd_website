@@ -174,9 +174,9 @@ function Navbar() {
                 <p className="text-xs text-gray-500 truncate">{user.email}</p>
               </div>
               <a
-                href="https://drive.usercontent.google.com/download?id=1yaioE-HGpdJls31qfXNGDxBg-c659K4T&export=download&authuser=0&confirm=t&uuid=56fed400-19ea-4776-af07-5377e0bb2369&at=ALBwUgmwPlkDcCuIBnfyYcLLKOmm:1776774263587"
-                target="_blank"
+                href="https://github.com/modemotionstudio-sys/coldnerd_website/releases/latest/download/ColdNerd_Software.zip"
                 rel="noopener noreferrer"
+                download="ColdNerd_Software.zip"
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 no-underline transition-colors"
               >
                 Download App
@@ -246,7 +246,7 @@ function Navbar() {
                 <p className="text-xs text-gray-500 truncate">{user.email}</p>
               </div>
             </div>
-            <a href="https://drive.usercontent.google.com/download?id=1yaioE-HGpdJls31qfXNGDxBg-c659K4T&export=download&authuser=0&confirm=t&uuid=56fed400-19ea-4776-af07-5377e0bb2369&at=ALBwUgmwPlkDcCuIBnfyYcLLKOmm:1776774263587" target="_blank" rel="noopener noreferrer" className="text-center py-2.5 rounded-full bg-[#2a6ff3] text-white font-semibold text-sm no-underline hover:bg-[#1f5ccf] transition-colors">Download App</a>
+            <a href="https://github.com/modemotionstudio-sys/coldnerd_website/releases/latest/download/ColdNerd_Software.zip" rel="noopener noreferrer" download="ColdNerd_Software.zip" className="text-center py-2.5 rounded-full bg-[#2a6ff3] text-white font-semibold text-sm no-underline hover:bg-[#1f5ccf] transition-colors">Download App</a>
             <button
               onClick={async () => { await supabase.auth.signOut(); setUser(null); closeMobile(); }}
               className="py-2.5 rounded-full border border-red-300 text-red-600 font-semibold text-sm hover:bg-red-50 transition-colors"
@@ -377,6 +377,16 @@ function Container2() {
 }
 
 function ButtonContainer() {
+  const navigate = useNavigate();
+
+  const handleClick = async (e: React.MouseEvent) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user) {
+      e.preventDefault();
+      navigate("/signup");
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -385,7 +395,7 @@ function ButtonContainer() {
       className="content-stretch flex flex-col h-[50px] items-center pb-[6px] relative shrink-0 w-[224px]"
       data-name="Button Container"
     >
-      <a href="https://drive.usercontent.google.com/download?id=1yaioE-HGpdJls31qfXNGDxBg-c659K4T&export=download&authuser=0&confirm=t&uuid=56fed400-19ea-4776-af07-5377e0bb2369&at=ALBwUgmwPlkDcCuIBnfyYcLLKOmm:1776774263587" target="_blank" rel="noopener noreferrer" className="bg-[#2a6ff3] content-stretch flex h-[44px] items-center justify-center relative rounded-[8px] shrink-0 w-[217px] hover:bg-[#1f5ccf] transition-colors cursor-pointer no-underline" data-name="Button">
+      <a href="https://github.com/modemotionstudio-sys/coldnerd_website/releases/latest/download/ColdNerd_Software.zip" rel="noopener noreferrer" download="ColdNerd_Software.zip" onClick={handleClick} className="bg-[#2a6ff3] content-stretch flex h-[44px] items-center justify-center relative rounded-[8px] shrink-0 w-[217px] hover:bg-[#1f5ccf] transition-colors cursor-pointer no-underline" data-name="Button">
         <Container2 />
       </a>
     </motion.div>

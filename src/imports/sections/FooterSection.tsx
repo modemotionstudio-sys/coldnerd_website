@@ -1,6 +1,13 @@
 import { motion, AnimatePresence } from "motion/react";
 import { Link, useNavigate } from "react-router";
-import { Instagram, Facebook, Twitter, Linkedin, Youtube, Mail, MapPin, Send, X } from "lucide-react";
+import { Instagram, Facebook, Linkedin, Mail, MapPin, Send, X } from "lucide-react";
+
+// TikTok icon (lucide-react doesn't ship one)
+const TikTok = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43V8.59a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.84-.02Z"/>
+  </svg>
+);
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 import type { User } from "@supabase/supabase-js";
@@ -30,11 +37,10 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { icon: Instagram, href: "#", label: "Instagram", hoverColor: "hover:text-pink-500" },
-  { icon: Facebook, href: "#", label: "Facebook", hoverColor: "hover:text-blue-600" },
-  { icon: Twitter, href: "#", label: "Twitter", hoverColor: "hover:text-sky-500" },
-  { icon: Linkedin, href: "#", label: "LinkedIn", hoverColor: "hover:text-blue-500" },
-  { icon: Youtube, href: "#", label: "YouTube", hoverColor: "hover:text-red-500" },
+  { icon: Instagram, href: "https://www.instagram.com/cold_nerd_/", label: "Instagram", hoverColor: "hover:text-pink-500" },
+  { icon: Facebook, href: "https://www.facebook.com/profile.php?id=61573369782245", label: "Facebook", hoverColor: "hover:text-blue-600" },
+  { icon: TikTok, href: "https://www.tiktok.com/@cold.nerd", label: "TikTok", hoverColor: "hover:text-black" },
+  { icon: Linkedin, href: "https://www.linkedin.com/company/cold-nerd", label: "LinkedIn", hoverColor: "hover:text-blue-500" },
 ];
 
 export function FooterSection() {
@@ -183,6 +189,8 @@ export function FooterSection() {
                   <motion.a
                     key={i}
                     href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     aria-label={social.label}
                     whileHover={{ y: -3, scale: 1.1 }}
                     className="w-8 h-8 sm:w-10 sm:h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white/70 hover:text-white transition-all"
