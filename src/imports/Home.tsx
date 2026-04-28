@@ -15,6 +15,7 @@ import { VerticalTimelineSection } from "./sections/VerticalTimelineSection";
 import { FAQSection } from "./sections/FAQSection";
 import { BlogSection } from "./sections/BlogSection";
 import { FooterSection } from "./sections/FooterSection";
+import { DownloadModal, openDownloadModal } from "../app/components/DownloadModal";
 import imgFrame10000056551 from "figma:asset/bb834f03157fd23888b46fc97bf375d1f17e227d.png";
 import imgDashboard1 from "figma:asset/92e21f3370ec8756b689948218a7dd293b611573.png";
 import imgMetricItem1 from "figma:asset/69ae9a7aff4b31a3755fc57599c1994537159505.png";
@@ -173,14 +174,12 @@ function Navbar() {
                 <p className="text-sm font-medium text-gray-900 truncate">{user.user_metadata?.full_name || "User"}</p>
                 <p className="text-xs text-gray-500 truncate">{user.email}</p>
               </div>
-              <a
-                href="https://github.com/modemotionstudio-sys/coldnerd_website/releases/latest/download/ColdNerd_Software.zip"
-                rel="noopener noreferrer"
-                download="ColdNerd_Software.zip"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 no-underline transition-colors"
+              <button
+                onClick={() => openDownloadModal()}
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 Download App
-              </a>
+              </button>
               <button
                 onClick={async () => {
                   await supabase.auth.signOut();
@@ -246,7 +245,7 @@ function Navbar() {
                 <p className="text-xs text-gray-500 truncate">{user.email}</p>
               </div>
             </div>
-            <a href="https://github.com/modemotionstudio-sys/coldnerd_website/releases/latest/download/ColdNerd_Software.zip" rel="noopener noreferrer" download="ColdNerd_Software.zip" className="text-center py-2.5 rounded-full bg-[#2a6ff3] text-white font-semibold text-sm no-underline hover:bg-[#1f5ccf] transition-colors">Download App</a>
+            <button onClick={() => { closeMobile(); openDownloadModal(); }} className="text-center py-2.5 rounded-full bg-[#2a6ff3] text-white font-semibold text-sm hover:bg-[#1f5ccf] transition-colors">Download App</button>
             <button
               onClick={async () => { await supabase.auth.signOut(); setUser(null); closeMobile(); }}
               className="py-2.5 rounded-full border border-red-300 text-red-600 font-semibold text-sm hover:bg-red-50 transition-colors"
@@ -362,7 +361,7 @@ function Container2() {
     <div className="content-stretch flex gap-[8px] h-[56px] items-center pl-[24px] pr-[16px] relative rounded-[8px] shrink-0" data-name="Container">
       <div className="flex flex-col font-['Inter',sans-serif] font-semibold justify-center leading-[0] relative shrink-0 text-[16px] text-white whitespace-nowrap">
         <p className="leading-[30px]" dir="auto">
-          Start Automating
+          Download
         </p>
       </div>
       <div className="relative shrink-0 size-[24px]" data-name="icon-arrow-right">
@@ -379,12 +378,13 @@ function Container2() {
 function ButtonContainer() {
   const navigate = useNavigate();
 
-  const handleClick = async (e: React.MouseEvent) => {
+  const handleClick = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session?.user) {
-      e.preventDefault();
       navigate("/signup");
+      return;
     }
+    openDownloadModal();
   };
 
   return (
@@ -395,9 +395,9 @@ function ButtonContainer() {
       className="content-stretch flex flex-col h-[50px] items-center pb-[6px] relative shrink-0 w-[224px]"
       data-name="Button Container"
     >
-      <a href="https://github.com/modemotionstudio-sys/coldnerd_website/releases/latest/download/ColdNerd_Software.zip" rel="noopener noreferrer" download="ColdNerd_Software.zip" onClick={handleClick} className="bg-[#2a6ff3] content-stretch flex h-[44px] items-center justify-center relative rounded-[8px] shrink-0 w-[217px] hover:bg-[#1f5ccf] transition-colors cursor-pointer no-underline" data-name="Button">
+      <button onClick={handleClick} className="bg-[#2a6ff3] content-stretch flex h-[44px] items-center justify-center relative rounded-[8px] shrink-0 w-[217px] hover:bg-[#1f5ccf] transition-colors cursor-pointer border-0" data-name="Button">
         <Container2 />
-      </a>
+      </button>
     </motion.div>
   );
 }
@@ -4844,6 +4844,7 @@ export default function Home() {
       <div className="w-full">
         <FooterSection />
       </div>
+      <DownloadModal />
     </div>
   );
 }
