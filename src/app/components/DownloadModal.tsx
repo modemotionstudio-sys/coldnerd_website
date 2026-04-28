@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Apple } from "lucide-react";
+import { X } from "lucide-react";
 
 export const DOWNLOAD_URL =
   "https://github.com/modemotionstudio-sys/coldnerd_website/releases/latest/download/ColdNerd_Software.zip";
@@ -23,6 +23,13 @@ const triggerWindowsDownload = () => {
 const WindowsIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
     <path d="M2 4.5 11 3v8.5H2V4.5Zm0 8h9V21l-9-1.5v-7Zm10-9.7L22 1v10.5H12V2.8Zm0 9.7h10V23l-10-1.5v-9Z" />
+  </svg>
+);
+
+// Inline Apple logo
+const AppleLogo = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+    <path d="M16.365 1.43c0 1.14-.46 2.235-1.21 3.04-.81.87-2.13 1.55-3.22 1.46-.13-1.12.43-2.29 1.16-3.06.82-.86 2.22-1.5 3.27-1.44ZM20.5 17.27c-.55 1.27-.81 1.83-1.51 2.95-.98 1.56-2.36 3.51-4.07 3.52-1.52.02-1.91-.99-3.97-.97-2.06.02-2.49 1-4.01.98-1.71-.02-3.02-1.78-4-3.34C.93 15.94.7 11.86 2.4 9.36c1.21-1.79 3.12-2.84 4.92-2.84 1.83 0 2.98.99 4.49.99 1.46 0 2.36-.99 4.48-.99 1.61 0 3.32.88 4.54 2.4-3.99 2.18-3.34 7.85.67 8.35Z" />
   </svg>
 );
 
@@ -109,7 +116,7 @@ export function DownloadModal() {
                 onClick={() => setMacClicked(true)}
                 className="group flex flex-col items-center justify-center gap-3 p-5 sm:p-6 rounded-xl border-2 border-gray-200 hover:border-gray-400 hover:bg-gray-50 transition-all"
               >
-                <Apple className="w-10 h-10 text-gray-700 transition-colors" />
+                <AppleLogo className="w-10 h-10 text-gray-700 transition-colors" />
                 <div className="text-center">
                   <p className="font-semibold text-gray-900">macOS</p>
                   <p className="text-xs text-gray-500 mt-0.5">

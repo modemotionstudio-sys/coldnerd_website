@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "motion/react";
 import { Link, useNavigate } from "react-router";
-import { Instagram, Facebook, Linkedin, Mail, MapPin, Send, X } from "lucide-react";
+import { Instagram, Facebook, Linkedin, Youtube, Mail, MapPin, Send, X } from "lucide-react";
 
 // TikTok icon (lucide-react doesn't ship one)
 const TikTok = ({ className }: { className?: string }) => (
@@ -41,6 +41,7 @@ const socialLinks = [
   { icon: Facebook, href: "https://www.facebook.com/profile.php?id=61573369782245", label: "Facebook", hoverColor: "hover:text-blue-600" },
   { icon: TikTok, href: "https://www.tiktok.com/@cold.nerd", label: "TikTok", hoverColor: "hover:text-black" },
   { icon: Linkedin, href: "https://www.linkedin.com/company/cold-nerd", label: "LinkedIn", hoverColor: "hover:text-blue-500" },
+  { icon: Youtube, href: "https://www.youtube.com/@coldnerdai", label: "YouTube", hoverColor: "hover:text-red-500" },
 ];
 
 export function FooterSection() {
