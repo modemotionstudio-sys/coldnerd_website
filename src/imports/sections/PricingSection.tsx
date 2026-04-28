@@ -9,8 +9,8 @@ const plans = [
     name: "Starter",
     description: "Perfect for solo creators getting started with safe Instagram outreach.",
     monthlyPrice: 27,
-    yearlyPrice: 21.6,
-    yearlyTotal: 259.2,
+    yearlyPrice: 22,
+    yearlyTotal: 259,
     checkoutUrl: "https://whop.com/coldnerd/cold-nerd-3c/",
     features: [
       "Up to 6 Instagram accounts",
@@ -25,8 +25,8 @@ const plans = [
     name: "Growth",
     description: "Scale your outreach with multi-account automation and unlimited DMs.",
     monthlyPrice: 67,
-    yearlyPrice: 53.6,
-    yearlyTotal: 643.2,
+    yearlyPrice: 54,
+    yearlyTotal: 643,
     checkoutUrl: "https://whop.com/coldnerd/coldnerd-growth",
     features: [
       "Up to 15 Instagram accounts",
@@ -41,8 +41,8 @@ const plans = [
     name: "Agency Pro",
     description: "For agencies. Land clients, not just DMs \u2014 unlimited everything.",
     monthlyPrice: 197,
-    yearlyPrice: 157.6,
-    yearlyTotal: 1891.2,
+    yearlyPrice: 158,
+    yearlyTotal: 1891,
     checkoutUrl: "https://whop.com/coldnerd/coldnerd-agency-pro",
     features: [
       "Unlimited Instagram accounts",
@@ -98,11 +98,11 @@ function PricingCard({ plan, isYearly, isActive, onActivate, isLoggedIn, onGetSt
             transition={{ duration: 0.2 }}
             className="flex items-baseline justify-center gap-1"
           >
-            <span className={`text-4xl font-bold transition-colors duration-500 ${active ? "text-white" : "text-gray-900"}`}>${price.toFixed(price % 1 === 0 ? 0 : 2)}</span>
+            <span className={`text-4xl font-bold transition-colors duration-500 ${active ? "text-white" : "text-gray-900"}`}>${price}</span>
             <span className={`transition-colors duration-500 ${active ? "text-white/70" : "text-gray-500"}`}>/month</span>
           </motion.div>
         </AnimatePresence>
-        {isYearly && <p className={`text-sm mt-1 transition-colors duration-500 ${active ? "text-green-200" : "text-green-600"}`}>${plan.yearlyTotal.toFixed(2)} billed yearly &middot; Save 20%</p>}
+        {isYearly && <p className={`text-sm mt-1 transition-colors duration-500 ${active ? "text-green-200" : "text-green-600"}`}>${plan.yearlyTotal} billed yearly &middot; Save 20%</p>}
       </div>
 
       <ul className="space-y-3 mb-8">
@@ -215,10 +215,7 @@ export function PricingSection() {
               key={i}
               variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
             >
-              <PricingCard plan={plan} isYearly={isYearly} isActive={activeCard === i} onActivate={() => setActiveCard(i)} isLoggedIn={isLoggedIn} onGetStarted={() => {
-                if (!isLoggedIn) { navigate("/signup"); return; }
-                window.open(plan.checkoutUrl, "_blank", "noopener,noreferrer");
-              }} />
+              <PricingCard plan={plan} isYearly={isYearly} isActive={activeCard === i} onActivate={() => setActiveCard(i)} isLoggedIn={isLoggedIn} onGetStarted={() => navigate(isLoggedIn ? "/pricing" : "/signup")} />
             </motion.div>
           ))}
         </motion.div>
