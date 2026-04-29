@@ -4774,6 +4774,54 @@ function ProblemSolutionMobile() {
 }
 
 export default function Home() {
+  // Smooth scroll-position restore on reload to avoid layout shift "shake"
+  // while images and motion animations finish settling.
+  useEffect(() => {
+    const KEY = "coldnerd:home:scrollY";
+    const saved = Number(sessionStorage.getItem(KEY) || 0);
+
+    const save = () => sessionStorage.setItem(KEY, String(window.scrollY));
+    window.addEventListener("beforeunload", save);
+    window.addEventListener("pagehide", save);
+
+    if (saved > 0) {
+      // Re-pin scroll to the saved Y across ~1.6s while images load and
+      // sections expand. Stop early if the user starts scrolling.
+      let cancelled = false;
+      const stopOnUser = () => { cancelled = true; };
+      window.addEventListener("wheel", stopOnUser, { passive: true });
+      window.addEventListener("touchstart", stopOnUser, { passive: true });
+      window.addEventListener("keydown", stopOnUser);
+
+      const start = performance.now();
+      const tick = (t: number) => {
+        if (cancelled) return;
+        window.scrollTo(0, saved);
+        if (t - start < 1600) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+
+      const cleanup = setTimeout(() => {
+        cancelled = true;
+        sessionStorage.removeItem(KEY);
+      }, 1700);
+
+      return () => {
+        clearTimeout(cleanup);
+        window.removeEventListener("beforeunload", save);
+        window.removeEventListener("pagehide", save);
+        window.removeEventListener("wheel", stopOnUser);
+        window.removeEventListener("touchstart", stopOnUser);
+        window.removeEventListener("keydown", stopOnUser);
+      };
+    }
+
+    return () => {
+      window.removeEventListener("beforeunload", save);
+      window.removeEventListener("pagehide", save);
+    };
+  }, []);
+
   return (
     <div className="bg-white flex flex-col items-center relative w-full overflow-x-hidden" data-name="Home">
       {/* Fixed frosted glass navbar */}

@@ -53,6 +53,16 @@ export function FooterSection() {
   const [contactQueries, setContactQueries] = useState("");
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+
+  // Inline contact form (separate from the subscribe-modal flow above)
+  const [cFirstName, setCFirstName] = useState("");
+  const [cLastName, setCLastName] = useState("");
+  const [cEmail, setCEmail] = useState("");
+  const [cMessage, setCMessage] = useState("");
+  const [cSending, setCSending] = useState(false);
+  const [cSent, setCSent] = useState(false);
+  const [cError, setCError] = useState("");
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -112,6 +122,41 @@ export function FooterSection() {
     }
   };
 
+  const handleInlineContactSubmit = async () => {
+    setCError("");
+    if (!cFirstName.trim() || !cLastName.trim() || !cEmail.trim() || !cMessage.trim()) {
+      setCError("Please fill in all fields.");
+      return;
+    }
+    setCSending(true);
+    try {
+      const res = await fetch("https://coldnerdserver.vercel.app/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: `${cFirstName.trim()} ${cLastName.trim()}`,
+          email: cEmail.trim(),
+          queries: cMessage.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setCSent(true);
+        setCFirstName("");
+        setCLastName("");
+        setCEmail("");
+        setCMessage("");
+        setTimeout(() => setCSent(false), 5000);
+      } else {
+        setCError("Failed to send. Please try again.");
+      }
+    } catch {
+      setCError("Network error. Please try again.");
+    } finally {
+      setCSending(false);
+    }
+  };
+
   const protectedPaths = ["/pricing", "/terms-and-conditions"];
 
   const handleProtectedLink = (e: React.MouseEvent, href: string) => {
@@ -131,9 +176,104 @@ export function FooterSection() {
 
   return (
     <>
-    <footer id="contact" className="bg-[#2a6ff3] text-white">
-      {/* Newsletter */}
-      <div className="border-b border-white/20">
+    {/* Inline Contact Section (above footer) */}
+    <section id="contact" className="bg-[#2a6ff3] text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start"
+        >
+          <div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 leading-tight">
+              Get in touch with us
+            </h2>
+            <p className="text-white/80 text-base sm:text-lg leading-relaxed mb-6 max-w-md">
+              Have a question, partnership idea, or need help? Send us a message and we&apos;ll get back to you shortly.
+            </p>
+            <div className="flex items-center gap-3 text-white/90 text-sm">
+              <Mail className="w-5 h-5" />
+              <a href="mailto:coldnerdai@gmail.com" className="hover:underline">
+                coldnerdai@gmail.com
+              </a>
+            </div>
+          </div>
+
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 sm:p-7 border border-white/20">
+            {cSent ? (
+              <div className="text-center py-10">
+                <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Send className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-bold mb-1">Message sent!</h3>
+                <p className="text-white/80 text-sm">We&apos;ll get back to you soon.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-white/80 mb-1.5">First name</label>
+                    <input
+                      type="text"
+                      value={cFirstName}
+                      onChange={(e) => setCFirstName(e.target.value)}
+                      placeholder="Jane"
+                      className="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 text-sm focus:outline-none focus:border-white focus:bg-white/15 transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-white/80 mb-1.5">Last name</label>
+                    <input
+                      type="text"
+                      value={cLastName}
+                      onChange={(e) => setCLastName(e.target.value)}
+                      placeholder="Doe"
+                      className="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 text-sm focus:outline-none focus:border-white focus:bg-white/15 transition-all"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-white/80 mb-1.5">Email</label>
+                  <input
+                    type="email"
+                    value={cEmail}
+                    onChange={(e) => setCEmail(e.target.value)}
+                    placeholder="jane@example.com"
+                    className="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 text-sm focus:outline-none focus:border-white focus:bg-white/15 transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-white/80 mb-1.5">Message</label>
+                  <textarea
+                    value={cMessage}
+                    onChange={(e) => setCMessage(e.target.value)}
+                    rows={5}
+                    placeholder="How can we help you?"
+                    className="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 text-sm focus:outline-none focus:border-white focus:bg-white/15 transition-all resize-none"
+                  />
+                </div>
+                {cError && <p className="text-yellow-200 text-xs">{cError}</p>}
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleInlineContactSubmit}
+                  disabled={cSending}
+                  className="w-full py-3 bg-white text-[#2a6ff3] hover:bg-white/90 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {cSending ? "Sending..." : "Send Message"} <Send className="w-4 h-4" />
+                </motion.button>
+              </div>
+            )}
+          </div>
+        </motion.div>
+      </div>
+    </section>
+
+    <footer className="bg-[#2a6ff3] text-white">
+      {/* Newsletter (white bar) */}
+      <div className="bg-white text-gray-900 border-y border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12 lg:py-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -143,8 +283,8 @@ export function FooterSection() {
             className="flex flex-col lg:flex-row items-center justify-between gap-4 sm:gap-8"
           >
             <div className="text-center lg:text-left max-w-md">
-              <h3 className="text-xl sm:text-3xl font-bold mb-1 sm:mb-2">Stay in the Loop</h3>
-              <p className="text-white/70 text-sm sm:text-base">Get the latest tips on Instagram growth, automation strategies, and product updates.</p>
+              <h3 className="text-xl sm:text-3xl font-bold mb-1 sm:mb-2 text-gray-900">Stay in the Loop</h3>
+              <p className="text-gray-600 text-sm sm:text-base">Get the latest tips on Instagram growth, automation strategies, and product updates.</p>
             </div>
             <div className="flex w-full max-w-md">
               <input
@@ -152,13 +292,13 @@ export function FooterSection() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-l-full text-white placeholder-white/50 text-sm focus:outline-none focus:border-white/50 transition-colors"
+                className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-l-full text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-[#2a6ff3] focus:bg-white transition-colors"
               />
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleSubscribeClick}
-                className="px-5 py-3 bg-white text-[#2a6ff3] hover:bg-white/90 rounded-r-full font-semibold text-sm flex items-center gap-2 transition-colors"
+                className="px-5 py-3 bg-[#2a6ff3] hover:bg-[#1f5ccf] text-white rounded-r-full font-semibold text-sm flex items-center gap-2 transition-colors"
               >
                 Subscribe <Send className="w-4 h-4" />
               </motion.button>
