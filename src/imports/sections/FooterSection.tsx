@@ -186,19 +186,13 @@ export function FooterSection() {
           transition={{ duration: 0.6 }}
           className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start"
         >
-          <div>
+          <div className="text-center lg:text-left lg:flex lg:flex-col lg:justify-center lg:h-full">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 leading-tight">
               Get in touch with us
             </h2>
-            <p className="text-white/80 text-base sm:text-lg leading-relaxed mb-6 max-w-md">
+            <p className="text-white/80 text-base sm:text-lg leading-relaxed max-w-md mx-auto lg:mx-0">
               Have a question, partnership idea, or need help? Send us a message and we&apos;ll get back to you shortly.
             </p>
-            <div className="flex items-center gap-3 text-white/90 text-sm">
-              <Mail className="w-5 h-5" />
-              <a href="mailto:coldnerdai@gmail.com" className="hover:underline">
-                coldnerdai@gmail.com
-              </a>
-            </div>
           </div>
 
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 sm:p-7 border border-white/20">

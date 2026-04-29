@@ -24,9 +24,9 @@ const plans = [
   {
     name: "Growth",
     description: "Scale your outreach with multi-account automation and unlimited DMs.",
-    monthlyPrice: 67,
-    yearlyPrice: 54,
-    yearlyTotal: 643,
+    monthlyPrice: 97,
+    yearlyPrice: 78,
+    yearlyTotal: 931,
     checkoutUrl: "https://whop.com/coldnerd/coldnerd-growth",
     features: [
       "Up to 15 Instagram accounts",
