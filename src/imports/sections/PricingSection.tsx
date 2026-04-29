@@ -6,6 +6,23 @@ import { supabase } from "../../lib/supabase";
 
 const plans = [
   {
+    name: "Free Trial",
+    description: "Try ColdNerd risk-free for 14 days. No credit card required.",
+    monthlyPrice: 0,
+    yearlyPrice: 0,
+    yearlyTotal: 0,
+    checkoutUrl: "",
+    freeTrial: true,
+    features: [
+      "1 Instagram account",
+      "500 DMs total",
+      "14-day free trial",
+      "Auto warmup",
+      "Email support",
+    ],
+    popular: false,
+  },
+  {
     name: "Starter",
     description: "Perfect for solo creators getting started with safe Instagram outreach.",
     monthlyPrice: 27,
@@ -13,7 +30,8 @@ const plans = [
     yearlyTotal: 259,
     checkoutUrl: "https://whop.com/coldnerd/cold-nerd-3c/",
     features: [
-      "Up to 6 Instagram accounts",
+      "Up to 3 Instagram accounts",
+      "3,000 DMs per month",
       "Smart DM automation",
       "Auto warmup",
       "Basic analytics",
@@ -59,6 +77,7 @@ const plans = [
 function PricingCard({ plan, isYearly, isActive, onActivate, isLoggedIn, onGetStarted }: { plan: typeof plans[0]; isYearly: boolean; isActive: boolean; onActivate: () => void; isLoggedIn: boolean; onGetStarted: () => void }) {
   const price = isYearly ? plan.yearlyPrice : plan.monthlyPrice;
   const active = isActive;
+  const isFree = plan.freeTrial;
 
   return (
     <motion.div
@@ -89,20 +108,28 @@ function PricingCard({ plan, isYearly, isActive, onActivate, isLoggedIn, onGetSt
       </div>
 
       <div className="text-center mb-8">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={isYearly ? "yearly" : "monthly"}
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            transition={{ duration: 0.2 }}
-            className="flex items-baseline justify-center gap-1"
-          >
-            <span className={`text-4xl font-bold transition-colors duration-500 ${active ? "text-white" : "text-gray-900"}`}>${price}</span>
-            <span className={`transition-colors duration-500 ${active ? "text-white/70" : "text-gray-500"}`}>/month</span>
-          </motion.div>
-        </AnimatePresence>
-        {isYearly && <p className={`text-sm mt-1 transition-colors duration-500 ${active ? "text-green-200" : "text-green-600"}`}>${plan.yearlyTotal} billed yearly &middot; Save 20%</p>}
+        {isFree ? (
+          <div className="flex items-baseline justify-center gap-1">
+            <span className={`text-4xl font-bold transition-colors duration-500 ${active ? "text-white" : "text-gray-900"}`}>Free</span>
+            <span className={`transition-colors duration-500 ${active ? "text-white/70" : "text-gray-500"}`}>/14 days</span>
+          </div>
+        ) : (
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={isYearly ? "yearly" : "monthly"}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              transition={{ duration: 0.2 }}
+              className="flex items-baseline justify-center gap-1"
+            >
+              <span className={`text-4xl font-bold transition-colors duration-500 ${active ? "text-white" : "text-gray-900"}`}>${price}</span>
+              <span className={`transition-colors duration-500 ${active ? "text-white/70" : "text-gray-500"}`}>/month</span>
+            </motion.div>
+          </AnimatePresence>
+        )}
+        {!isFree && isYearly && <p className={`text-sm mt-1 transition-colors duration-500 ${active ? "text-green-200" : "text-green-600"}`}>${plan.yearlyTotal} billed yearly &middot; Save 20%</p>}
+        {isFree && <p className={`text-sm mt-1 transition-colors duration-500 ${active ? "text-white/70" : "text-gray-500"}`}>No credit card required</p>}
       </div>
 
       <ul className="space-y-3 mb-8">
@@ -131,7 +158,7 @@ function PricingCard({ plan, isYearly, isActive, onActivate, isLoggedIn, onGetSt
               : "bg-gray-100 hover:bg-gray-200 text-gray-900"
         }`}
       >
-        Get Started &rarr;
+        {isFree ? "Start Free Trial \u2192" : "Get Started \u2192"}
       </motion.button>
     </motion.div>
   );
@@ -208,7 +235,7 @@ export function PricingSection() {
           whileInView="visible"
           viewport={{ once: true }}
           variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.12 } } }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-6 items-stretch"
         >
           {plans.map((plan, i) => (
             <motion.div
