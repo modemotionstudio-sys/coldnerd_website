@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import { Check, ArrowLeft } from "lucide-react";
 import { supabase } from "../lib/supabase";
+import { SHOW_FREE_TRIAL_PRICING_CARD } from "../lib/pricingVisibility";
 import type { User } from "@supabase/supabase-js";
 
 const imgLogo = "/logo.png";
@@ -170,6 +171,7 @@ export default function Pricing() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const visiblePlans = SHOW_FREE_TRIAL_PRICING_CARD ? plans : plans.filter((p) => !p.freeTrial);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -272,9 +274,9 @@ export default function Pricing() {
             initial="hidden"
             animate="visible"
             variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.12 } } }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-6 items-stretch"
+            className={`grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-6 items-stretch ${SHOW_FREE_TRIAL_PRICING_CARD ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}
           >
-            {plans.map((plan, i) => (
+            {visiblePlans.map((plan, i) => (
               <motion.div
                 key={i}
                 variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
