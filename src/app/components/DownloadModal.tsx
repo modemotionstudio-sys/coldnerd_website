@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { X } from "lucide-react";
 
 export const DOWNLOAD_URL =
-  "https://github.com/modemotionstudio-sys/coldnerd_website/releases/latest/download/ColdNerd_Software.zip";
+  "https://github.com/modemotionstudio-sys/coldnerd_website/releases/latest/download/ColdNerd_Setup.exe";
 
 export const openDownloadModal = () => {
   window.dispatchEvent(new Event("open-download-modal"));
@@ -12,7 +12,7 @@ export const openDownloadModal = () => {
 const triggerWindowsDownload = () => {
   const a = document.createElement("a");
   a.href = DOWNLOAD_URL;
-  a.download = "ColdNerd_Software.zip";
+  a.download = "ColdNerd_Setup.exe";
   a.rel = "noopener noreferrer";
   document.body.appendChild(a);
   a.click();
@@ -107,7 +107,7 @@ export function DownloadModal() {
                 <WindowsIcon className="w-10 h-10 text-gray-700 group-hover:text-[#2a6ff3] transition-colors" />
                 <div className="text-center">
                   <p className="font-semibold text-gray-900">Windows</p>
-                  <p className="text-xs text-gray-500 mt-0.5">Download .zip</p>
+                  <p className="text-xs text-gray-500 mt-0.5">Download installer (.exe)</p>
                 </div>
               </button>
 
