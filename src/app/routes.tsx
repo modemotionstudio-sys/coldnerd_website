@@ -9,6 +9,7 @@ import Signup from "../imports/Signup";
 import Blog from "../imports/Blog";
 import Pricing from "../imports/Pricing";
 import TermsAndConditions from "../imports/TermsAndConditions";
+import { gaPageView } from "../lib/analytics";
 
 const pageVariants = {
   initial: { opacity: 0, y: 15 },
@@ -51,6 +52,11 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 function AnimatedLayout() {
   const location = useLocation();
+
+  useEffect(() => {
+    gaPageView(location.pathname + location.search);
+  }, [location.pathname, location.search]);
+
   return (
     <AnimatePresence mode="wait">
       <motion.div

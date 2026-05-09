@@ -331,8 +331,10 @@ function LetterReveal({ text, className, delay = 0 }: { text: string; className?
 
 function Frame17() {
   const line1 = "Scale Your Instagram";
-  const line2 = "Without the Manual Work";
+  const line2 = "outreach Without the";
+  const line3 = "Manual Work";
   const subtitle = "Streamline outreach, automate engagement, and grow safely with smart timing and built-in safety controls.";
+  const charEstimate = line1.length + line2.length + line3.length;
 
   return (
     <div className="flex flex-col gap-5 lg:gap-6 items-start relative shrink-0 text-[#0d0d0d] w-full">
@@ -343,11 +345,14 @@ function Frame17() {
         <div className="mt-1">
           <LetterReveal text={line2} delay={0.2 + line1.length * 0.035 + 0.1} />
         </div>
+        <div className="mt-1">
+          <LetterReveal text={line3} delay={0.2 + line1.length * 0.035 + 0.1 + line2.length * 0.035 + 0.1} />
+        </div>
       </div>
       <motion.p
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 + (line1.length + line2.length) * 0.035 + 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+        transition={{ duration: 0.6, delay: 0.2 + charEstimate * 0.035 + 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="font-['Inter',sans-serif] font-normal text-gray-600 leading-[1.7] relative shrink-0 text-[15px] sm:text-[17px] lg:text-[19px] max-w-[520px] text-left"
       >
         {subtitle}
