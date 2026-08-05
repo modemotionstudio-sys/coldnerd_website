@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X } from "lucide-react";
 
+// Pinned to the v1.0 release — that's the tag holding ColdNerd_Setup.exe.
+// Do NOT use /releases/latest/: the newest release (v2.4.0) has no such asset, so it 404s.
 export const DOWNLOAD_URL =
-  "https://github.com/modemotionstudio-sys/coldnerd_website/releases/latest/download/ColdNerd_Setup.exe";
+  "https://github.com/modemotionstudio-sys/coldnerd_website/releases/download/v1.0/ColdNerd_Setup.exe";
 
 export const openDownloadModal = () => {
   window.dispatchEvent(new Event("open-download-modal"));
