@@ -399,7 +399,8 @@ export default function CmsDashboard() {
         </div>
 
         <p className="text-xs text-gray-400 mt-4">
-          Tip: the home page "Learn, Grow &amp; Automate" section shows the first {HOME_SLOTS} published articles marked with a star, in the order above.
+          The blog page always lists the newest published article first. The home page "Learn, Grow &amp; Automate" section
+          shows the first {HOME_SLOTS} published articles marked with a star, in the order above (use the arrows to change it).
         </p>
       </div>
 

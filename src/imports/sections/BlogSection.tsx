@@ -78,7 +78,9 @@ export function BlogSection() {
   const [articles, setArticles] = useState<Article[] | null>(null);
 
   useEffect(() => {
-    fetchPublishedPosts({ featuredOnly: true, limit: 6 }).then((posts) => setArticles(toArticles(posts)));
+    fetchPublishedPosts({ featuredOnly: true, limit: 6, ordering: "manual" }).then((posts) =>
+      setArticles(toArticles(posts))
+    );
   }, []);
 
   if (articles !== null && articles.length === 0) return null;

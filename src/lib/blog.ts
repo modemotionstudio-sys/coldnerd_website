@@ -35,47 +35,53 @@ const LIST_COLUMNS =
   "id,slug,title,excerpt,cover_image_url,category,author_name,read_time_minutes,status,featured,position,published_at,created_at,updated_at";
 
 // ---------------------------------------------------------------------------
-// Public reads. If the blog tables haven't been created in Supabase yet, fall
-// back to the bundled starter articles so the site never shows a broken blog.
+// Public reads. If the database has no published articles (or can't be
+// reached), fall back to the bundled starter articles so the landing page
+// cards and the blog never show up empty.
 // ---------------------------------------------------------------------------
 
-function orderPosts<T extends Pick<BlogPost, "position" | "published_at">>(posts: T[]): T[] {
-  return [...posts].sort(
-    (a, b) =>
-      a.position - b.position ||
-      (b.published_at ?? "").localeCompare(a.published_at ?? "")
-  );
+type Ordering = "manual" | "newest";
+
+function orderPosts<T extends Pick<BlogPost, "position" | "published_at">>(posts: T[], ordering: Ordering): T[] {
+  const newest = (a: T, b: T) => (b.published_at ?? "").localeCompare(a.published_at ?? "");
+  return [...posts].sort((a, b) => (ordering === "manual" ? a.position - b.position || newest(a, b) : newest(a, b)));
 }
 
-export async function fetchPublishedPosts(opts: { featuredOnly?: boolean; limit?: number } = {}) {
+/**
+ * `ordering: "newest"` (blog list) puts the latest published article first.
+ * `ordering: "manual"` (home page cards) follows the order set in the CMS.
+ */
+export async function fetchPublishedPosts(
+  opts: { featuredOnly?: boolean; limit?: number; ordering?: Ordering } = {}
+) {
+  const ordering = opts.ordering ?? "newest";
   let query = supabase
     .from(TABLE)
     .select(LIST_COLUMNS)
     .eq("status", "published")
-    .lte("published_at", new Date().toISOString())
-    .order("position", { ascending: true })
-    .order("published_at", { ascending: false });
+    .lte("published_at", new Date().toISOString());
+  query =
+    ordering === "manual"
+      ? query.order("position", { ascending: true }).order("published_at", { ascending: false })
+      : query.order("published_at", { ascending: false });
   if (opts.featuredOnly) query = query.eq("featured", true);
   if (opts.limit) query = query.limit(opts.limit);
 
   const { data, error } = await query;
-  if (error) {
-    console.warn("[blog] falling back to starter articles:", error.message);
-    let posts = orderPosts(seedPosts);
-    if (opts.featuredOnly) posts = posts.filter((p) => p.featured);
-    return opts.limit ? posts.slice(0, opts.limit) : posts;
-  }
-  return data as unknown as BlogPost[];
+  if (error) console.warn("[blog] falling back to starter articles:", error.message);
+  if (!error && data && data.length > 0) return data as unknown as BlogPost[];
+
+  let posts = orderPosts(seedPosts, ordering);
+  if (opts.featuredOnly) posts = posts.filter((p) => p.featured);
+  return opts.limit ? posts.slice(0, opts.limit) : posts;
 }
 
 /** Returns a post by slug. Drafts are only returned to CMS managers (enforced by RLS). */
 export async function fetchPostBySlug(slug: string): Promise<BlogPost | null> {
   const { data, error } = await supabase.from(TABLE).select("*").eq("slug", slug).maybeSingle();
-  if (error) {
-    console.warn("[blog] falling back to starter articles:", error.message);
-    return seedPosts.find((p) => p.slug === slug) ?? null;
-  }
-  return (data as BlogPost) ?? null;
+  if (error) console.warn("[blog] falling back to starter articles:", error.message);
+  if (!error && data) return data as BlogPost;
+  return seedPosts.find((p) => p.slug === slug) ?? null;
 }
 
 // ---------------------------------------------------------------------------
