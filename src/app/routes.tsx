@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider, useLocation, useNavigate, Outlet } from "react-router";
+import { createBrowserRouter, useLocation, useNavigate, useOutlet } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
@@ -75,7 +75,11 @@ function AnimatedLayout() {
   }, [location.pathname, location.search]);
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence
+      mode="wait"
+      // New page starts at the top (the blog page scrolls itself to a highlighted card).
+      onExitComplete={() => window.scrollTo({ top: 0, left: 0, behavior: "instant" })}
+    >
       <motion.div
         key={location.pathname}
         initial="initial"
@@ -85,10 +89,21 @@ function AnimatedLayout() {
         transition={pageTransition}
         className="w-full min-h-screen relative"
       >
-        <Outlet />
+        <FrozenOutlet />
       </motion.div>
     </AnimatePresence>
   );
+}
+
+/**
+ * Keeps rendering the page this wrapper was created for. Without this, the
+ * page that is fading out would switch to the *next* route's content mid-exit
+ * and that page's own animations could stall the transition (blank screen).
+ */
+function FrozenOutlet() {
+  const outlet = useOutlet();
+  const [frozen] = useState(outlet);
+  return frozen;
 }
 
 export const router = createBrowserRouter([

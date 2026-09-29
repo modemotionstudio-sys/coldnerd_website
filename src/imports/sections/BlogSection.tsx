@@ -50,7 +50,7 @@ function MobileBlogCard({ article }: { article: Article }) {
       onTouchStart={() => setTapped(true)}
       onTouchEnd={() => setTimeout(() => setTapped(false), 300)}
     >
-      <Link to={`/blog/${article.slug}`} className="block group no-underline h-full">
+      <Link to={`/blog?highlight=${article.slug}`} className="block group no-underline h-full">
         <motion.div
           animate={tapped ? { y: -6, scale: 1.03 } : { y: 0, scale: 1 }}
           whileHover={{ y: -6, scale: 1.03 }}
@@ -138,7 +138,7 @@ export function BlogSection() {
                     },
                   }}
                 >
-                  <Link to={`/blog/${article.slug}`} className="block group no-underline h-full">
+                  <Link to={`/blog?highlight=${article.slug}`} className="block group no-underline h-full">
                     <motion.div
                       whileHover={{ y: -8, scale: 1.02 }}
                       transition={{ type: "spring", stiffness: 300 }}

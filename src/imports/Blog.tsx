@@ -1,19 +1,53 @@
-import { Link } from "react-router";
-import { motion } from "motion/react";
+import { Link, useSearchParams } from "react-router";
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useMemo, useState } from "react";
 import ScrollReveal from "../app/components/ScrollReveal";
 import { BlogNavbar } from "../blog/BlogNavbar";
 import { categoryClass, fetchPublishedPosts, formatPostDate, type BlogPost } from "../lib/blog";
 
-function BlogCard({ post }: { post: BlogPost }) {
+const HIGHLIGHT_MS = 4500;
+
+function BlogCard({ post, index, highlighted }: { post: BlogPost; index: number; highlighted: boolean }) {
   return (
     <motion.div
-      layout
+      id={`post-${post.slug}`}
       initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.4 }}
+      animate={highlighted ? { opacity: 1, y: 0, scale: [1, 1.05, 1.02] } : { opacity: 1, y: 0, scale: 1 }}
+      transition={highlighted ? { duration: 0.8, ease: "easeOut" } : { duration: 0.4, delay: Math.min(index, 8) * 0.06 }}
+      className="relative scroll-mt-32"
     >
+      {/* Highlight when arriving from a home-page card */}
+      <AnimatePresence>
+        {highlighted && (
+          <>
+            <motion.span
+              aria-hidden
+              className="absolute -inset-1 rounded-[20px] pointer-events-none"
+              initial={{ opacity: 0 }}
+              animate={{
+                opacity: 1,
+                boxShadow: [
+                  "0 0 0 0px rgba(42,111,243,0.55)",
+                  "0 0 0 16px rgba(42,111,243,0)",
+                ],
+              }}
+              exit={{ opacity: 0 }}
+              transition={{ boxShadow: { duration: 1.2, repeat: 3, ease: "easeOut" }, opacity: { duration: 0.3 } }}
+              style={{ border: "3px solid #2a6ff3" }}
+            />
+            <motion.span
+              className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap px-3 py-1 rounded-full bg-[#2a6ff3] text-white text-xs font-semibold shadow-lg"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
+            >
+              Tap to read this article
+            </motion.span>
+          </>
+        )}
+      </AnimatePresence>
+
       <Link to={`/blog/${post.slug}`} className="block h-full no-underline group">
         <motion.article
           whileHover={{ y: -6, boxShadow: "0 20px 40px rgba(0,0,0,0.08)" }}
@@ -76,11 +110,34 @@ function SkeletonCard() {
 export default function Blog() {
   const [posts, setPosts] = useState<BlogPost[] | null>(null);
   const [category, setCategory] = useState("All");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [highlighted, setHighlighted] = useState<string | null>(null);
+  const highlightSlug = searchParams.get("highlight");
 
   useEffect(() => {
     document.title = "Blog - ColdNerd";
     fetchPublishedPosts().then(setPosts);
   }, []);
+
+  // Arriving from a home-page card (/blog?highlight=slug): glide to that card and pulse it.
+  useEffect(() => {
+    if (!posts || !highlightSlug) return;
+    if (!posts.some((p) => p.slug === highlightSlug)) return;
+    setCategory("All");
+    const scrollTimer = setTimeout(() => {
+      document.getElementById(`post-${highlightSlug}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 450);
+    const pulseTimer = setTimeout(() => setHighlighted(highlightSlug), 900);
+    const clearTimer = setTimeout(() => {
+      setHighlighted(null);
+      setSearchParams({}, { replace: true });
+    }, 900 + HIGHLIGHT_MS);
+    return () => {
+      clearTimeout(scrollTimer);
+      clearTimeout(pulseTimer);
+      clearTimeout(clearTimer);
+    };
+  }, [posts, highlightSlug, setSearchParams]);
 
   const categories = useMemo(
     () => ["All", ...Array.from(new Set((posts ?? []).map((p) => p.category)))],
@@ -144,11 +201,11 @@ export default function Blog() {
           ) : visible.length === 0 ? (
             <p className="text-center text-gray-500 py-20">No articles published yet. Check back soon!</p>
           ) : (
-            <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-              {visible.map((post) => (
-                <BlogCard key={post.id} post={post} />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              {visible.map((post, i) => (
+                <BlogCard key={post.id} post={post} index={i} highlighted={highlighted === post.slug} />
               ))}
-            </motion.div>
+            </div>
           )}
         </div>
       </div>
