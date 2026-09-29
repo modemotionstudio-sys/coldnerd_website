@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router";
 import { supabase } from "../lib/supabase";
+import { checkIsManager } from "../lib/blog";
 import { motion } from "motion/react";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 const imgWhatsAppImage20260226At124548AmRemovebgPreview1 = "/logo.png";
@@ -29,7 +30,8 @@ export default function Login() {
       if (signInError) throw signInError;
 
       if (data.session) {
-        navigate("/");
+        // Blog managers land straight in the Content Manager.
+        navigate((await checkIsManager()) ? "/admin" : "/");
       }
     } catch (err: any) {
       setError(err.message || "Failed to log in");

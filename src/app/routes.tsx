@@ -1,12 +1,29 @@
 import { createBrowserRouter, RouterProvider, useLocation, useNavigate, Outlet } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import Home from "../imports/Home";
 import Dashboard from "../imports/Frame1000005560";
 import Login from "../imports/Login";
 import Signup from "../imports/Signup";
 import Blog from "../imports/Blog";
+import BlogPost from "../imports/BlogPost";
+import { ManagerRoute } from "../cms/ManagerRoute";
+
+// CMS pages (and the rich-text editor) load only when a manager opens them.
+const CmsLogin = lazy(() => import("../cms/CmsLogin"));
+const CmsDashboard = lazy(() => import("../cms/CmsDashboard"));
+const CmsEditor = lazy(() => import("../cms/CmsEditor"));
+
+function CmsPage({ children, protect = true }: { children: React.ReactNode; protect?: boolean }) {
+  const fallback = (
+    <div className="min-h-screen bg-[#f5f8ff] flex items-center justify-center">
+      <div className="w-8 h-8 border-4 border-[#2a6ff3] border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+  const page = <Suspense fallback={fallback}>{children}</Suspense>;
+  return protect ? <ManagerRoute>{page}</ManagerRoute> : page;
+}
 import Pricing from "../imports/Pricing";
 import TermsAndConditions from "../imports/TermsAndConditions";
 import { gaPageView } from "../lib/analytics";
@@ -93,6 +110,26 @@ export const router = createBrowserRouter([
       {
         path: "/blog",
         element: <Blog />,
+      },
+      {
+        path: "/blog/:slug",
+        element: <BlogPost />,
+      },
+      {
+        path: "/admin/login",
+        element: <CmsPage protect={false}><CmsLogin /></CmsPage>,
+      },
+      {
+        path: "/admin",
+        element: <CmsPage><CmsDashboard /></CmsPage>,
+      },
+      {
+        path: "/admin/new",
+        element: <CmsPage><CmsEditor /></CmsPage>,
+      },
+      {
+        path: "/admin/edit/:id",
+        element: <CmsPage><CmsEditor /></CmsPage>,
       },
       {
         path: "/signup",

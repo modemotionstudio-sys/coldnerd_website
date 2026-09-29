@@ -5,6 +5,7 @@ import FigmaScale from "../app/components/FigmaScale";
 import { motion } from "motion/react";
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
+import { useIsManager } from "../lib/blog";
 import type { User } from "@supabase/supabase-js";
 import backgroundImg from "../assets/background.png";
 import { AnalyticsSection } from "./sections/AnalyticsSection";
@@ -100,6 +101,7 @@ function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const isManager = useIsManager();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -174,6 +176,14 @@ function Navbar() {
                 <p className="text-sm font-medium text-gray-900 truncate">{user.user_metadata?.full_name || "User"}</p>
                 <p className="text-xs text-gray-500 truncate">{user.email}</p>
               </div>
+              {isManager && (
+                <Link
+                  to="/admin"
+                  className="block w-full text-left px-4 py-2 text-sm font-semibold text-[#2a6ff3] hover:bg-blue-50 transition-colors no-underline"
+                >
+                  Manage Blog
+                </Link>
+              )}
               <button
                 onClick={() => openDownloadModal()}
                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
@@ -245,6 +255,9 @@ function Navbar() {
                 <p className="text-xs text-gray-500 truncate">{user.email}</p>
               </div>
             </div>
+            {isManager && (
+              <Link to="/admin" onClick={closeMobile} className="text-center py-2.5 rounded-full border border-[#2a6ff3] text-[#2a6ff3] font-semibold text-sm no-underline hover:bg-blue-50 transition-colors">Manage Blog</Link>
+            )}
             <button onClick={() => { closeMobile(); openDownloadModal(); }} className="text-center py-2.5 rounded-full bg-[#2a6ff3] text-white font-semibold text-sm hover:bg-[#1f5ccf] transition-colors">Download App</button>
             <button
               onClick={async () => { await supabase.auth.signOut(); setUser(null); closeMobile(); }}
@@ -2503,27 +2516,12 @@ function Statistics() {
   );
 }
 
-function Container5() {
-  return (
-    <div className="content-stretch flex h-[56px] items-center justify-center px-[24px] relative rounded-[8px] shrink-0" data-name="Container">
-      <div className="flex flex-col font-['Inter:Regular',sans-serif] font-normal justify-center leading-[0] not-italic relative shrink-0 text-[16px] text-white whitespace-nowrap">
-        <p className="leading-[28px]" dir="auto">
-          Explore Analytics
-        </p>
-      </div>
-    </div>
-  );
-}
-
 function Description1() {
   return (
     <div className="relative flex flex-col gap-6 w-full lg:w-[624px]" data-name="Description 1">
       <p className="font-['Inter:Bold',sans-serif] font-bold leading-tight lg:leading-[78px] not-italic text-[#0d0d0d] text-3xl sm:text-4xl lg:text-[48px]">Track Every Message, Campaign, and Conversion</p>
       <p className="font-['Inter:Regular',sans-serif] font-normal leading-relaxed lg:leading-[36px] not-italic text-[#5e5e5e] text-base lg:text-[20px] max-w-[590px]">Get complete visibility into your outreach performance. Analyze response rates, monitor warmups, and adjust strategies instantly.</p>
       <Statistics />
-      <div className="bg-[#2a6ff3] content-stretch flex h-[44px] items-center justify-center rounded-[8px] w-fit" data-name="Button">
-        <Container5 />
-      </div>
     </div>
   );
 }

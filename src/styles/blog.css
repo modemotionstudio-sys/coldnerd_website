@@ -1,0 +1,189 @@
+/* ==========================================================================
+   Article typography — shared by the public article page and the CMS editor
+   so what the manager sees while editing is what visitors see.
+   ========================================================================== */
+
+.cn-prose {
+  --cn-prose-accent: #2a6ff3;
+  color: #334155;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 18px;
+  line-height: 1.8;
+  word-wrap: break-word;
+}
+
+.cn-prose::after {
+  /* contain floated images */
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.cn-prose > * + * { margin-top: 1.25em; }
+
+.cn-prose h1,
+.cn-prose h2,
+.cn-prose h3,
+.cn-prose h4 {
+  color: #0d0d0d;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.cn-prose h1 { font-size: 2.25em; line-height: 1.2; margin-top: 1.6em; }
+.cn-prose h2 { font-size: 1.75em; line-height: 1.25; margin-top: 1.8em; }
+.cn-prose h3 { font-size: 1.35em; line-height: 1.35; margin-top: 1.6em; }
+.cn-prose h4 { font-size: 1.1em; line-height: 1.45; margin-top: 1.4em; }
+.cn-prose > :first-child { margin-top: 0; }
+
+.cn-prose p { margin-bottom: 0; }
+.cn-prose strong { color: #0d0d0d; font-weight: 700; }
+.cn-prose a { color: var(--cn-prose-accent); text-decoration: underline; text-underline-offset: 3px; }
+.cn-prose a:hover { opacity: 0.8; }
+
+.cn-prose ul,
+.cn-prose ol { padding-left: 1.5em; }
+.cn-prose ul { list-style: disc; }
+.cn-prose ol { list-style: decimal; }
+.cn-prose li + li { margin-top: 0.4em; }
+.cn-prose li > p { margin: 0; }
+.cn-prose li::marker { color: var(--cn-prose-accent); }
+
+.cn-prose blockquote {
+  border-left: 4px solid var(--cn-prose-accent);
+  background: #f5f8ff;
+  border-radius: 0 12px 12px 0;
+  padding: 1em 1.25em;
+  color: #1e293b;
+  font-style: italic;
+}
+
+.cn-prose code {
+  background: #eef2ff;
+  color: #1e3a8a;
+  border-radius: 6px;
+  padding: 0.15em 0.4em;
+  font-size: 0.88em;
+  font-family: "Roboto Mono", ui-monospace, monospace;
+}
+.cn-prose pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: 12px;
+  padding: 1em 1.25em;
+  overflow-x: auto;
+  font-size: 0.88em;
+  line-height: 1.6;
+}
+.cn-prose pre code { background: none; color: inherit; padding: 0; }
+
+.cn-prose hr { border: 0; border-top: 1px solid #e2e8f0; margin: 2.5em 0; }
+
+.cn-prose mark { border-radius: 3px; padding: 0 2px; }
+
+/* Tables */
+.cn-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92em;
+  display: block;
+  overflow-x: auto;
+}
+.cn-prose th,
+.cn-prose td {
+  border: 1px solid #e2e8f0;
+  padding: 0.6em 0.8em;
+  text-align: left;
+  vertical-align: top;
+  min-width: 80px;
+}
+.cn-prose th { background: #f5f8ff; color: #0d0d0d; font-weight: 600; }
+.cn-prose td > p, .cn-prose th > p { margin: 0; }
+
+/* Video embeds */
+.cn-prose div[data-youtube-video] iframe,
+.cn-prose iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  border: 0;
+  border-radius: 12px;
+}
+
+/* Images — public page renders <img data-align>, editor renders .cn-image wrapper */
+.cn-prose img { max-width: 100%; height: auto; border-radius: 12px; }
+
+.cn-prose img[data-align],
+.cn-prose .cn-image {
+  display: block;
+  max-width: 100%;
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+.cn-prose .cn-image img { width: 100%; display: block; margin: 0; }
+
+.cn-prose [data-align="center"] { margin-left: auto; margin-right: auto; }
+.cn-prose [data-align="left"] { margin-left: 0; margin-right: auto; }
+.cn-prose [data-align="right"] { margin-left: auto; margin-right: 0; }
+.cn-prose [data-align="float-left"] { float: left; margin: 0.35em 1.5em 1em 0; }
+.cn-prose [data-align="float-right"] { float: right; margin: 0.35em 0 1em 1.5em; }
+
+@media (max-width: 640px) {
+  .cn-prose { font-size: 17px; }
+  .cn-prose [data-align="float-left"],
+  .cn-prose [data-align="float-right"] {
+    float: none;
+    width: 100% !important;
+    margin: 1.5em 0;
+  }
+}
+
+/* ==========================================================================
+   Editor-only chrome
+   ========================================================================== */
+
+.cn-editor .ProseMirror { outline: none; min-height: 480px; padding-bottom: 120px; }
+
+.cn-editor .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: #94a3b8;
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.cn-editor .cn-image { position: relative; cursor: grab; }
+.cn-editor .cn-image.is-selected img { outline: 3px solid #2a6ff3; outline-offset: 2px; }
+.cn-editor .ProseMirror-selectednode img { outline: 3px solid #2a6ff3; outline-offset: 2px; }
+
+.cn-image-handle {
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 48px;
+  margin-top: -24px;
+  border-radius: 6px;
+  background: #2a6ff3;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  cursor: ew-resize;
+  touch-action: none;
+}
+.cn-image-handle.left { left: -7px; }
+.cn-image-handle.right { right: -7px; }
+
+.cn-image-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(15, 23, 42, 0.8);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.cn-editor .selectedCell { background: #e0ebff; }
+.cn-editor div[data-youtube-video] { cursor: move; }
+.cn-editor div[data-youtube-video].ProseMirror-selectednode iframe { outline: 3px solid #2a6ff3; }

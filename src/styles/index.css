@@ -1,6 +1,7 @@
 @import './fonts.css';
 @import './tailwind.css';
 @import './theme.css';
+@import './blog.css';
 
 /* Smooth scrolling */
 html {
@@ -10,6 +11,8 @@ html {
 /* Global responsive overrides */
 body {
   overflow-x: hidden;
+  /* clip (unlike hidden) doesn't create a scroll container, so position: sticky keeps working */
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -101,5 +104,6 @@ body {
 /* Ensure no horizontal overflow */
 #root {
   overflow-x: hidden;
+  overflow-x: clip;
   width: 100%;
 }

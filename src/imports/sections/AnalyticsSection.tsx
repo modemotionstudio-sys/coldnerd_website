@@ -101,14 +101,6 @@ export function AnalyticsSection() {
               <StatCard icon={TrendingUp} value={320} label="Avg. Growth Rate" suffix="%" />
               <StatCard icon={Activity} value={24} label="Smart Monitoring" suffix="/7" />
             </div>
-
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="mt-8 py-3 px-8 bg-[#2a6ff3] hover:bg-[#1f5ccf] text-white rounded-xl font-medium transition-colors"
-            >
-              Explore Analytics
-            </motion.button>
           </motion.div>
 
           {/* Dashboard Mockup */}
