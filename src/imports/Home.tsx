@@ -1,5 +1,5 @@
 import svgPaths from "./svg-yjlo5u9hqz";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import ScrollReveal, { StaggerContainer, StaggerItem } from "../app/components/ScrollReveal";
 import FigmaScale from "../app/components/FigmaScale";
 import { motion } from "motion/react";
@@ -4777,6 +4777,17 @@ function ProblemSolutionMobile() {
 }
 
 export default function Home() {
+  // Opened as /#pricing, /#features… (e.g. from the footer on another page): glide to that section.
+  const { hash } = useLocation();
+  useEffect(() => {
+    document.title = "ColdNerd — AI Instagram Outreach & DM Automation Software";
+  }, []);
+  useEffect(() => {
+    if (!hash) return;
+    const t = setTimeout(() => document.querySelector(hash)?.scrollIntoView({ behavior: "smooth" }), 600);
+    return () => clearTimeout(t);
+  }, [hash]);
+
   // Smooth scroll-position restore on reload to avoid layout shift "shake"
   // while images and motion animations finish settling.
   useEffect(() => {

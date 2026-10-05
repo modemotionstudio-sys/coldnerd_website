@@ -8,6 +8,8 @@ import Login from "../imports/Login";
 import Signup from "../imports/Signup";
 import Blog from "../imports/Blog";
 import BlogPost from "../imports/BlogPost";
+import SeoPage from "../imports/SeoPage";
+import { seoPages } from "../seo/pages";
 import { ManagerRoute } from "../cms/ManagerRoute";
 
 // CMS pages (and the rich-text editor) load only when a manager opens them.
@@ -130,6 +132,8 @@ export const router = createBrowserRouter([
         path: "/blog/:slug",
         element: <BlogPost />,
       },
+      // SEO landing pages (/instagram-outreach, /for-agencies, …)
+      ...seoPages.map((p) => ({ path: `/${p.slug}`, element: <SeoPage slug={p.slug} /> })),
       {
         path: "/admin/login",
         element: <CmsPage protect={false}><CmsLogin /></CmsPage>,

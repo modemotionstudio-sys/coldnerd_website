@@ -4,7 +4,17 @@ import { useIsManager } from "../lib/blog";
 
 const logo = "/logo.png";
 
-export function BlogNavbar({ backTo = "/", backLabel = "Back to Home" }: { backTo?: string; backLabel?: string }) {
+export function BlogNavbar({
+  backTo = "/",
+  backLabel = "Back to Home",
+  centerLabel = "Blog",
+  centerTo = "/blog",
+}: {
+  backTo?: string;
+  backLabel?: string;
+  centerLabel?: string;
+  centerTo?: string;
+}) {
   const isManager = useIsManager();
 
   return (
@@ -14,8 +24,8 @@ export function BlogNavbar({ backTo = "/", backLabel = "Back to Home" }: { backT
       </Link>
 
       <div className="hidden md:flex items-center absolute left-1/2 -translate-x-1/2">
-        <Link to="/blog" className="font-['Inter:Bold',sans-serif] font-bold text-[#0d0d0d] text-[20px] no-underline">
-          Blog
+        <Link to={centerTo} className="font-['Inter:Bold',sans-serif] font-bold text-[#0d0d0d] text-[20px] no-underline">
+          {centerLabel}
         </Link>
       </div>
 

@@ -1,0 +1,25 @@
+# ColdNerd
+
+> ColdNerd is AI-powered Instagram outreach and DM automation software. It finds prospects, analyzes their profiles with AI, writes personalized DMs, sends follow-ups and tracks replies, with automatic account warmup, daily limits and human-like timing for safety.
+
+## About
+- [What Is ColdNerd?](https://www.coldnerd.com/what-is-coldnerd): ColdNerd is AI-powered Instagram outreach software that finds prospects, writes personalized DMs, sends follow-ups and tracks replies — with built-in account safety.
+
+## Learn
+- [Instagram Outreach](https://www.coldnerd.com/instagram-outreach): Learn how to do Instagram outreach that gets replies: targeting, personalized DMs, follow-ups, safety limits and how to scale with ColdNerd.
+- [Instagram Prospecting](https://www.coldnerd.com/instagram-prospecting): A practical guide to Instagram prospecting: where to find ideal prospects, how to qualify them and how ColdNerd automates discovery and AI profile analysis.
+- [Instagram Lead Generation](https://www.coldnerd.com/instagram-lead-generation): Generate leads from Instagram with outbound DMs, smart follow-ups and content that converts. See how ColdNerd turns Instagram conversations into qualified leads.
+- [Instagram DM Automation](https://www.coldnerd.com/instagram-dm-automation): How Instagram DM automation works, how to keep it safe and personal, and how ColdNerd automates AI-personalized DMs, follow-ups and voice notes.
+
+## Solutions
+- [For Agencies](https://www.coldnerd.com/for-agencies): Run Instagram outreach for your agency and your clients: unlimited accounts, client workspaces, team members, voice notes and API access with ColdNerd Agency.
+- [For Freelancers](https://www.coldnerd.com/for-freelancers): Freelancers use ColdNerd to find clients on Instagram: discover prospects, send AI-personalized DMs and automate follow-ups — starting with the affordable Starter plan.
+
+## Pricing
+- Starter ($27/month, $22/month billed yearly): 3 Instagram accounts, Prospect discovery, Limited AI profile analysis, AI personalization, 3,000 DMs per month, Follow-ups, Basic analytics, Email support
+- Growth ($97/month, $78/month billed yearly): 15 Instagram accounts, Prospect discovery, AI profile analysis, AI personalization, Unlimited DMs, Follow-ups, Advanced analytics, Priority support
+- Agency ($197/month, $158/month billed yearly): Unlimited Instagram accounts, Everything in Growth, Voice notes, Team members, Client workspaces, API access, Advanced analytics, Dedicated support
+
+## More
+- [Blog](https://www.coldnerd.com/blog): Guides on Instagram growth, DM outreach and automation.
+- [Home](https://www.coldnerd.com/): Product overview, features and pricing.

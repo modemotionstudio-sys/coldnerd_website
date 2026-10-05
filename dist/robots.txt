@@ -1,0 +1,57 @@
+# ColdNerd — crawlers welcome. Private areas are excluded below.
+
+# Search engines
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+
+User-agent: Bingbot
+Allow: /
+Disallow: /admin
+
+# AI search & assistants (ChatGPT, Claude, Perplexity, Gemini, etc.)
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /admin
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /admin
+
+User-agent: GPTBot
+Allow: /
+Disallow: /admin
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /admin
+
+User-agent: Claude-User
+Allow: /
+Disallow: /admin
+
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /admin
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /admin
+
+User-agent: Perplexity-User
+Allow: /
+Disallow: /admin
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot
+Allow: /
+Disallow: /admin
+
+# Everyone else
+User-agent: *
+Allow: /
+Disallow: /admin
+
+Sitemap: https://www.coldnerd.com/sitemap.xml

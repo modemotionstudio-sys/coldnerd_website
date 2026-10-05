@@ -2,6 +2,7 @@
   import { createRoot } from "react-dom/client";
   import App from "./app/App.tsx";
   import "./styles/index.css";
+  import { trackAiReferral } from "./lib/analytics";
 
   // Disable browser's automatic scroll restoration so we can re-anchor to the
   // saved Y after layout settles (images + motion animations) and avoid the
@@ -11,4 +12,5 @@
   }
 
   createRoot(document.getElementById("root")!).render(<App />);
+  trackAiReferral();
   

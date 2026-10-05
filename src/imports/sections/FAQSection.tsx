@@ -20,7 +20,7 @@ const faqItems = [
   {
     icon: MessageCircle,
     q: "How many DMs can I send per day?",
-    a: "It depends on your plan. Basic allows up to 500 DMs/day, Pro up to 5,000, and Ultimate offers unlimited messaging. ColdNerd automatically adjusts send rates based on your account health score to maximize volume while staying safe.",
+    a: "It depends on your plan. Starter includes 3,000 DMs per month, while Growth and Agency include unlimited DMs. ColdNerd automatically adjusts send rates based on your account health score to maximize volume while staying safe.",
   },
   {
     icon: Zap,
@@ -30,7 +30,7 @@ const faqItems = [
   {
     icon: Users,
     q: "Can I manage multiple Instagram accounts?",
-    a: "Yes! Our Pro plan supports up to 5 accounts and our Ultimate plan supports 10+ accounts. You can manage all accounts from a single dashboard with separate campaigns and analytics for each.",
+    a: "Yes! Starter supports 3 Instagram accounts, Growth supports 15, and Agency supports unlimited accounts. You can manage all accounts from a single dashboard with separate campaigns and analytics for each.",
   },
   {
     icon: Star,

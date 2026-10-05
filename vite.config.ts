@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
+import { seoPrerender } from './src/seo/prerender'
 
 // Custom plugin to resolve figma:asset/ imports to local assets
 function figmaAssetPlugin() {
@@ -22,6 +23,7 @@ export default defineConfig({
     figmaAssetPlugin(),
     react(),
     tailwindcss(),
+    seoPrerender(),
   ],
   resolve: {
     alias: {

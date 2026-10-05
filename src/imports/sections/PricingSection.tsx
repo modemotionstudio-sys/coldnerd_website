@@ -4,76 +4,9 @@ import { Check } from "lucide-react";
 import { useNavigate } from "react-router";
 import { supabase } from "../../lib/supabase";
 import { SHOW_FREE_TRIAL_PRICING_CARD } from "../../lib/pricingVisibility";
+import { plans } from "../../lib/pricingPlans";
+import { PricingComparison } from "../../app/components/PricingComparison";
 
-const plans = [
-  {
-    name: "Free Trial",
-    description: "Try ColdNerd risk-free for 14 days. No credit card required.",
-    monthlyPrice: 0,
-    yearlyPrice: 0,
-    yearlyTotal: 0,
-    checkoutUrl: "",
-    freeTrial: true,
-    features: [
-      "1 Instagram account",
-      "500 DMs total",
-      "14-day free trial",
-      "Auto warmup",
-      "Email support",
-    ],
-    popular: false,
-  },
-  {
-    name: "Starter",
-    description: "Perfect for solo creators getting started with safe Instagram outreach.",
-    monthlyPrice: 27,
-    yearlyPrice: 22,
-    yearlyTotal: 259,
-    checkoutUrl: "https://whop.com/coldnerd/cold-nerd-3c/",
-    features: [
-      "Up to 3 Instagram accounts",
-      "3,000 DMs per month",
-      "Smart DM automation",
-      "Auto warmup",
-      "Basic analytics",
-      "Email support",
-    ],
-    popular: false,
-  },
-  {
-    name: "Growth",
-    description: "Scale your outreach with multi-account automation and unlimited DMs.",
-    monthlyPrice: 97,
-    yearlyPrice: 78,
-    yearlyTotal: 931,
-    checkoutUrl: "https://whop.com/coldnerd/coldnerd-growth",
-    features: [
-      "Up to 15 Instagram accounts",
-      "Unlimited DMs",
-      "Auto warmup",
-      "Advanced analytics",
-      "Priority support",
-    ],
-    popular: true,
-  },
-  {
-    name: "Agency Pro",
-    description: "For agencies. Land clients, not just DMs \u2014 unlimited everything.",
-    monthlyPrice: 197,
-    yearlyPrice: 158,
-    yearlyTotal: 1891,
-    checkoutUrl: "https://whop.com/coldnerd/coldnerd-agency-pro",
-    features: [
-      "Unlimited Instagram accounts",
-      "Unlimited DMs",
-      "Humanized voice notes",
-      "Auto warmup",
-      "Admin controls & team seats",
-      "Dedicated support",
-    ],
-    popular: false,
-  },
-];
 
 function PricingCard({ plan, isYearly, isActive, onActivate, isLoggedIn, onGetStarted }: { plan: typeof plans[0]; isYearly: boolean; isActive: boolean; onActivate: () => void; isLoggedIn: boolean; onGetStarted: () => void }) {
   const price = isYearly ? plan.yearlyPrice : plan.monthlyPrice;
@@ -196,7 +129,7 @@ export function PricingSection() {
             Find the Perfect Plan for You or Your Team
           </h2>
           <p className="text-base sm:text-lg text-gray-600">
-            Start for free and unlock more features as you grow
+            Pick a plan and unlock more accounts, AI and team features as you grow
           </p>
         </motion.div>
 
@@ -248,6 +181,8 @@ export function PricingSection() {
             </motion.div>
           ))}
         </motion.div>
+
+        <PricingComparison />
       </div>
     </section>
   );

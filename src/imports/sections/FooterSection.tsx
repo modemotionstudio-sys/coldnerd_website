@@ -13,26 +13,27 @@ import { supabase } from "../../lib/supabase";
 import type { User } from "@supabase/supabase-js";
 
 const footerLinks = {
+  Learn: [
+    { label: "Instagram Outreach", href: "/instagram-outreach" },
+    { label: "Instagram Prospecting", href: "/instagram-prospecting" },
+    { label: "Instagram Lead Generation", href: "/instagram-lead-generation" },
+    { label: "Instagram DM Automation", href: "/instagram-dm-automation" },
+  ],
   Product: [
     { label: "Features", href: "#features" },
-    { label: "Pricing", href: "/pricing" },
     { label: "How It Works", href: "#how-it-works" },
-    { label: "Dashboard", href: "#dashboard" },
-    { label: "Blog", href: "/blog" },
+    { label: "Pricing", href: "#pricing" },
+  ],
+  Solutions: [
+    { label: "For Agencies", href: "/for-agencies" },
+    { label: "For Freelancers", href: "/for-freelancers" },
   ],
   Company: [
-    { label: "About Us", href: "#" },
-    { label: "Careers", href: "#" },
+    { label: "What Is ColdNerd?", href: "/what-is-coldnerd" },
+    { label: "Blog", href: "/blog" },
+    { label: "Contact", href: "#contact" },
     { label: "Privacy Policy", href: "/terms-and-conditions" },
     { label: "Terms of Service", href: "/terms-and-conditions" },
-    { label: "Contact", href: "#contact" },
-  ],
-  Resources: [
-    { label: "Help Center", href: "#" },
-    { label: "API Documentation", href: "#" },
-    { label: "Community", href: "#" },
-    { label: "Status", href: "#" },
-    { label: "Changelog", href: "#" },
   ],
 };
 
@@ -166,11 +167,14 @@ export function FooterSection() {
     }
   };
 
+  // Section links (#features, #pricing…) scroll on the home page, or open the
+  // home page at that section when the footer is shown on another page.
   const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href.startsWith("#")) {
       e.preventDefault();
       const el = document.querySelector(href);
       if (el) el.scrollIntoView({ behavior: "smooth" });
+      else navigate(`/${href}`);
     }
   };
 
@@ -303,9 +307,9 @@ export function FooterSection() {
 
       {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12 lg:py-16">
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-8 lg:gap-12">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8 lg:gap-10">
           {/* Brand */}
-          <div className="col-span-2 sm:col-span-2">
+          <div className="col-span-2 sm:col-span-3 lg:col-span-2">
             <motion.div
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
@@ -360,7 +364,7 @@ export function FooterSection() {
                       </Link>
                     ) : (
                       <a
-                        href={link.href}
+                        href={`/${link.href}`}
                         onClick={(e) => handleSmoothScroll(e, link.href)}
                         className="text-white/60 hover:text-white text-sm transition-colors inline-flex items-center gap-1 group"
                       >
