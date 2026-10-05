@@ -40,7 +40,12 @@ function StatCard({ icon: Icon, value, label, suffix = "" }: {
           <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-[#2a6ff3]" />
         </div>
         <div>
-          <p className="text-2xl sm:text-3xl font-bold text-gray-900">{count}{suffix}</p>
+          {/* The invisible final value reserves the width, so the card never
+              changes size while counting up (that resize made scrolling stutter). */}
+          <p className="relative text-2xl sm:text-3xl font-bold text-gray-900 tabular-nums">
+            <span className="invisible" aria-hidden="true">{value}{suffix}</span>
+            <span className="absolute inset-0">{count}{suffix}</span>
+          </p>
           <p className="text-xs sm:text-sm text-gray-500">{label}</p>
         </div>
       </div>

@@ -163,7 +163,7 @@ function inject(template: string, head: string, body: string) {
   if (a < 0 || b < 0) throw new Error("[seo] index.html is missing the <!-- seo:start --> / <!-- seo:end --> markers");
   const withHead = template.slice(0, a) + SEO_START + "\n    " + head + "\n    " + template.slice(b);
   if (!withHead.includes('<div id="root"></div>')) throw new Error('[seo] index.html is missing <div id="root"></div>');
-  return withHead.replace('<div id="root"></div>', () => `<div id="root">${body}</div>`);
+  return withHead.replace('<div id="root"></div>', () => `<div id="root"><div data-prerender>${body}</div></div>`);
 }
 
 async function blogSlugs(): Promise<{ slug: string; lastmod: string }[]> {

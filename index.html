@@ -4,6 +4,10 @@
     <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <!-- Pre-rendered page text is for crawlers that don't run JavaScript.
+           Visitors' browsers hide it immediately and the app renders instead. -->
+      <script>document.documentElement.classList.add("js")</script>
+      <style>html.js [data-prerender]{display:none!important}</style>
       <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
       <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />

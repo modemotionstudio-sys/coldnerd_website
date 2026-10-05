@@ -442,3 +442,15 @@ export const seoPages: SeoPage[] = [
 
 export const seoPageBySlug = (slug: string) => seoPages.find((p) => p.slug === slug);
 export const seoPagesInGroup = (group: SeoPage["group"]) => seoPages.filter((p) => p.group === group);
+
+/** Comparison articles (published through the blog CMS). */
+export const comparisonLinks = [
+  { label: "ColdNerd vs ManyChat", href: "/blog/coldnerd-vs-manychat" },
+  { label: "ColdNerd vs PhantomBuster", href: "/blog/coldnerd-vs-phantombuster" },
+  { label: "Best Instagram Outreach Tools", href: "/blog/best-instagram-outreach-tools" },
+];
+
+/** "Learn" guides, in menu order. */
+export const learnLinks = seoPages
+  .filter((p) => p.group === "learn")
+  .map((p) => ({ label: p.label, href: `/${p.slug}` }));

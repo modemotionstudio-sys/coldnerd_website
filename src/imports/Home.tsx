@@ -17,6 +17,7 @@ import { FAQSection } from "./sections/FAQSection";
 import { BlogSection } from "./sections/BlogSection";
 import { FooterSection } from "./sections/FooterSection";
 import { DownloadModal, openDownloadModal } from "../app/components/DownloadModal";
+import { ResourcesMenu, resourceGroups } from "../app/components/ResourcesMenu";
 import imgFrame10000056551 from "figma:asset/bb834f03157fd23888b46fc97bf375d1f17e227d.png";
 import imgDashboard1 from "figma:asset/92e21f3370ec8756b689948218a7dd293b611573.png";
 import imgMetricItem1 from "figma:asset/69ae9a7aff4b31a3755fc57599c1994537159505.png";
@@ -148,6 +149,7 @@ function Navbar() {
         <NavLink label="Features" target="features" active />
         <NavLink label="Pricing" target="pricing" />
         <NavLink label="Contact" target="contact" />
+        <ResourcesMenu />
         <Link
           to="/blog"
           className="font-['Inter:Regular',sans-serif] font-normal text-[#474747] text-[16px] lg:text-[18px] leading-[36px] whitespace-nowrap hover:text-[#2a6ff3] transition-colors no-underline"
@@ -238,6 +240,22 @@ function Navbar() {
         <button onClick={() => { document.getElementById("features")?.scrollIntoView({ behavior: "smooth" }); closeMobile(); }} className="text-left text-gray-700 hover:text-[#2a6ff3] font-medium py-2 transition-colors">Features</button>
         <button onClick={() => { document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" }); closeMobile(); }} className="text-left text-gray-700 hover:text-[#2a6ff3] font-medium py-2 transition-colors">Pricing</button>
         <button onClick={() => { document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" }); closeMobile(); }} className="text-left text-gray-700 hover:text-[#2a6ff3] font-medium py-2 transition-colors">Contact</button>
+        <details className="group">
+          <summary className="flex items-center justify-between text-gray-700 font-medium py-2 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+            Resources
+            <span className="text-gray-400 transition-transform group-open:rotate-180">&#9662;</span>
+          </summary>
+          <div className="pl-3 pb-1 flex flex-col gap-1">
+            {resourceGroups.map((g) => (
+              <div key={g.title}>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 mt-2 mb-1">{g.title}</p>
+                {g.links.map((l) => (
+                  <Link key={l.href} to={l.href} onClick={closeMobile} className="block text-sm text-gray-600 hover:text-[#2a6ff3] py-1.5 no-underline">{l.label}</Link>
+                ))}
+              </div>
+            ))}
+          </div>
+        </details>
         <Link to="/blog" onClick={closeMobile} className="text-gray-700 hover:text-[#2a6ff3] font-medium py-2 transition-colors no-underline">Blog</Link>
         <hr className="border-gray-200" />
         {user ? (

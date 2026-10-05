@@ -5,7 +5,6 @@ import { useNavigate } from "react-router";
 import { supabase } from "../../lib/supabase";
 import { SHOW_FREE_TRIAL_PRICING_CARD } from "../../lib/pricingVisibility";
 import { plans } from "../../lib/pricingPlans";
-import { PricingComparison } from "../../app/components/PricingComparison";
 
 
 function PricingCard({ plan, isYearly, isActive, onActivate, isLoggedIn, onGetStarted }: { plan: typeof plans[0]; isYearly: boolean; isActive: boolean; onActivate: () => void; isLoggedIn: boolean; onGetStarted: () => void }) {
@@ -182,7 +181,6 @@ export function PricingSection() {
           ))}
         </motion.div>
 
-        <PricingComparison />
       </div>
     </section>
   );

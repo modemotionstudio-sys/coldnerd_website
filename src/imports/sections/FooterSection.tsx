@@ -10,6 +10,7 @@ const TikTok = ({ className }: { className?: string }) => (
 );
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
+import { comparisonLinks } from "../../seo/pages";
 import type { User } from "@supabase/supabase-js";
 
 const footerLinks = {
@@ -28,6 +29,7 @@ const footerLinks = {
     { label: "For Agencies", href: "/for-agencies" },
     { label: "For Freelancers", href: "/for-freelancers" },
   ],
+  Compare: comparisonLinks,
   Company: [
     { label: "What Is ColdNerd?", href: "/what-is-coldnerd" },
     { label: "Blog", href: "/blog" },
@@ -307,7 +309,7 @@ export function FooterSection() {
 
       {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12 lg:py-16">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8 lg:gap-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-6 sm:gap-8 lg:gap-8">
           {/* Brand */}
           <div className="col-span-2 sm:col-span-3 lg:col-span-2">
             <motion.div
