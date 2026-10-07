@@ -22,6 +22,7 @@ import {
   type BlogPostInput,
   type PostStatus,
 } from "../lib/blog";
+import { setPageMeta } from "../lib/seo";
 
 interface FormState {
   title: string;
@@ -149,7 +150,7 @@ export default function CmsEditor() {
   }, []);
 
   useEffect(() => {
-    document.title = `${id ? "Edit" : "New"} article - ColdNerd CMS`;
+    setPageMeta({ title: `${id ? "Edit" : "New"} article - ColdNerd CMS`, noindex: true });
     if (!editor) return;
     if (!id) {
       setForm(EMPTY_FORM);

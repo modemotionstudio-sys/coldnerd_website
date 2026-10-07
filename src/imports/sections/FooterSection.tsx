@@ -160,7 +160,7 @@ export function FooterSection() {
     }
   };
 
-  const protectedPaths = ["/pricing", "/terms-and-conditions"];
+  const protectedPaths = ["/pricing"];
 
   const handleProtectedLink = (e: React.MouseEvent, href: string) => {
     if (protectedPaths.includes(href) && !user) {
@@ -352,7 +352,7 @@ export function FooterSection() {
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: colIdx * 0.1 }}
             >
-              <h4 className="text-xs sm:text-sm font-semibold text-white uppercase tracking-wider mb-2 sm:mb-4">{title}</h4>
+              <h3 className="text-xs sm:text-sm font-semibold text-white uppercase tracking-wider mb-2 sm:mb-4">{title}</h3>
               <ul className="space-y-1.5 sm:space-y-3">
                 {links.map((link, i) => (
                   <li key={i}>

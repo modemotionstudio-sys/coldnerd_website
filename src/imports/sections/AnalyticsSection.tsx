@@ -118,7 +118,7 @@ export function AnalyticsSection() {
             <div className="bg-white rounded-3xl shadow-xl border border-gray-200 p-5 sm:p-6 lg:p-8">
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h4 className="font-semibold text-gray-900">Monthly Growth</h4>
+                  <h3 className="font-semibold text-gray-900">Monthly Growth</h3>
                   <p className="text-sm text-gray-500">Jan 13, 2025</p>
                 </div>
                 <div className="flex items-center gap-2">

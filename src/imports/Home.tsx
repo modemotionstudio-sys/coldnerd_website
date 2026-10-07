@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { useIsManager } from "../lib/blog";
+import { setPageMeta } from "../lib/seo";
 import type { User } from "@supabase/supabase-js";
 import backgroundImg from "../assets/background.png";
 import { AnalyticsSection } from "./sections/AnalyticsSection";
@@ -369,17 +370,21 @@ function Frame17() {
 
   return (
     <div className="flex flex-col gap-5 lg:gap-6 items-start relative shrink-0 text-[#0d0d0d] w-full">
-      <div className="font-['Inter',sans-serif] font-bold leading-[1.15] relative shrink-0 text-[32px] sm:text-[38px] lg:text-[44px] xl:text-[50px] 2xl:text-[56px] text-left">
-        <div>
+      {/* The page's H1 (SEO). aria-label gives the full sentence; the letters are split for the animation. */}
+      <h1
+        aria-label={`${line1} ${line2} ${line3}`}
+        className="font-['Inter',sans-serif] font-bold leading-[1.15] relative shrink-0 text-[32px] sm:text-[38px] lg:text-[44px] xl:text-[50px] 2xl:text-[56px] text-left"
+      >
+        <span className="block">
           <LetterReveal text={line1} delay={0.2} />
-        </div>
-        <div className="mt-1">
+        </span>
+        <span className="block mt-1">
           <LetterReveal text={line2} delay={0.2 + line1.length * 0.035 + 0.1} />
-        </div>
-        <div className="mt-1">
+        </span>
+        <span className="block mt-1">
           <LetterReveal text={line3} delay={0.2 + line1.length * 0.035 + 0.1 + line2.length * 0.035 + 0.1} />
-        </div>
-      </div>
+        </span>
+      </h1>
       <motion.p
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -700,7 +705,7 @@ function Group3() {
 function SectionHeader() {
   return (
     <ScrollReveal variant="fadeUp" className="flex flex-col gap-[24px] items-center not-italic relative shrink-0 w-full">
-      <p className="font-['Inter:Bold',sans-serif] font-bold leading-tight lg:leading-[78px] relative shrink-0 text-[#0d0d0d] text-3xl sm:text-4xl lg:text-[48px]">Main Features</p>
+      <h2 className="font-['Inter:Bold',sans-serif] font-bold leading-tight lg:leading-[78px] relative shrink-0 text-[#0d0d0d] text-3xl sm:text-4xl lg:text-[48px]">Main Features</h2>
       <div className="flex flex-col font-['Inter:Regular',sans-serif] font-normal justify-center leading-[0] w-full relative shrink-0 text-[#5e5e5e] text-base lg:text-[20px] text-center">
         <p className="leading-relaxed lg:leading-[36px]">Powerful Automation Features Designed for Safe and Scalable Instagram Growth</p>
       </div>
@@ -4798,7 +4803,7 @@ export default function Home() {
   // Opened as /#pricing, /#features… (e.g. from the footer on another page): glide to that section.
   const { hash } = useLocation();
   useEffect(() => {
-    document.title = "ColdNerd — AI Instagram Outreach & DM Automation Software";
+    setPageMeta({ title: "ColdNerd — AI Instagram Outreach & DM Automation Software", canonicalPath: "/" });
   }, []);
   useEffect(() => {
     if (!hash) return;

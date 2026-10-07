@@ -29,6 +29,8 @@ function CmsPage({ children, protect = true }: { children: React.ReactNode; prot
 import Pricing from "../imports/Pricing";
 import TermsAndConditions from "../imports/TermsAndConditions";
 import { gaPageView } from "../lib/analytics";
+import { setPageMeta, usePageMeta } from "../lib/seo";
+import NotFound from "../imports/NotFound";
 
 const pageVariants = {
   initial: { opacity: 0, y: 15 },
@@ -67,6 +69,12 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }
 
   return authenticated ? <>{children}</> : null;
+}
+
+/** Sets the page's title / description / canonical / robots for routes whose components don't. */
+function Meta({ children, ...meta }: { children: React.ReactNode } & Parameters<typeof setPageMeta>[0]) {
+  usePageMeta(meta);
+  return <>{children}</>;
 }
 
 function AnimatedLayout() {
@@ -118,11 +126,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "/dashboard",
-        element: <Dashboard />,
+        element: <Meta title="Dashboard demo - ColdNerd" noindex><Dashboard /></Meta>,
       },
       {
         path: "/login",
-        element: <Login />,
+        element: <Meta title="Log in - ColdNerd" noindex><Login /></Meta>,
       },
       {
         path: "/blog",
@@ -152,16 +160,29 @@ export const router = createBrowserRouter([
       },
       {
         path: "/signup",
-        element: <Signup />,
+        element: <Meta title="Sign up - ColdNerd" noindex><Signup /></Meta>,
       },
       {
         path: "/pricing",
-        element: <ProtectedRoute><Pricing /></ProtectedRoute>,
+        element: (
+          <Meta title="Pricing & Plans - ColdNerd" description="Compare ColdNerd's Starter, Growth and Agency plans for Instagram outreach and DM automation." canonicalPath="/pricing">
+            <ProtectedRoute><Pricing /></ProtectedRoute>
+          </Meta>
+        ),
       },
       {
         path: "/terms-and-conditions",
-        element: <ProtectedRoute><TermsAndConditions /></ProtectedRoute>,
-      }
+        // Public so visitors and search engines can read the Terms & Privacy Policy.
+        element: (
+          <Meta title="Terms & Privacy Policy - ColdNerd" description="ColdNerd's terms of service and privacy policy: what data we collect, how it is used and your rights." canonicalPath="/terms-and-conditions">
+            <TermsAndConditions />
+          </Meta>
+        ),
+      },
+      {
+        path: "*",
+        element: <NotFound />,
+      },
     ],
   },
 ]);

@@ -15,6 +15,7 @@ import type { Plugin } from "vite";
 import { SITE_URL, seoPages, type SeoPage } from "./pages";
 import { plans } from "../lib/pricingPlans";
 import { seedPosts } from "../lib/blogSeed";
+import { homeFaqs } from "../lib/faqData";
 
 const SUPABASE_URL = "https://digzspnffmdrqpagxswi.supabase.co";
 const SUPABASE_ANON_KEY =
@@ -29,22 +30,25 @@ const esc = (s: string) =>
 const jsonLd = (data: unknown) =>
   `<script type="application/ld+json">${JSON.stringify(data).replace(/</g, "\\u003c")}</script>`;
 
-function headTags(o: { title: string; description: string; url: string; type?: string; extra?: string }) {
+function headTags(o: { title: string; description: string; url?: string; type?: string; robots?: string; image?: string; extra?: string }) {
   return [
     `<title>${esc(o.title)}</title>`,
     `<meta name="description" content="${esc(o.description)}" />`,
-    `<link rel="canonical" href="${o.url}" />`,
+    o.robots ? `<meta name="robots" content="${o.robots}" />` : "",
+    o.url ? `<link rel="canonical" href="${o.url}" />` : "",
     `<meta property="og:type" content="${o.type ?? "website"}" />`,
     `<meta property="og:site_name" content="ColdNerd" />`,
     `<meta property="og:title" content="${esc(o.title)}" />`,
     `<meta property="og:description" content="${esc(o.description)}" />`,
-    `<meta property="og:url" content="${o.url}" />`,
-    `<meta property="og:image" content="${SITE_URL}/logo.png" />`,
+    o.url ? `<meta property="og:url" content="${o.url}" />` : "",
+    `<meta property="og:image" content="${o.image ?? `${SITE_URL}/logo.png`}" />`,
     `<meta name="twitter:card" content="summary" />`,
     `<meta name="twitter:title" content="${esc(o.title)}" />`,
     `<meta name="twitter:description" content="${esc(o.description)}" />`,
     o.extra ?? "",
-  ].join("\n    ");
+  ]
+    .filter(Boolean)
+    .join("\n    ");
 }
 
 /** Shared crawlable navigation so every page links to every other page. */
@@ -146,6 +150,10 @@ function homeJsonLd() {
           url: `${SITE_URL}/#pricing`,
         })),
       },
+      {
+        "@type": "FAQPage",
+        mainEntity: homeFaqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+      },
     ],
   });
 }
@@ -166,23 +174,158 @@ function inject(template: string, head: string, body: string) {
   return withHead.replace('<div id="root"></div>', () => `<div id="root"><div data-prerender>${body}</div></div>`);
 }
 
-async function blogSlugs(): Promise<{ slug: string; lastmod: string }[]> {
+interface PublishedPost {
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  cover_image_url: string | null;
+  category: string;
+  author_name: string;
+  read_time_minutes: number;
+  published_at: string | null;
+  updated_at: string;
+  seo_title: string | null;
+  seo_description: string | null;
+}
+
+/** Published blog articles from Supabase (or the bundled starter articles if the database can't be reached). */
+async function publishedPosts(): Promise<PublishedPost[]> {
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/blog_posts?select=slug,updated_at&status=eq.published`, {
-      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
-      signal: AbortSignal.timeout(8000),
-    });
+    const cols =
+      "slug,title,excerpt,content,cover_image_url,category,author_name,read_time_minutes,published_at,updated_at,seo_title,seo_description";
+    const now = new Date().toISOString();
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/blog_posts?select=${cols}&status=eq.published&published_at=lte.${now}&order=published_at.desc`,
+      { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }, signal: AbortSignal.timeout(10000) }
+    );
     if (res.ok) {
-      const rows = (await res.json()) as { slug: string; updated_at: string }[];
-      if (rows.length) return rows.map((r) => ({ slug: r.slug, lastmod: r.updated_at }));
+      const rows = (await res.json()) as PublishedPost[];
+      if (rows.length) return rows;
     }
   } catch {
     /* offline build: fall back to starter articles */
   }
-  return seedPosts.map((p) => ({ slug: p.slug, lastmod: p.updated_at }));
+  return seedPosts;
 }
 
-function llmsTxt() {
+const ALLOWED_TAGS = new Set([
+  "p", "br", "hr", "h1", "h2", "h3", "h4", "h5", "h6", "strong", "b", "em", "i", "u", "s", "mark", "code", "pre",
+  "blockquote", "ul", "ol", "li", "a", "img", "table", "thead", "tbody", "tr", "th", "td", "span", "div", "sub", "sup",
+]);
+const ALLOWED_ATTRS = new Set(["href", "src", "alt", "title"]);
+
+/** Conservative sanitiser for article HTML written into the static pages (no scripts, styles, iframes or event handlers). */
+function cleanHtml(html: string) {
+  return html
+    .replace(/<(script|style|iframe|object|embed|noscript|template)[\s\S]*?<\/\1\s*>/gi, "")
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/<\/?([a-zA-Z0-9]+)([^>]*)>/g, (tag, name: string, attrs: string) => {
+      const t = name.toLowerCase();
+      if (!ALLOWED_TAGS.has(t)) return "";
+      if (tag.startsWith("</")) return `</${t}>`;
+      const kept: string[] = [];
+      for (const m of attrs.matchAll(/([a-zA-Z-]+)\s*=\s*("([^"]*)"|'([^']*)')/g)) {
+        const key = m[1].toLowerCase();
+        const val = m[3] ?? m[4] ?? "";
+        if (!ALLOWED_ATTRS.has(key)) continue;
+        if ((key === "href" || key === "src") && /^\s*(javascript|data|vbscript):/i.test(val)) continue;
+        kept.push(`${key}="${esc(val.replace(/&quot;/g, '"').replace(/&amp;/g, "&"))}"`);
+      }
+      return `<${t}${kept.length ? " " + kept.join(" ") : ""}>`;
+    });
+}
+
+const absUrl = (u: string | null) =>
+  !u ? `${SITE_URL}/logo.png` : u.startsWith("http") ? u : `${SITE_URL}${u.startsWith("/") ? "" : "/"}${u}`;
+const fmtDate = (iso: string | null) =>
+  iso ? new Date(iso).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" }) : "";
+
+// Keep in sync with BLOG_META in src/lib/seo.ts
+const BLOG_TITLE = "ColdNerd Blog — Instagram Outreach, DM Automation & Growth Guides";
+const BLOG_DESCRIPTION =
+  "Guides, comparisons and playbooks on Instagram outreach, cold DMs, prospecting, lead generation and safe DM automation from the ColdNerd team.";
+const GENERIC_DESCRIPTION =
+  "Find prospects, send AI-personalized Instagram DMs, automate follow-ups and track replies with ColdNerd — Instagram outreach with built-in account safety.";
+
+function postHead(post: PublishedPost) {
+  const url = `${SITE_URL}/blog/${post.slug}`;
+  const title = `${post.seo_title || post.title} - ColdNerd Blog`;
+  const description = post.seo_description || post.excerpt;
+  const ld = jsonLd({
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BlogPosting",
+        "@id": `${url}#article`,
+        headline: post.title,
+        description,
+        image: absUrl(post.cover_image_url),
+        datePublished: post.published_at ?? post.updated_at,
+        dateModified: post.updated_at,
+        articleSection: post.category,
+        author: { "@type": post.author_name === "ColdNerd Team" ? "Organization" : "Person", name: post.author_name },
+        publisher: {
+          "@type": "Organization",
+          name: "ColdNerd",
+          url: SITE_URL,
+          logo: { "@type": "ImageObject", url: `${SITE_URL}/logo.png` },
+        },
+        mainEntityOfPage: url,
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+          { "@type": "ListItem", position: 2, name: "Blog", item: `${SITE_URL}/blog` },
+          { "@type": "ListItem", position: 3, name: post.title, item: url },
+        ],
+      },
+    ],
+  });
+  return headTags({ title, description, url, type: "article", image: absUrl(post.cover_image_url), extra: ld });
+}
+
+function postBody(post: PublishedPost) {
+  return `<article class="max-w-[760px] mx-auto px-4 pt-32 pb-10"><nav aria-label="Breadcrumb" class="text-sm text-gray-500 mb-4"><a href="/">Home</a> / <a href="/blog">Blog</a> / <span>${esc(post.title)}</span></nav><p class="text-[#2a6ff3] font-semibold">${esc(post.category)}</p><h1 class="text-4xl font-bold text-gray-900 my-4">${esc(post.title)}</h1><p class="text-xl text-gray-600 mb-4">${esc(post.excerpt)}</p><p class="text-sm text-gray-500 mb-8">By ${esc(post.author_name)} · ${fmtDate(post.published_at ?? post.updated_at)} · ${post.read_time_minutes} min read</p><div class="cn-prose">${cleanHtml(post.content)}</div><p class="mt-10"><a class="text-[#2a6ff3] font-semibold" href="/blog">More articles on the ColdNerd blog</a></p></article>${siteNav()}`;
+}
+
+function blogListHead(posts: PublishedPost[]) {
+  const url = `${SITE_URL}/blog`;
+  const ld = jsonLd({
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": url,
+        url,
+        name: BLOG_TITLE,
+        description: BLOG_DESCRIPTION,
+        isPartOf: { "@type": "WebSite", name: "ColdNerd", url: SITE_URL },
+        hasPart: posts.slice(0, 20).map((p) => ({ "@type": "BlogPosting", headline: p.title, url: `${SITE_URL}/blog/${p.slug}` })),
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+          { "@type": "ListItem", position: 2, name: "Blog", item: url },
+        ],
+      },
+    ],
+  });
+  return headTags({ title: BLOG_TITLE, description: BLOG_DESCRIPTION, url, extra: ld });
+}
+
+function blogListBody(posts: PublishedPost[]) {
+  return `<div class="max-w-[960px] mx-auto px-4 pt-32 pb-10"><h1 class="text-4xl font-bold text-gray-900 mb-4">Insights &amp; Strategies for Instagram Growth</h1><p class="text-lg text-gray-600 mb-8">Tips, guides, and best practices to help you automate smarter and grow faster.</p>${posts
+    .map(
+      (p) =>
+        `<article class="py-4 border-b border-gray-100"><h2 class="text-xl font-bold"><a href="/blog/${esc(p.slug)}">${esc(p.title)}</a></h2><p class="text-gray-600">${esc(p.excerpt)}</p><p class="text-sm text-gray-400">${esc(p.category)} · ${fmtDate(p.published_at)}</p></article>`
+    )
+    .join("")}</div>${siteNav()}`;
+}
+
+function llmsTxt(posts: PublishedPost[]) {
   const group = (g: SeoPage["group"]) =>
     seoPages
       .filter((p) => p.group === g)
@@ -192,6 +335,7 @@ function llmsTxt() {
     .filter((p) => !p.freeTrial)
     .map((p) => `- ${p.name} ($${p.monthlyPrice}/month, $${p.yearlyPrice}/month billed yearly): ${p.features.join(", ")}`)
     .join("\n");
+  const articles = posts.map((p) => `- [${p.title}](${SITE_URL}/blog/${p.slug}): ${p.seo_description || p.excerpt}`).join("\n");
   return `# ColdNerd
 
 > ColdNerd is AI-powered Instagram outreach and DM automation software. It finds prospects, analyzes their profiles with AI, writes personalized DMs, sends follow-ups and tracks replies, with automatic account warmup, daily limits and human-like timing for safety.
@@ -208,9 +352,13 @@ ${group("solutions")}
 ## Pricing
 ${pricing}
 
+## Blog articles
+${articles}
+
 ## More
 - [Blog](${SITE_URL}/blog): Guides on Instagram growth, DM outreach and automation.
 - [Home](${SITE_URL}/): Product overview, features and pricing.
+- [Terms & Privacy Policy](${SITE_URL}/terms-and-conditions)
 `;
 }
 
@@ -226,28 +374,51 @@ export function seoPrerender(): Plugin {
       const indexPath = path.join(outDir, "index.html");
       const template = fs.readFileSync(indexPath, "utf8");
       const today = new Date().toISOString().slice(0, 10);
+      const write = (file: string, html: string) => {
+        const full = path.join(outDir, file);
+        fs.mkdirSync(path.dirname(full), { recursive: true });
+        fs.writeFileSync(full, html);
+      };
 
+      // SEO landing pages
       for (const page of seoPages) {
         const url = `${SITE_URL}/${page.slug}`;
         const head = headTags({ title: page.metaTitle, description: page.metaDescription, url, extra: pageJsonLd(page) });
-        fs.writeFileSync(path.join(outDir, `${page.slug}.html`), inject(template, head, renderPageBody(page)));
+        write(`${page.slug}.html`, inject(template, head, renderPageBody(page)));
       }
 
+      // Blog list + every published article
+      const posts = await publishedPosts();
+      write("blog.html", inject(template, blogListHead(posts), blogListBody(posts)));
+      for (const post of posts) {
+        if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(post.slug)) continue;
+        write(`blog/${post.slug}.html`, inject(template, postHead(post), postBody(post)));
+      }
+
+      // App shell for pages that only render in the browser (login, sign-up, pricing, articles published
+      // since the last deploy…). It has no canonical, so it never claims to be the homepage.
+      write("app.html", inject(template, headTags({ title: "ColdNerd", description: GENERIC_DESCRIPTION }), ""));
+      // Real 404 page: Vercel serves it with a 404 status for unknown URLs.
+      write(
+        "404.html",
+        inject(template, headTags({ title: "Page not found - ColdNerd", description: GENERIC_DESCRIPTION, robots: "noindex" }), "")
+      );
+
+      // Homepage (written last because index.html is the template for everything above)
       const homeHead = headTags({
         title: "ColdNerd — AI Instagram Outreach & DM Automation Software",
-        description:
-          "Find prospects, send AI-personalized Instagram DMs, automate follow-ups and track replies with ColdNerd — Instagram outreach with built-in account safety.",
+        description: GENERIC_DESCRIPTION,
         url: `${SITE_URL}/`,
         extra: homeJsonLd(),
       });
       fs.writeFileSync(indexPath, inject(template, homeHead, homeBody()));
 
-      const posts = await blogSlugs();
       const urls = [
         { loc: `${SITE_URL}/`, lastmod: today, priority: "1.0" },
         ...seoPages.map((p) => ({ loc: `${SITE_URL}/${p.slug}`, lastmod: today, priority: "0.8" })),
         { loc: `${SITE_URL}/blog`, lastmod: today, priority: "0.7" },
-        ...posts.map((p) => ({ loc: `${SITE_URL}/blog/${p.slug}`, lastmod: p.lastmod.slice(0, 10), priority: "0.6" })),
+        ...posts.map((p) => ({ loc: `${SITE_URL}/blog/${p.slug}`, lastmod: p.updated_at.slice(0, 10), priority: "0.6" })),
+        { loc: `${SITE_URL}/terms-and-conditions`, lastmod: today, priority: "0.3" },
       ];
       fs.writeFileSync(
         path.join(outDir, "sitemap.xml"),
@@ -255,8 +426,10 @@ export function seoPrerender(): Plugin {
           .map((u) => `  <url><loc>${u.loc}</loc><lastmod>${u.lastmod}</lastmod><priority>${u.priority}</priority></url>`)
           .join("\n")}\n</urlset>\n`
       );
-      fs.writeFileSync(path.join(outDir, "llms.txt"), llmsTxt());
-      console.log(`[seo] pre-rendered ${seoPages.length} pages, sitemap (${urls.length} URLs) and llms.txt`);
+      fs.writeFileSync(path.join(outDir, "llms.txt"), llmsTxt(posts));
+      console.log(
+        `[seo] pre-rendered ${seoPages.length} pages, blog + ${posts.length} articles, app shell, 404, sitemap (${urls.length} URLs), llms.txt`
+      );
     },
   };
 }

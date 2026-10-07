@@ -1,6 +1,19 @@
 {
   "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    { "source": "/privacy-policy", "destination": "/terms-and-conditions", "permanent": true },
+    { "source": "/privacy", "destination": "/terms-and-conditions", "permanent": true },
+    { "source": "/terms", "destination": "/terms-and-conditions", "permanent": true }
+  ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
+    { "source": "/blog/:slug", "destination": "/app" },
+    { "source": "/login", "destination": "/app" },
+    { "source": "/signup", "destination": "/app" },
+    { "source": "/pricing", "destination": "/app" },
+    { "source": "/terms-and-conditions", "destination": "/app" },
+    { "source": "/dashboard", "destination": "/app" },
+    { "source": "/admin", "destination": "/app" },
+    { "source": "/admin/:path*", "destination": "/app" }
   ]
 }

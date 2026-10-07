@@ -13,16 +13,8 @@ import {
   useIsManager,
   type BlogPost as Post,
 } from "../lib/blog";
+import { setPageMeta } from "../lib/seo";
 
-function setMeta(name: string, content: string) {
-  let tag = document.querySelector<HTMLMetaElement>(`meta[name="${name}"]`);
-  if (!tag) {
-    tag = document.createElement("meta");
-    tag.name = name;
-    document.head.appendChild(tag);
-  }
-  tag.content = content;
-}
 
 export default function BlogPost() {
   const { slug = "" } = useParams();
@@ -40,8 +32,17 @@ export default function BlogPost() {
 
   useEffect(() => {
     if (!post) return;
-    document.title = `${post.seo_title || post.title} - ColdNerd Blog`;
-    setMeta("description", post.seo_description || post.excerpt);
+    const unpublished = post.status !== "published" || (!!post.published_at && new Date(post.published_at) > new Date());
+    setPageMeta({
+      title: `${post.seo_title || post.title} - ColdNerd Blog`,
+      description: post.seo_description || post.excerpt,
+      canonicalPath: `/blog/${post.slug}`,
+      noindex: unpublished,
+    });
+  }, [post]);
+
+  useEffect(() => {
+    if (post === null) setPageMeta({ title: "Article not found - ColdNerd Blog", noindex: true });
   }, [post]);
 
   const html = useMemo(() => (post ? sanitizeHtml(post.content) : ""), [post]);

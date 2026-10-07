@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import ScrollReveal from "../app/components/ScrollReveal";
 import { BlogNavbar } from "../blog/BlogNavbar";
 import { categoryClass, fetchPublishedPosts, formatPostDate, type BlogPost } from "../lib/blog";
+import { BLOG_META, setPageMeta } from "../lib/seo";
 
 const HIGHLIGHT_MS = 4500;
 
@@ -75,9 +76,9 @@ function BlogCard({ post, index, highlighted }: { post: BlogPost; index: number;
               <span className="text-gray-400 text-sm">{formatPostDate(post.published_at)}</span>
             </div>
 
-            <h3 className="font-['Inter:Bold',sans-serif] font-bold text-[#0d0d0d] text-lg sm:text-xl leading-tight mb-3 group-hover:text-[#2a6ff3] transition-colors">
+            <h2 className="font-['Inter:Bold',sans-serif] font-bold text-[#0d0d0d] text-lg sm:text-xl leading-tight mb-3 group-hover:text-[#2a6ff3] transition-colors">
               {post.title}
-            </h3>
+            </h2>
 
             <p className="font-['Inter:Regular',sans-serif] text-[#757575] text-sm sm:text-base leading-relaxed flex-1 line-clamp-3">
               {post.excerpt}
@@ -115,7 +116,7 @@ export default function Blog() {
   const highlightSlug = searchParams.get("highlight");
 
   useEffect(() => {
-    document.title = "Blog - ColdNerd";
+    setPageMeta(BLOG_META);
     fetchPublishedPosts().then(setPosts);
   }, []);
 

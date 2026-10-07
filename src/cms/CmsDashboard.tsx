@@ -30,6 +30,7 @@ import {
   updatePost,
   type BlogPost,
 } from "../lib/blog";
+import { setPageMeta } from "../lib/seo";
 
 type Filter = "all" | "published" | "draft" | "featured";
 
@@ -55,7 +56,7 @@ export default function CmsDashboard() {
   }, []);
 
   useEffect(() => {
-    document.title = "Articles - ColdNerd CMS";
+    setPageMeta({ title: "Articles - ColdNerd CMS", noindex: true });
     load();
   }, [load]);
 

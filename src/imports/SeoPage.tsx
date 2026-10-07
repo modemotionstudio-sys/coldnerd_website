@@ -4,16 +4,9 @@ import { motion } from "motion/react";
 import { ArrowRight, Check, ChevronDown } from "lucide-react";
 import { BlogNavbar } from "../blog/BlogNavbar";
 import { FooterSection } from "./sections/FooterSection";
-import { SITE_URL, seoPageBySlug, type SeoSection } from "../seo/pages";
+import { seoPageBySlug, type SeoSection } from "../seo/pages";
+import { setPageMeta } from "../lib/seo";
 
-function setHeadTag(selector: string, create: () => HTMLElement, apply: (el: HTMLElement) => void) {
-  let el = document.head.querySelector<HTMLElement>(selector);
-  if (!el) {
-    el = create();
-    document.head.appendChild(el);
-  }
-  apply(el);
-}
 
 function Section({ section, index }: { section: SeoSection; index: number }) {
   return (
@@ -69,13 +62,7 @@ export default function SeoPage({ slug }: { slug: string }) {
 
   useEffect(() => {
     if (!page) return;
-    document.title = page.metaTitle;
-    setHeadTag('meta[name="description"]', () => Object.assign(document.createElement("meta"), { name: "description" }), (el) =>
-      el.setAttribute("content", page.metaDescription)
-    );
-    setHeadTag('link[rel="canonical"]', () => Object.assign(document.createElement("link"), { rel: "canonical" }), (el) =>
-      el.setAttribute("href", `${SITE_URL}/${page.slug}`)
-    );
+    setPageMeta({ title: page.metaTitle, description: page.metaDescription, canonicalPath: `/${page.slug}` });
   }, [page]);
 
   if (!page) return null;

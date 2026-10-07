@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { Eye, EyeOff, Lock, Mail, PenSquare } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { checkIsManager } from "../lib/blog";
+import { setPageMeta } from "../lib/seo";
 
 export default function CmsLogin() {
   const [email, setEmail] = useState("");
@@ -17,7 +18,7 @@ export default function CmsLogin() {
 
   // Already signed in as a manager? Skip the form.
   useEffect(() => {
-    document.title = "CMS Login - ColdNerd";
+    setPageMeta({ title: "CMS Login - ColdNerd", noindex: true });
     checkIsManager().then((ok) => ok && navigate(from, { replace: true }));
   }, [from, navigate]);
 
