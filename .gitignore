@@ -5,3 +5,7 @@ app/node_modules/
 *.log
 public/*.zip
 dist/*.zip
+
+# Claude Code context (kept local; repo is public)
+.claude/
+CLAUDE.md
