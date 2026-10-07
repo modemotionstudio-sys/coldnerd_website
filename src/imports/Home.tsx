@@ -4408,7 +4408,7 @@ function FooterColumnLinks3() {
   return (
     <div className="content-stretch flex flex-col font-['Inter:Regular',sans-serif] font-normal gap-[16px] items-start leading-[0] relative shrink-0 text-[#474747] text-[14px] w-full" data-name="Footer Column Links">
       <div className="flex flex-col justify-center relative shrink-0 w-[184px]">
-        <p className="leading-[24px]">instagram ai@gmail.com</p>
+        <p className="leading-[24px]">info@coldnerd.com</p>
       </div>
       <div className="flex flex-col justify-center min-w-full relative shrink-0 w-[min-content]">
         <p className="leading-[24px]">+133-394-3439-1435</p>

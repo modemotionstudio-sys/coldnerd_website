@@ -389,8 +389,8 @@ export function FooterSection() {
               <p>&copy; {new Date().getFullYear()} ColdNerd. All rights reserved.</p>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4" />
-                <a href="mailto:virtualdepthstudio@gmail.com" className="hover:text-white transition-colors">
-                  virtualdepthstudio@gmail.com
+                <a href="mailto:info@coldnerd.com" className="hover:text-white transition-colors">
+                  info@coldnerd.com
                 </a>
               </div>
             </div>

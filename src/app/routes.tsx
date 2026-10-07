@@ -164,8 +164,9 @@ export const router = createBrowserRouter([
       },
       {
         path: "/pricing",
+        // Behind sign-up by the owner's choice, so kept out of search results.
         element: (
-          <Meta title="Pricing & Plans - ColdNerd" description="Compare ColdNerd's Starter, Growth and Agency plans for Instagram outreach and DM automation." canonicalPath="/pricing">
+          <Meta title="Pricing & Plans - ColdNerd" description="Compare ColdNerd's Starter, Growth and Agency plans for Instagram outreach and DM automation." noindex>
             <ProtectedRoute><Pricing /></ProtectedRoute>
           </Meta>
         ),
