@@ -8,6 +8,7 @@
  *     article text inside #root (React replaces it on load for real visitors)
  *   - a crawlable site summary + structured data in dist/index.html
  *   - dist/sitemap.xml and dist/llms.txt
+ * and then sends recently updated articles to IndexNow (see indexnow.ts).
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -16,6 +17,7 @@ import { SITE_URL, seoPages, type SeoPage } from "./pages";
 import { plans } from "../lib/pricingPlans";
 import { seedPosts } from "../lib/blogSeed";
 import { homeFaqs } from "../lib/faqData";
+import { recentlyUpdated, submitIndexNow } from "./indexnow";
 
 const SUPABASE_URL = "https://digzspnffmdrqpagxswi.supabase.co";
 const SUPABASE_ANON_KEY =
@@ -430,6 +432,7 @@ export function seoPrerender(): Plugin {
       console.log(
         `[seo] pre-rendered ${seoPages.length} pages, blog + ${posts.length} articles, app shell, 404, sitemap (${urls.length} URLs), llms.txt`
       );
+      console.log(`[seo] IndexNow: ${await submitIndexNow(recentlyUpdated(posts))}`);
     },
   };
 }

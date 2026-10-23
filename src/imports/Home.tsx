@@ -18,6 +18,8 @@ import { FAQSection } from "./sections/FAQSection";
 import { BlogSection } from "./sections/BlogSection";
 import { FooterSection } from "./sections/FooterSection";
 import { DownloadModal, openDownloadModal } from "../app/components/DownloadModal";
+import { TrustpilotBadge } from "../app/components/TrustpilotBadge";
+import { isTrustpilotConfigured } from "../lib/trustpilot";
 import { ResourcesMenu, resourceGroups } from "../app/components/ResourcesMenu";
 import imgFrame10000056551 from "figma:asset/bb834f03157fd23888b46fc97bf375d1f17e227d.png";
 import imgDashboard1 from "figma:asset/92e21f3370ec8756b689948218a7dd293b611573.png";
@@ -447,7 +449,14 @@ function Frame18() {
   return (
     <div className="relative flex flex-col gap-6 lg:gap-[49px] items-start w-full max-w-[591px]">
       <Frame17 />
-      <ButtonContainer />
+      {isTrustpilotConfigured() ? (
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
+          <ButtonContainer />
+          <TrustpilotBadge />
+        </div>
+      ) : (
+        <ButtonContainer />
+      )}
     </div>
   );
 }
