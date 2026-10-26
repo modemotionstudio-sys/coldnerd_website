@@ -23,6 +23,7 @@ import {
   type PostStatus,
 } from "../lib/blog";
 import { setPageMeta } from "../lib/seo";
+import { postPageTitle, publicSlug, tidyPostHtml } from "../lib/postHtml";
 
 interface FormState {
   title: string;
@@ -36,6 +37,10 @@ interface FormState {
   published_at: string; // datetime-local value, "" = not set
   seo_title: string;
   seo_description: string;
+  focus_keyword: string;
+  og_image_url: string | null;
+  canonical_url: string;
+  noindex: boolean;
 }
 
 const EMPTY_FORM: FormState = {
@@ -50,6 +55,10 @@ const EMPTY_FORM: FormState = {
   published_at: "",
   seo_title: "",
   seo_description: "",
+  focus_keyword: "",
+  og_image_url: null,
+  canonical_url: "",
+  noindex: false,
 };
 
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -74,10 +83,14 @@ function formFromPost(p: BlogPost): FormState {
     published_at: toLocalInput(p.published_at),
     seo_title: p.seo_title ?? "",
     seo_description: p.seo_description ?? "",
+    focus_keyword: p.focus_keyword ?? "",
+    og_image_url: p.og_image_url ?? null,
+    canonical_url: p.canonical_url ?? "",
+    noindex: !!p.noindex,
   };
 }
 
-type MediaMode = "insert" | "replace" | "cover" | null;
+type MediaMode = "insert" | "replace" | "cover" | "social" | null;
 
 export default function CmsEditor() {
   const { id } = useParams();
@@ -168,7 +181,7 @@ export default function CmsEditor() {
         if (!alive) return;
         setForm(formFromPost(post));
         setSlugTouched(true);
-        editor.commands.setContent(post.content);
+        editor.commands.setContent(tidyPostHtml(post.content, post.title));
         setWordCount(editor.getText().split(/\s+/).filter(Boolean).length);
         setDirty(false);
       })
@@ -197,7 +210,8 @@ export default function CmsEditor() {
     async (mode: "save" | "publish" | "unpublish" = "save"): Promise<BlogPost | null> => {
       if (!editor) return null;
       const title = form.title.trim();
-      const slug = form.slug.trim() || slugify(title);
+      // "/blog/" is already in the URL, so a "blog-" prefix is dropped from slugs.
+      const slug = (form.slug.trim() || slugify(title)).replace(/^blog-(?=.)/, "");
       if (!title) {
         toast.error("Please add a title before saving.");
         return null;
@@ -223,6 +237,10 @@ export default function CmsEditor() {
         published_at: form.published_at ? new Date(form.published_at).toISOString() : null,
         seo_title: form.seo_title.trim() || null,
         seo_description: form.seo_description.trim() || null,
+        focus_keyword: form.focus_keyword.trim() || null,
+        og_image_url: form.og_image_url,
+        canonical_url: form.canonical_url.trim() || null,
+        noindex: form.noindex,
       };
 
       setSaving(true);
@@ -292,7 +310,7 @@ export default function CmsEditor() {
   const preview = async () => {
     const win = window.open("about:blank", "_blank");
     const saved = dirty || !id ? await save() : { slug: form.slug };
-    if (saved && win) win.location.href = `/blog/${saved.slug}`;
+    if (saved && win) win.location.href = `/blog/${publicSlug(saved.slug)}`;
     else win?.close();
   };
 
@@ -312,6 +330,7 @@ export default function CmsEditor() {
   const onMediaSelect = (url: string, alt: string) => {
     if (!editor) return;
     if (mediaMode === "cover") update("cover_image_url", url);
+    else if (mediaMode === "social") update("og_image_url", url);
     else if (mediaMode === "replace") {
       const current = editor.getAttributes("image");
       editor.chain().focus().updateAttributes("image", { src: url, alt: alt || current.alt }).run();
@@ -322,8 +341,14 @@ export default function CmsEditor() {
     form.status === "published" && form.published_at && new Date(form.published_at).getTime() > Date.now();
   const statusLabel = form.status === "draft" ? "Draft" : isScheduled ? "Scheduled" : "Published";
   const readTime = Math.max(1, Math.round(wordCount / 220));
-  const seoTitle = form.seo_title || form.title || "Article title";
+  const seoTitle = postPageTitle({ title: form.title || "Article title", seo_title: form.seo_title });
   const seoDesc = form.seo_description || form.excerpt || "Article description shown in search results.";
+  const seoChecks = useMemo(
+    () => seoChecklist(form, editor?.getHTML() ?? "", seoTitle, seoDesc),
+    // wordCount changes whenever the article text changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [form, seoTitle, seoDesc, wordCount]
+  );
 
   const categoryOptions = useMemo(
     () => Array.from(new Set([...categories, "Automation", "Growth", "Safety", "Strategy", "Tips", "Outreach", "Templates", "Agencies"])).sort(),
@@ -524,7 +549,7 @@ export default function CmsEditor() {
           </Panel>
 
           <Panel title="Details">
-            <Field label="URL slug" hint={`coldnerd.com/blog/${form.slug || "your-article"}`}>
+            <Field label="URL slug" hint={`coldnerd.com/blog/${publicSlug(form.slug) || "your-article"}`}>
               <input
                 value={form.slug}
                 onChange={(e) => {
@@ -548,8 +573,19 @@ export default function CmsEditor() {
             </Field>
           </Panel>
 
-          <Panel title="SEO (search engines)">
-            <Field label="SEO title" hint={`${seoTitle.length}/60 characters`}>
+          <Panel title="SEO & meta tags">
+            <Field label="Focus keyword" hint="The main search phrase this article should rank for. Used for the checklist below.">
+              <input
+                value={form.focus_keyword}
+                onChange={(e) => update("focus_keyword", e.target.value)}
+                placeholder="e.g. instagram cold outreach"
+                className={inputClass}
+              />
+            </Field>
+            <Field
+              label="SEO title (meta title)"
+              hint={`${seoTitle.length}/60 characters${seoTitle.length > 60 ? " — too long, Google will cut it" : ""}`}
+            >
               <input
                 value={form.seo_title}
                 onChange={(e) => update("seo_title", e.target.value)}
@@ -557,7 +593,10 @@ export default function CmsEditor() {
                 className={inputClass}
               />
             </Field>
-            <Field label="Meta description" hint={`${seoDesc.length}/160 characters`}>
+            <Field
+              label="Meta description"
+              hint={`${seoDesc.length}/155 characters${seoDesc.length > 160 ? " — too long, Google will cut it" : ""}`}
+            >
               <textarea
                 value={form.seo_description}
                 onChange={(e) => update("seo_description", e.target.value)}
@@ -568,10 +607,64 @@ export default function CmsEditor() {
             </Field>
             <div className="rounded-xl border border-gray-100 bg-gray-50 p-3">
               <p className="text-[11px] text-gray-400 mb-1">Google preview</p>
-              <p className="text-[#1a0dab] text-base leading-snug line-clamp-1">{seoTitle} - ColdNerd Blog</p>
-              <p className="text-[#006621] text-xs">coldnerd.com › blog › {form.slug || "…"}</p>
+              <p className="text-[#1a0dab] text-base leading-snug line-clamp-1">{seoTitle}</p>
+              <p className="text-[#006621] text-xs">coldnerd.com › blog › {publicSlug(form.slug) || "…"}</p>
               <p className="text-xs text-gray-600 line-clamp-2 mt-0.5">{seoDesc}</p>
             </div>
+            <ul className="space-y-1.5">
+              {seoChecks.map((c) => (
+                <li key={c.label} className="flex items-start gap-2 text-xs">
+                  <span className={`font-bold ${c.ok ? "text-green-600" : "text-amber-500"}`}>{c.ok ? "✓" : "!"}</span>
+                  <span className={c.ok ? "text-gray-500" : "text-gray-700"}>{c.label}</span>
+                </li>
+              ))}
+            </ul>
+            <Field label="Social share image" hint="Shown when the link is shared on LinkedIn, X, WhatsApp… Defaults to the cover image.">
+              {form.og_image_url ? (
+                <div className="flex items-center gap-3">
+                  <img src={form.og_image_url} alt="" className="w-20 h-12 object-cover rounded-lg border border-gray-200" />
+                  <button type="button" onClick={() => setMediaMode("social")} className="text-sm font-medium text-[#2a6ff3]">
+                    Change
+                  </button>
+                  <button type="button" onClick={() => update("og_image_url", null)} className="text-sm font-medium text-red-600">
+                    Remove
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setMediaMode("social")}
+                  className="w-full rounded-lg border border-dashed border-gray-300 py-2 text-sm text-gray-500 hover:border-[#2a6ff3] hover:text-[#2a6ff3]"
+                >
+                  Choose image
+                </button>
+              )}
+            </Field>
+            <details className="rounded-xl border border-gray-100 px-3 py-2">
+              <summary className="cursor-pointer text-xs font-semibold text-gray-600">Advanced</summary>
+              <div className="space-y-4 pt-3">
+                <Field label="Canonical URL" hint="Leave empty. Only fill in if this article was first published on another website.">
+                  <input
+                    value={form.canonical_url}
+                    onChange={(e) => update("canonical_url", e.target.value)}
+                    placeholder={`https://www.coldnerd.com/blog/${publicSlug(form.slug) || "your-article"}`}
+                    className={inputClass}
+                  />
+                </Field>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.noindex}
+                    onChange={(e) => update("noindex", e.target.checked)}
+                    className="mt-0.5 w-4 h-4 accent-[#2a6ff3]"
+                  />
+                  <span className="text-xs text-gray-600">
+                    <span className="block font-semibold text-gray-800">Hide from Google &amp; Bing (noindex)</span>
+                    The article stays on the blog but won't appear in search results.
+                  </span>
+                </label>
+              </div>
+            </details>
           </Panel>
 
           {id && (
@@ -590,7 +683,15 @@ export default function CmsEditor() {
 
       <MediaLibrary
         open={mediaMode !== null}
-        title={mediaMode === "cover" ? "Choose cover image" : mediaMode === "replace" ? "Replace image" : "Insert image"}
+        title={
+          mediaMode === "cover"
+            ? "Choose cover image"
+            : mediaMode === "social"
+              ? "Choose social share image"
+              : mediaMode === "replace"
+                ? "Replace image"
+                : "Insert image"
+        }
         onClose={() => setMediaMode(null)}
         onSelect={onMediaSelect}
       />
@@ -638,4 +739,31 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
       {hint && <p className="text-[11px] text-gray-400 mt-1 break-all">{hint}</p>}
     </div>
   );
+}
+
+/** Simple on-page SEO checks shown under the meta fields. */
+function seoChecklist(form: FormState, html: string, seoTitle: string, seoDesc: string) {
+  const kw = form.focus_keyword.trim().toLowerCase();
+  const plain = (s: string) => s.replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim().toLowerCase();
+  const text = plain(html);
+  const firstParagraph = plain(html.match(/<p[^>]*>([\s\S]*?)<\/p>/i)?.[1] ?? "");
+  const subheadings = Array.from(html.matchAll(/<h[2-4][^>]*>([\s\S]*?)<\/h[2-4]>/gi)).map((m) => plain(m[1]));
+  const words = text ? text.split(" ").length : 0;
+  const checks = [
+    { ok: seoTitle.length >= 30 && seoTitle.length <= 60, label: "SEO title is 30–60 characters" },
+    { ok: seoDesc.length >= 70 && seoDesc.length <= 160, label: "Meta description is 70–160 characters" },
+    { ok: words >= 600, label: `Article has 600+ words (now ${words})` },
+    { ok: /href="(\/|https:\/\/(www\.)?coldnerd\.com)/.test(html), label: "Links to at least one other ColdNerd page" },
+    { ok: !!(form.cover_image_url || form.og_image_url), label: "Has a cover or share image" },
+  ];
+  if (kw) {
+    checks.unshift(
+      { ok: seoTitle.toLowerCase().includes(kw), label: "Focus keyword in SEO title" },
+      { ok: seoDesc.toLowerCase().includes(kw), label: "Focus keyword in meta description" },
+      { ok: form.slug.includes(kw.replace(/[^a-z0-9]+/g, "-")), label: "Focus keyword in URL slug" },
+      { ok: firstParagraph.includes(kw), label: "Focus keyword in the first paragraph" },
+      { ok: subheadings.some((h) => h.includes(kw)), label: "Focus keyword in a subheading" }
+    );
+  }
+  return checks;
 }

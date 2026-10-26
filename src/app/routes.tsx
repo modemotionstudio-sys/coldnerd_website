@@ -9,7 +9,7 @@ import Signup from "../imports/Signup";
 import Blog from "../imports/Blog";
 import BlogPost from "../imports/BlogPost";
 import SeoPage from "../imports/SeoPage";
-import { seoPages } from "../seo/pages";
+import { appPageMeta, seoPages } from "../seo/pages";
 import { ManagerRoute } from "../cms/ManagerRoute";
 
 // CMS pages (and the rich-text editor) load only when a manager opens them.
@@ -130,7 +130,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/login",
-        element: <Meta title="Log in - ColdNerd" noindex><Login /></Meta>,
+        element: <Meta {...appPageMeta.login}><Login /></Meta>,
       },
       {
         path: "/blog",
@@ -160,13 +160,13 @@ export const router = createBrowserRouter([
       },
       {
         path: "/signup",
-        element: <Meta title="Sign up - ColdNerd" noindex><Signup /></Meta>,
+        element: <Meta {...appPageMeta.signup}><Signup /></Meta>,
       },
       {
         path: "/pricing",
         // Behind sign-up by the owner's choice, so kept out of search results.
         element: (
-          <Meta title="Pricing & Plans - ColdNerd" description="Compare ColdNerd's Starter, Growth and Agency plans for Instagram outreach and DM automation." noindex>
+          <Meta {...appPageMeta.pricing}>
             <ProtectedRoute><Pricing /></ProtectedRoute>
           </Meta>
         ),
@@ -175,7 +175,7 @@ export const router = createBrowserRouter([
         path: "/terms-and-conditions",
         // Public so visitors and search engines can read the Terms & Privacy Policy.
         element: (
-          <Meta title="Terms & Privacy Policy - ColdNerd" description="ColdNerd's terms of service and privacy policy: what data we collect, how it is used and your rights." canonicalPath="/terms-and-conditions">
+          <Meta {...appPageMeta["terms-and-conditions"]}>
             <TermsAndConditions />
           </Meta>
         ),

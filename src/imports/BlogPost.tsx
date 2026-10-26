@@ -14,6 +14,8 @@ import {
   type BlogPost as Post,
 } from "../lib/blog";
 import { setPageMeta } from "../lib/seo";
+import { postPageTitle, tidyPostHtml } from "../lib/postHtml";
+import { guideHubs, hubForPost } from "../seo/pages";
 
 
 export default function BlogPost() {
@@ -34,24 +36,28 @@ export default function BlogPost() {
     if (!post) return;
     const unpublished = post.status !== "published" || (!!post.published_at && new Date(post.published_at) > new Date());
     setPageMeta({
-      title: `${post.seo_title || post.title} - ColdNerd Blog`,
+      title: postPageTitle(post),
       description: post.seo_description || post.excerpt,
       canonicalPath: `/blog/${post.slug}`,
-      noindex: unpublished,
+      canonicalUrl: post.canonical_url || undefined,
+      noindex: unpublished || !!post.noindex,
+      image: post.og_image_url || post.cover_image_url || undefined,
     });
   }, [post]);
 
   useEffect(() => {
-    if (post === null) setPageMeta({ title: "Article not found - ColdNerd Blog", noindex: true });
+    if (post === null) setPageMeta({ title: "Article not found | ColdNerd", noindex: true });
   }, [post]);
 
-  const html = useMemo(() => (post ? sanitizeHtml(post.content) : ""), [post]);
+  const html = useMemo(() => (post ? sanitizeHtml(tidyPostHtml(post.content, post.title)) : ""), [post]);
+  const hub = post ? hubForPost(post.slug) : undefined;
 
+  // Same guide first, then same category, then the rest.
   const relatedPosts = useMemo(() => {
     if (!post) return [];
-    const same = related.filter((p) => p.category === post.category);
-    const others = related.filter((p) => p.category !== post.category);
-    return [...same, ...others].slice(0, 3);
+    const hubSlugs = guideHubs.find((h) => h.posts.includes(post.slug))?.posts ?? [];
+    const rank = (p: Post) => (hubSlugs.includes(p.slug) ? 0 : p.category === post.category ? 1 : 2);
+    return [...related].sort((a, b) => rank(a) - rank(b)).slice(0, 3);
   }, [related, post]);
 
   const copyLink = async () => {
@@ -191,6 +197,14 @@ export default function BlogPost() {
           className="max-w-[760px] mx-auto px-4 sm:px-6 mt-12"
         >
           <div className="cn-prose" dangerouslySetInnerHTML={{ __html: html }} />
+          {hub && (
+            <p className="mt-10 text-gray-600">
+              Learn more:{" "}
+              <Link to={`/${hub.page}`} className="text-[#2a6ff3] font-semibold">
+                {hub.anchor.charAt(0).toUpperCase() + hub.anchor.slice(1)}
+              </Link>
+            </p>
+          )}
         </motion.div>
 
         {/* CTA */}

@@ -223,9 +223,8 @@ export function Toolbar({ editor, onInsertImage, onReplaceImage }: {
   onInsertImage: () => void;
   onReplaceImage: () => void;
 }) {
-  const blockType = editor.isActive("heading", { level: 1 })
-    ? "h1"
-    : editor.isActive("heading", { level: 2 })
+  // No "Heading 1": the article title is the page's only H1 (better for SEO).
+  const blockType = editor.isActive("heading", { level: 1 }) || editor.isActive("heading", { level: 2 })
       ? "h2"
       : editor.isActive("heading", { level: 3 })
         ? "h3"
@@ -266,7 +265,6 @@ export function Toolbar({ editor, onInsertImage, onReplaceImage }: {
 
         <Select value={blockType} onChange={setBlockType} title="Text style" className="w-[130px]">
           <option value="p">Paragraph</option>
-          <option value="h1">Heading 1</option>
           <option value="h2">Heading 2</option>
           <option value="h3">Heading 3</option>
           <option value="h4">Heading 4</option>

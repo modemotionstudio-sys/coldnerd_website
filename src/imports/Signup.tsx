@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router";
 import { supabase } from "../lib/supabase";
+import { trackSignUp } from "../lib/analytics";
 import { motion } from "motion/react";
 import { Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 const imgWhatsAppImage20260226At124548AmRemovebgPreview1 = "/logo.png";
@@ -48,6 +49,8 @@ export default function Signup() {
       });
 
       if (signUpError) throw signUpError;
+      // (an already-registered email comes back with no identities: not a new sign-up)
+      if (data.user?.identities?.length) trackSignUp(data.user.id, "email");
 
       if (data.session) {
         navigate("/");

@@ -10,8 +10,12 @@ interface PageMeta {
   description?: string;
   /** Path of the page's main URL, e.g. "/blog". Omit on pages that shouldn't be indexed. */
   canonicalPath?: string;
+  /** Full canonical URL, when it points to another site (overrides canonicalPath). */
+  canonicalUrl?: string;
   /** Keep this page out of search results (login, sign-up, admin, 404…). */
   noindex?: boolean;
+  /** Social share image (og:image). Defaults to the logo. */
+  image?: string;
 }
 
 function upsert(selector: string, create: () => HTMLElement): HTMLElement {
@@ -35,18 +39,19 @@ const meta = (attr: "name" | "property", key: string) =>
  * robots rule. Pages call this on mount so the head always matches the page,
  * even after client-side navigation from another page.
  */
-export function setPageMeta({ title, description = DEFAULT_DESCRIPTION, canonicalPath, noindex }: PageMeta) {
+export function setPageMeta({ title, description = DEFAULT_DESCRIPTION, canonicalPath, canonicalUrl, noindex, image }: PageMeta) {
   if (typeof document === "undefined") return;
   document.title = title;
   meta("name", "description").setAttribute("content", description);
   meta("property", "og:title").setAttribute("content", title);
   meta("property", "og:description").setAttribute("content", description);
+  meta("property", "og:image").setAttribute("content", image ? new URL(image, SITE_ORIGIN).href : `${SITE_ORIGIN}/logo.png`);
   meta("name", "twitter:title").setAttribute("content", title);
   meta("name", "twitter:description").setAttribute("content", description);
 
   const canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
-  if (canonicalPath && !noindex) {
-    const href = SITE_ORIGIN + canonicalPath;
+  if ((canonicalUrl || canonicalPath) && !noindex) {
+    const href = canonicalUrl || SITE_ORIGIN + canonicalPath;
     const link = canonical ?? Object.assign(document.createElement("link"), { rel: "canonical" });
     link.href = href;
     if (!canonical) document.head.appendChild(link);

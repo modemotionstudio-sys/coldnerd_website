@@ -1,11 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { motion } from "motion/react";
 import { ArrowRight, Check, ChevronDown } from "lucide-react";
 import { BlogNavbar } from "../blog/BlogNavbar";
 import { FooterSection } from "./sections/FooterSection";
-import { seoPageBySlug, type SeoSection } from "../seo/pages";
+import { guidesForPage, seoPageBySlug, type SeoSection } from "../seo/pages";
 import { setPageMeta } from "../lib/seo";
+import { fetchPublishedPosts, type BlogPost } from "../lib/blog";
 
 
 function Section({ section, index }: { section: SeoSection; index: number }) {
@@ -59,11 +60,20 @@ function Section({ section, index }: { section: SeoSection; index: number }) {
 
 export default function SeoPage({ slug }: { slug: string }) {
   const page = seoPageBySlug(slug);
+  const [guides, setGuides] = useState<BlogPost[]>([]);
 
   useEffect(() => {
     if (!page) return;
     setPageMeta({ title: page.metaTitle, description: page.metaDescription, canonicalPath: `/${page.slug}` });
   }, [page]);
+
+  useEffect(() => {
+    let alive = true;
+    fetchPublishedPosts().then((posts) => alive && setGuides(guidesForPage(slug, posts)));
+    return () => {
+      alive = false;
+    };
+  }, [slug]);
 
   if (!page) return null;
   const related = page.related.map(seoPageBySlug).filter((p): p is NonNullable<typeof p> => !!p);
@@ -113,6 +123,26 @@ export default function SeoPage({ slug }: { slug: string }) {
         {page.sections.map((s, i) => (
           <Section key={s.heading} section={s} index={i} />
         ))}
+
+        {/* Guides from the blog (internal linking plan in seo/pages.ts) */}
+        {guides.length > 0 && (
+          <section className="py-10">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#0d0d0d] tracking-tight mb-6">Related guides</h2>
+            <ul className="grid sm:grid-cols-2 gap-3">
+              {guides.map((g) => (
+                <li key={g.slug}>
+                  <Link
+                    to={`/blog/${g.slug}`}
+                    className="group flex items-center justify-between gap-3 h-full rounded-2xl border border-gray-100 px-5 py-4 no-underline hover:border-[#2a6ff3] transition-colors"
+                  >
+                    <span className="font-semibold text-gray-900 group-hover:text-[#2a6ff3] transition-colors">{g.title}</span>
+                    <ArrowRight className="w-4 h-4 text-[#2a6ff3] shrink-0" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {/* FAQ */}
         {page.faqs.length > 0 && (

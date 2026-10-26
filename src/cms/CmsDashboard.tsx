@@ -31,6 +31,7 @@ import {
   type BlogPost,
 } from "../lib/blog";
 import { setPageMeta } from "../lib/seo";
+import { publicSlug } from "../lib/postHtml";
 
 type Filter = "all" | "published" | "draft" | "featured";
 
@@ -379,7 +380,7 @@ export default function CmsDashboard() {
                       >
                         {post.status === "published" ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </IconButton>
-                      <IconButton title="Preview on site" onClick={() => window.open(`/blog/${post.slug}`, "_blank")}>
+                      <IconButton title="Preview on site" onClick={() => window.open(`/blog/${publicSlug(post.slug)}`, "_blank")}>
                         <Search className="w-4 h-4" />
                       </IconButton>
                       <IconButton title="Duplicate" onClick={() => duplicate(post)}>

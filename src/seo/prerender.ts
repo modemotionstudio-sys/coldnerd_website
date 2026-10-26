@@ -13,11 +13,17 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Plugin } from "vite";
-import { SITE_URL, seoPages, type SeoPage } from "./pages";
+import { SITE_URL, appPageMeta, guidesForPage, hubForPost, seoPages, type SeoPage } from "./pages";
 import { plans } from "../lib/pricingPlans";
 import { seedPosts } from "../lib/blogSeed";
 import { homeFaqs } from "../lib/faqData";
 import { recentlyUpdated, submitIndexNow } from "./indexnow";
+import { extractFaqs, postPageTitle, publicSlug, tidyPostHtml } from "../lib/postHtml";
+
+// Sitemap <lastmod> for pages whose text lives in the code. Update when you change that page's content.
+const HOME_UPDATED = "2026-10-26";
+const SEO_PAGES_UPDATED = "2026-10-26";
+const TERMS_UPDATED = "2026-03-25";
 
 const SUPABASE_URL = "https://digzspnffmdrqpagxswi.supabase.co";
 const SUPABASE_ANON_KEY =
@@ -66,7 +72,7 @@ function siteNav() {
     .join("")}</ul></nav>`;
 }
 
-function renderPageBody(page: SeoPage) {
+function renderPageBody(page: SeoPage, posts: PublishedPost[]) {
   const sections = page.sections
     .map((s) => {
       const body = (s.body ?? []).map((p) => `<p class="text-lg text-gray-600 leading-relaxed mb-4">${esc(p)}</p>`).join("");
@@ -86,7 +92,13 @@ function renderPageBody(page: SeoPage) {
         .map((f) => `<h3 class="font-semibold text-gray-900 mt-4">${esc(f.q)}</h3><p class="text-gray-600">${esc(f.a)}</p>`)
         .join("")}</section>`
     : "";
-  return `<div class="bg-white min-h-screen"><header class="max-w-[860px] mx-auto px-4 pt-32 pb-6 text-center"><p class="text-[#2a6ff3] font-semibold mb-3">${esc(page.eyebrow)}</p><h1 class="text-4xl font-bold text-gray-900 mb-5">${esc(page.h1)}</h1><p class="text-xl text-gray-600">${esc(page.intro)}</p><p class="mt-6"><a class="text-[#2a6ff3] font-semibold" href="/signup">Get started with ColdNerd</a></p></header><main class="max-w-[860px] mx-auto px-4">${sections}${faqs}</main>${siteNav()}</div>`;
+  const guides = guidesForPage(page.slug, posts);
+  const guideList = guides.length
+    ? `<section class="py-8"><h2 class="text-2xl font-bold text-gray-900 mb-4">Related guides</h2><ul class="list-disc pl-6 space-y-2">${guides
+        .map((g) => `<li><a class="text-[#2a6ff3]" href="/blog/${g.slug}">${esc(g.title)}</a></li>`)
+        .join("")}</ul></section>`
+    : "";
+  return `<div class="bg-white min-h-screen"><header class="max-w-[860px] mx-auto px-4 pt-32 pb-6 text-center"><p class="text-[#2a6ff3] font-semibold mb-3">${esc(page.eyebrow)}</p><h1 class="text-4xl font-bold text-gray-900 mb-5">${esc(page.h1)}</h1><p class="text-xl text-gray-600">${esc(page.intro)}</p><p class="mt-6"><a class="text-[#2a6ff3] font-semibold" href="/signup">Get started with ColdNerd</a></p></header><main class="max-w-[860px] mx-auto px-4">${sections}${guideList}${faqs}</main>${siteNav()}</div>`;
 }
 
 function pageJsonLd(page: SeoPage) {
@@ -160,10 +172,15 @@ function homeJsonLd() {
   });
 }
 
-function homeBody() {
+function homeBody(posts: PublishedPost[]) {
   return `<div class="max-w-[860px] mx-auto px-4 pt-32 pb-10"><h1 class="text-4xl font-bold text-gray-900 mb-4">ColdNerd — AI Instagram Outreach &amp; DM Automation</h1><p class="text-lg text-gray-600 mb-4">ColdNerd finds the right prospects on Instagram, writes AI-personalized DMs, sends smart follow-ups and tracks replies — with automatic warmup, daily limits and human-like timing to keep accounts safe.</p><h2 class="text-2xl font-bold text-gray-900 mt-8 mb-3">Plans</h2><ul class="list-disc pl-6 text-gray-700">${plans
     .filter((p) => !p.freeTrial)
     .map((p) => `<li><strong>${esc(p.name)}</strong> — $${p.monthlyPrice}/month: ${esc(p.features.join(", "))}</li>`)
+    .join("")}</ul><h2 class="text-2xl font-bold text-gray-900 mt-8 mb-3">Frequently asked questions</h2>${homeFaqs
+    .map((f) => `<h3 class="font-semibold text-gray-900 mt-4">${esc(f.q)}</h3><p class="text-gray-600">${esc(f.a)}</p>`)
+    .join("")}<h2 class="text-2xl font-bold text-gray-900 mt-8 mb-3">Latest guides</h2><ul class="list-disc pl-6 text-gray-700">${posts
+    .slice(0, 8)
+    .map((p) => `<li><a class="text-[#2a6ff3]" href="/blog/${p.slug}">${esc(p.title)}</a></li>`)
     .join("")}</ul></div>${siteNav()}`;
 }
 
@@ -189,26 +206,28 @@ interface PublishedPost {
   updated_at: string;
   seo_title: string | null;
   seo_description: string | null;
+  og_image_url?: string | null;
+  canonical_url?: string | null;
+  noindex?: boolean | null;
 }
 
 /** Published blog articles from Supabase (or the bundled starter articles if the database can't be reached). */
 async function publishedPosts(): Promise<PublishedPost[]> {
   try {
-    const cols =
-      "slug,title,excerpt,content,cover_image_url,category,author_name,read_time_minutes,published_at,updated_at,seo_title,seo_description";
+    // select=* so newer optional columns (og_image_url, noindex…) are read when present
     const now = new Date().toISOString();
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/blog_posts?select=${cols}&status=eq.published&published_at=lte.${now}&order=published_at.desc`,
+      `${SUPABASE_URL}/rest/v1/blog_posts?select=*&status=eq.published&published_at=lte.${now}&order=published_at.desc`,
       { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }, signal: AbortSignal.timeout(10000) }
     );
     if (res.ok) {
       const rows = (await res.json()) as PublishedPost[];
-      if (rows.length) return rows;
+      if (rows.length) return rows.map((p) => ({ ...p, slug: publicSlug(p.slug) }));
     }
   } catch {
     /* offline build: fall back to starter articles */
   }
-  return seedPosts;
+  return seedPosts.map((p) => ({ ...p, slug: publicSlug(p.slug) }));
 }
 
 const ALLOWED_TAGS = new Set([
@@ -252,8 +271,10 @@ const GENERIC_DESCRIPTION =
 
 function postHead(post: PublishedPost) {
   const url = `${SITE_URL}/blog/${post.slug}`;
-  const title = `${post.seo_title || post.title} - ColdNerd Blog`;
+  const title = postPageTitle(post);
   const description = post.seo_description || post.excerpt;
+  const image = absUrl(post.og_image_url || post.cover_image_url);
+  const faqs = extractFaqs(post.content);
   const ld = jsonLd({
     "@context": "https://schema.org",
     "@graph": [
@@ -262,7 +283,7 @@ function postHead(post: PublishedPost) {
         "@id": `${url}#article`,
         headline: post.title,
         description,
-        image: absUrl(post.cover_image_url),
+        image,
         datePublished: post.published_at ?? post.updated_at,
         dateModified: post.updated_at,
         articleSection: post.category,
@@ -283,13 +304,32 @@ function postHead(post: PublishedPost) {
           { "@type": "ListItem", position: 3, name: post.title, item: url },
         ],
       },
+      ...(faqs.length
+        ? [{ "@type": "FAQPage", mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) }]
+        : []),
     ],
   });
-  return headTags({ title, description, url, type: "article", image: absUrl(post.cover_image_url), extra: ld });
+  return headTags({
+    title,
+    description,
+    url: post.noindex ? undefined : post.canonical_url || url,
+    robots: post.noindex ? "noindex, follow" : undefined,
+    type: "article",
+    image,
+    extra: ld,
+  });
 }
 
-function postBody(post: PublishedPost) {
-  return `<article class="max-w-[760px] mx-auto px-4 pt-32 pb-10"><nav aria-label="Breadcrumb" class="text-sm text-gray-500 mb-4"><a href="/">Home</a> / <a href="/blog">Blog</a> / <span>${esc(post.title)}</span></nav><p class="text-[#2a6ff3] font-semibold">${esc(post.category)}</p><h1 class="text-4xl font-bold text-gray-900 my-4">${esc(post.title)}</h1><p class="text-xl text-gray-600 mb-4">${esc(post.excerpt)}</p><p class="text-sm text-gray-500 mb-8">By ${esc(post.author_name)} · ${fmtDate(post.published_at ?? post.updated_at)} · ${post.read_time_minutes} min read</p><div class="cn-prose">${cleanHtml(post.content)}</div><p class="mt-10"><a class="text-[#2a6ff3] font-semibold" href="/blog">More articles on the ColdNerd blog</a></p></article>${siteNav()}`;
+function postBody(post: PublishedPost, posts: PublishedPost[]) {
+  const hub = hubForPost(post.slug);
+  const hubLink = hub ? `<p class="mt-10">Learn more: <a class="text-[#2a6ff3] font-semibold" href="/${hub.page}">${esc(hub.anchor)}</a></p>` : "";
+  const related = (hub ? guidesForPage(hub.page, posts) : []).filter((p) => p.slug !== post.slug).slice(0, 3);
+  const relatedList = related.length
+    ? `<h2 class="text-2xl font-bold text-gray-900 mt-10 mb-3">Keep reading</h2><ul class="list-disc pl-6">${related
+        .map((p) => `<li><a class="text-[#2a6ff3]" href="/blog/${p.slug}">${esc(p.title)}</a></li>`)
+        .join("")}</ul>`
+    : "";
+  return `<article class="max-w-[760px] mx-auto px-4 pt-32 pb-10"><nav aria-label="Breadcrumb" class="text-sm text-gray-500 mb-4"><a href="/">Home</a> / <a href="/blog">Blog</a> / <span>${esc(post.title)}</span></nav><p class="text-[#2a6ff3] font-semibold">${esc(post.category)}</p><h1 class="text-4xl font-bold text-gray-900 my-4">${esc(post.title)}</h1><p class="text-xl text-gray-600 mb-4">${esc(post.excerpt)}</p><p class="text-sm text-gray-500 mb-8">By ${esc(post.author_name)} · ${fmtDate(post.published_at ?? post.updated_at)} · ${post.read_time_minutes} min read</p><div class="cn-prose">${cleanHtml(tidyPostHtml(post.content, post.title))}</div>${hubLink}${relatedList}<p class="mt-10"><a class="text-[#2a6ff3] font-semibold" href="/blog">More articles on the ColdNerd blog</a></p></article>${siteNav()}`;
 }
 
 function blogListHead(posts: PublishedPost[]) {
@@ -375,26 +415,38 @@ export function seoPrerender(): Plugin {
     async closeBundle() {
       const indexPath = path.join(outDir, "index.html");
       const template = fs.readFileSync(indexPath, "utf8");
-      const today = new Date().toISOString().slice(0, 10);
       const write = (file: string, html: string) => {
         const full = path.join(outDir, file);
         fs.mkdirSync(path.dirname(full), { recursive: true });
         fs.writeFileSync(full, html);
       };
 
+      const posts = await publishedPosts();
+
       // SEO landing pages
       for (const page of seoPages) {
         const url = `${SITE_URL}/${page.slug}`;
         const head = headTags({ title: page.metaTitle, description: page.metaDescription, url, extra: pageJsonLd(page) });
-        write(`${page.slug}.html`, inject(template, head, renderPageBody(page)));
+        write(`${page.slug}.html`, inject(template, head, renderPageBody(page, posts)));
       }
 
       // Blog list + every published article
-      const posts = await publishedPosts();
       write("blog.html", inject(template, blogListHead(posts), blogListBody(posts)));
       for (const post of posts) {
         if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(post.slug)) continue;
-        write(`blog/${post.slug}.html`, inject(template, postHead(post), postBody(post)));
+        write(`blog/${post.slug}.html`, inject(template, postHead(post), postBody(post, posts)));
+      }
+
+      // Browser-only pages (login, sign-up, pricing, terms): real title, description and robots in the HTML
+      for (const [slug, m] of Object.entries(appPageMeta)) {
+        const head = headTags({
+          title: m.title,
+          description: m.description,
+          url: "canonicalPath" in m ? `${SITE_URL}${m.canonicalPath}` : undefined,
+          robots: "noindex" in m && m.noindex ? "noindex, follow" : undefined,
+        });
+        const body = `<div class="max-w-[860px] mx-auto px-4 pt-32 pb-10"><h1 class="text-4xl font-bold text-gray-900 mb-4">${esc(m.title.replace(/ \| ColdNerd$/, ""))}</h1><p class="text-lg text-gray-600">${esc(m.description)}</p></div>${siteNav()}`;
+        write(`${slug}.html`, inject(template, head, body));
       }
 
       // App shell for pages that only render in the browser (login, sign-up, pricing, articles published
@@ -413,14 +465,16 @@ export function seoPrerender(): Plugin {
         url: `${SITE_URL}/`,
         extra: homeJsonLd(),
       });
-      fs.writeFileSync(indexPath, inject(template, homeHead, homeBody()));
+      fs.writeFileSync(indexPath, inject(template, homeHead, homeBody(posts)));
 
+      const indexable = posts.filter((p) => !p.noindex && !p.canonical_url);
+      const newestPost = posts.reduce((d, p) => (p.updated_at > d ? p.updated_at : d), "").slice(0, 10);
       const urls = [
-        { loc: `${SITE_URL}/`, lastmod: today, priority: "1.0" },
-        ...seoPages.map((p) => ({ loc: `${SITE_URL}/${p.slug}`, lastmod: today, priority: "0.8" })),
-        { loc: `${SITE_URL}/blog`, lastmod: today, priority: "0.7" },
-        ...posts.map((p) => ({ loc: `${SITE_URL}/blog/${p.slug}`, lastmod: p.updated_at.slice(0, 10), priority: "0.6" })),
-        { loc: `${SITE_URL}/terms-and-conditions`, lastmod: today, priority: "0.3" },
+        { loc: `${SITE_URL}/`, lastmod: HOME_UPDATED, priority: "1.0" },
+        ...seoPages.map((p) => ({ loc: `${SITE_URL}/${p.slug}`, lastmod: SEO_PAGES_UPDATED, priority: "0.8" })),
+        { loc: `${SITE_URL}/blog`, lastmod: newestPost || HOME_UPDATED, priority: "0.7" },
+        ...indexable.map((p) => ({ loc: `${SITE_URL}/blog/${p.slug}`, lastmod: p.updated_at.slice(0, 10), priority: "0.6" })),
+        { loc: `${SITE_URL}/terms-and-conditions`, lastmod: TERMS_UPDATED, priority: "0.3" },
       ];
       fs.writeFileSync(
         path.join(outDir, "sitemap.xml"),
@@ -430,9 +484,9 @@ export function seoPrerender(): Plugin {
       );
       fs.writeFileSync(path.join(outDir, "llms.txt"), llmsTxt(posts));
       console.log(
-        `[seo] pre-rendered ${seoPages.length} pages, blog + ${posts.length} articles, app shell, 404, sitemap (${urls.length} URLs), llms.txt`
+        `[seo] pre-rendered ${seoPages.length} pages, blog + ${posts.length} articles, login/signup/pricing/terms, app shell, 404, sitemap (${urls.length} URLs), llms.txt`
       );
-      console.log(`[seo] IndexNow: ${await submitIndexNow(recentlyUpdated(posts))}`);
+      console.log(`[seo] IndexNow: ${await submitIndexNow(recentlyUpdated(indexable))}`);
     },
   };
 }

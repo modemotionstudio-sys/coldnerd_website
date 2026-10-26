@@ -8,7 +8,7 @@
  */
 import { SITE_URL } from "./pages";
 
-export const INDEXNOW_KEY = "3a3e24301c9778f25a50b1e41105eea0";
+export const INDEXNOW_KEY = "134fe00a673c4c419c3757b22c77381a";
 
 /** Articles updated within this window are submitted (a publish triggers a rebuild within minutes). */
 const RECENT_MS = 2 * 24 * 60 * 60 * 1000;

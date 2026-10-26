@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import DOMPurify from "dompurify";
 import { supabase } from "./supabase";
 import { seedPosts } from "./blogSeed";
+import { publicSlug } from "./postHtml";
 
 export type PostStatus = "draft" | "published";
 
@@ -20,12 +21,19 @@ export interface BlogPost {
   position: number;
   seo_title: string | null;
   seo_description: string | null;
+  /** Extra SEO fields (migration 20261026000000_blog_seo_fields.sql); may be missing on older rows/databases. */
+  focus_keyword?: string | null;
+  og_image_url?: string | null;
+  canonical_url?: string | null;
+  noindex?: boolean | null;
   published_at: string | null;
   created_at: string;
   updated_at: string;
 }
 
 export type BlogPostInput = Omit<BlogPost, "id" | "created_at" | "updated_at">;
+
+const EXTRA_SEO_COLUMNS = ["focus_keyword", "og_image_url", "canonical_url", "noindex"] as const;
 
 export const IMAGE_BUCKET = "blog-images";
 const TABLE = "blog_posts";
@@ -69,19 +77,23 @@ export async function fetchPublishedPosts(
 
   const { data, error } = await query;
   if (error) console.warn("[blog] falling back to starter articles:", error.message);
-  if (!error && data && data.length > 0) return data as unknown as BlogPost[];
+  if (!error && data && data.length > 0) return (data as unknown as BlogPost[]).map(withPublicSlug);
 
   let posts = orderPosts(seedPosts, ordering);
   if (opts.featuredOnly) posts = posts.filter((p) => p.featured);
-  return opts.limit ? posts.slice(0, opts.limit) : posts;
+  return (opts.limit ? posts.slice(0, opts.limit) : posts).map(withPublicSlug);
 }
 
-/** Returns a post by slug. Drafts are only returned to CMS managers (enforced by RLS). */
+const withPublicSlug = <T extends { slug: string }>(p: T): T => ({ ...p, slug: publicSlug(p.slug) });
+
+/** Returns a post by its public slug. Drafts are only returned to CMS managers (enforced by RLS). */
 export async function fetchPostBySlug(slug: string): Promise<BlogPost | null> {
-  const { data, error } = await supabase.from(TABLE).select("*").eq("slug", slug).maybeSingle();
+  const candidates = [slug, `blog-${slug}`];
+  const { data, error } = await supabase.from(TABLE).select("*").in("slug", candidates).limit(1);
   if (error) console.warn("[blog] falling back to starter articles:", error.message);
-  if (!error && data) return data as BlogPost;
-  return seedPosts.find((p) => p.slug === slug) ?? null;
+  if (!error && data?.length) return withPublicSlug(data[0] as BlogPost);
+  const seed = seedPosts.find((p) => candidates.includes(p.slug));
+  return seed ? withPublicSlug(seed) : null;
 }
 
 // ---------------------------------------------------------------------------
@@ -113,13 +125,28 @@ export async function createPost(input: BlogPostInput) {
     .limit(1)
     .maybeSingle();
   const position = first ? first.position - 1 : 0;
-  const { data, error } = await supabase.from(TABLE).insert({ ...input, position }).select("*").single();
-  if (error) throw friendlyError(error);
-  return data as BlogPost;
+  return withSeoFallback({ ...input, position }, (row) => supabase.from(TABLE).insert(row).select("*").single());
 }
 
 export async function updatePost(id: string, patch: Partial<BlogPostInput>) {
-  const { data, error } = await supabase.from(TABLE).update(patch).eq("id", id).select("*").single();
+  return withSeoFallback(patch, (row) => supabase.from(TABLE).update(row).eq("id", id).select("*").single());
+}
+
+/**
+ * Saves the row; if the database doesn't have the extra SEO columns yet (migration not run),
+ * saves again without them so publishing never breaks.
+ */
+async function withSeoFallback<R extends Record<string, unknown>>(
+  row: R,
+  run: (row: Partial<R>) => PromiseLike<{ data: unknown; error: { code?: string; message: string } | null }>
+) {
+  let { data, error } = await run(row);
+  if (error && (error.code === "PGRST204" || /column/i.test(error.message)) && EXTRA_SEO_COLUMNS.some((c) => c in row)) {
+    const rest: Partial<R> = { ...row };
+    for (const c of EXTRA_SEO_COLUMNS) delete rest[c];
+    ({ data, error } = await run(rest));
+    if (!error) console.warn("[blog] extra SEO fields not saved: run supabase/migrations/20261026000000_blog_seo_fields.sql");
+  }
   if (error) throw friendlyError(error);
   return data as BlogPost;
 }

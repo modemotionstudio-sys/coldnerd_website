@@ -110,9 +110,9 @@ export const seoPages: SeoPage[] = [
     slug: "instagram-outreach",
     label: "Instagram Outreach",
     group: "learn",
-    metaTitle: "Instagram Outreach: The Complete Guide to Getting Replies (2026)",
+    metaTitle: "Instagram Outreach: 2026 Guide, Templates & Free Tool",
     metaDescription:
-      "Learn how to do Instagram outreach that gets replies: targeting, personalized DMs, follow-ups, safety limits and how to scale with ColdNerd.",
+      "Learn Instagram outreach that gets replies: find the right prospects, write personal DMs, follow up and stay safe. Step-by-step guide with examples.",
     eyebrow: "Learn",
     h1: "Instagram Outreach: How to Start Conversations That Turn Into Customers",
     intro:
@@ -174,9 +174,9 @@ export const seoPages: SeoPage[] = [
     slug: "instagram-prospecting",
     label: "Instagram Prospecting",
     group: "learn",
-    metaTitle: "Instagram Prospecting: How to Find Qualified Leads on Instagram",
+    metaTitle: "Instagram Prospecting: Find Qualified Leads Fast | ColdNerd",
     metaDescription:
-      "A practical guide to Instagram prospecting: where to find ideal prospects, how to qualify them and how ColdNerd automates discovery and AI profile analysis.",
+      "How to prospect on Instagram: find the right accounts by niche, hashtag and followers, qualify them, and turn them into conversations.",
     eyebrow: "Learn",
     h1: "Instagram Prospecting: How to Find the Right People to Message",
     intro:
@@ -287,9 +287,9 @@ export const seoPages: SeoPage[] = [
     slug: "instagram-dm-automation",
     label: "Instagram DM Automation",
     group: "learn",
-    metaTitle: "Instagram DM Automation: Send Personalized DMs at Scale Safely",
+    metaTitle: "Instagram DM Automation: Automate DMs Safely | ColdNerd",
     metaDescription:
-      "How Instagram DM automation works, how to keep it safe and personal, and how ColdNerd automates AI-personalized DMs, follow-ups and voice notes.",
+      "Automate Instagram DMs without risking your account: AI-personalised messages, paced sending, follow-ups and reply tracking in one tool.",
     eyebrow: "Learn",
     h1: "Instagram DM Automation: Personal Messages, Automated Safely",
     intro:
@@ -343,9 +343,9 @@ export const seoPages: SeoPage[] = [
     slug: "for-agencies",
     label: "For Agencies",
     group: "solutions",
-    metaTitle: "ColdNerd for Agencies: Instagram Outreach for Every Client",
+    metaTitle: "Instagram Outreach Tool for Agencies | Manage Client Accounts",
     metaDescription:
-      "Run Instagram outreach for your agency and your clients: unlimited accounts, client workspaces, team members, voice notes and API access with ColdNerd Agency.",
+      "Run Instagram outreach for multiple clients from one dashboard: prospecting, AI-personalised DMs, follow-ups and reporting per account.",
     eyebrow: "Solutions",
     h1: "Instagram Outreach Software Built for Agencies",
     intro:
@@ -397,9 +397,9 @@ export const seoPages: SeoPage[] = [
     slug: "for-freelancers",
     label: "For Freelancers",
     group: "solutions",
-    metaTitle: "ColdNerd for Freelancers: Find Clients on Instagram on Autopilot",
+    metaTitle: "Find Freelance Clients on Instagram | ColdNerd",
     metaDescription:
-      "Freelancers use ColdNerd to find clients on Instagram: discover prospects, send AI-personalized DMs and automate follow-ups — starting with the affordable Starter plan.",
+      "Land freelance clients on Instagram without living in your DMs. ColdNerd finds prospects, writes personalised DMs and handles follow-ups.",
     eyebrow: "Solutions",
     h1: "Find Freelance Clients on Instagram — Without Spending All Day in DMs",
     intro:
@@ -443,6 +443,34 @@ export const seoPages: SeoPage[] = [
 export const seoPageBySlug = (slug: string) => seoPages.find((p) => p.slug === slug);
 export const seoPagesInGroup = (group: SeoPage["group"]) => seoPages.filter((p) => p.group === group);
 
+/**
+ * Head tags for pages that only render in the browser. The same values are
+ * pre-rendered into their static HTML, so crawlers see them without JavaScript.
+ */
+export const appPageMeta = {
+  login: {
+    title: "Log in | ColdNerd",
+    description: "Log in to your ColdNerd account to manage your Instagram outreach and DM automation campaigns.",
+    noindex: true,
+  },
+  signup: {
+    title: "Create Your ColdNerd Account",
+    description: "Create your ColdNerd account to start AI-personalised Instagram outreach with automated follow-ups and built-in account safety.",
+    noindex: true,
+  },
+  pricing: {
+    title: "ColdNerd Pricing: Instagram DM Automation Plans",
+    description:
+      "See ColdNerd plans for AI Instagram outreach and DM automation, for freelancers, agencies and teams. Compare features and pick the right plan.",
+    noindex: true,
+  },
+  "terms-and-conditions": {
+    title: "Terms & Privacy Policy | ColdNerd",
+    description: "ColdNerd's terms of service and privacy policy: what data we collect, how it is used and your rights.",
+    canonicalPath: "/terms-and-conditions",
+  },
+} satisfies Record<string, { title: string; description: string; noindex?: boolean; canonicalPath?: string }>;
+
 /** Comparison articles (published through the blog CMS). */
 export const comparisonLinks = [
   { label: "ColdNerd vs ManyChat", href: "/blog/coldnerd-vs-manychat" },
@@ -454,3 +482,82 @@ export const comparisonLinks = [
 export const learnLinks = seoPages
   .filter((p) => p.group === "learn")
   .map((p) => ({ label: p.label, href: `/${p.slug}` }));
+
+/**
+ * Internal linking plan: each feature page ("hub") lists its guides in a
+ * "Related guides" section, and each of those articles links back to the hub.
+ * Blog slugs are the public ones (without the old "blog-" prefix).
+ */
+export const guideHubs: { page: string; anchor: string; posts: string[] }[] = [
+  {
+    page: "instagram-outreach",
+    anchor: "Instagram outreach guide",
+    posts: [
+      "cold-dm-outreach-complete-guide",
+      "instagram-cold-outreach-the-complete-guide",
+      "instagram-outreach-mistakes",
+      "best-instagram-outreach-tools",
+      "dm-templates-40-percent-reply-rates",
+      "write-instagram-cold-dms-that-get-replies",
+      "how-to-get-10k-instagram-followers",
+      "instagram-algorithm-what-actually-matters",
+      "avoid-instagram-dms-going-to-spam",
+      "instagram-dm-etiquette-first-message",
+      "instagram-dm-reply-rate-benchmarks",
+    ],
+  },
+  {
+    page: "instagram-dm-automation",
+    anchor: "Instagram DM automation",
+    posts: [
+      "instagram-dm-automation-what-to-automate",
+      "safely-automate-instagram-dms",
+      "account-warmup-why-its-critical",
+      "smart-follow-ups-boost-response-rate",
+      "personalized-cold-dms-at-scale",
+      "instagram-cold-outreach-ai-automation",
+      "scaling-dm-strategy-100-to-10000",
+      "coldnerd-vs-manychat",
+      "how-to-automate-instagram-dms",
+    ],
+  },
+  {
+    page: "instagram-prospecting",
+    anchor: "Instagram prospecting",
+    posts: [
+      "instagram-prospecting-guide-agencies",
+      "find-ideal-clients-instagram",
+      "find-high-quality-leads-instagram",
+      "coldnerd-vs-phantombuster",
+      "find-decision-maker-small-business-instagram",
+    ],
+  },
+  {
+    page: "instagram-lead-generation",
+    anchor: "Instagram lead generation",
+    posts: ["instagram-lead-generation-for-saas-companies-2026-guide", "instagram-lead-generation-system"],
+  },
+  {
+    page: "for-agencies",
+    anchor: "Instagram outreach for agencies",
+    posts: ["instagram-outreach-for-agencies", "how-agencies-manage-50-client-accounts", "instagram-prospecting-guide-agencies"],
+  },
+  {
+    page: "for-freelancers",
+    anchor: "find clients on Instagram",
+    posts: ["instagram-outreach-for-freelancers-get-your-first-clients"],
+  },
+];
+
+/** The feature page an article belongs to (first match), for its link back up. */
+export const hubForPost = (slug: string) => {
+  const hub = guideHubs.find((h) => h.posts.includes(slug));
+  const page = hub && seoPageBySlug(hub.page);
+  return hub && page ? { ...hub, label: page.label } : undefined;
+};
+
+/** Articles listed under a feature page, in plan order. */
+export const guidesForPage = <T extends { slug: string }>(page: string, posts: T[]) => {
+  const slugs = guideHubs.find((h) => h.page === page)?.posts ?? [];
+  return slugs.map((slug) => posts.find((p) => p.slug === slug)).filter((p): p is T => !!p);
+};

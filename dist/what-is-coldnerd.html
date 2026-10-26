@@ -26,15 +26,23 @@
     <meta name="twitter:description" content="ColdNerd is AI-powered Instagram outreach software that finds prospects, writes personalized DMs, sends follow-ups and tracks replies — with built-in account safety." />
     <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://www.coldnerd.com/what-is-coldnerd","url":"https://www.coldnerd.com/what-is-coldnerd","name":"What Is ColdNerd? AI Instagram Outreach & DM Automation Software","description":"ColdNerd is AI-powered Instagram outreach software that finds prospects, writes personalized DMs, sends follow-ups and tracks replies — with built-in account safety.","isPartOf":{"@type":"WebSite","name":"ColdNerd","url":"https://www.coldnerd.com"},"publisher":{"@type":"Organization","name":"ColdNerd","url":"https://www.coldnerd.com","logo":"https://www.coldnerd.com/logo.png"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.coldnerd.com"},{"@type":"ListItem","position":2,"name":"What Is ColdNerd?","item":"https://www.coldnerd.com/what-is-coldnerd"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is ColdNerd a chatbot?","acceptedAnswer":{"@type":"Answer","text":"No. Chatbots reply to people who message you first. ColdNerd is an outbound outreach tool: it helps you start conversations with new prospects and follow up with them."}},{"@type":"Question","name":"Does ColdNerd use AI?","acceptedAnswer":{"@type":"Answer","text":"Yes. ColdNerd uses AI to analyze prospect profiles and write personalized messages, so each DM references something relevant to the person receiving it."}},{"@type":"Question","name":"How many Instagram accounts can I connect?","acceptedAnswer":{"@type":"Answer","text":"Starter supports 3 accounts, Growth supports 15 and Agency supports unlimited accounts."}},{"@type":"Question","name":"Is ColdNerd safe for my Instagram account?","acceptedAnswer":{"@type":"Answer","text":"ColdNerd is designed to reduce risk with automatic warmup, daily sending limits and human-like timing. As with any automation, following sensible volumes and writing genuine messages is still important."}}]}]}</script>
     <!-- seo:end -->
-      <!-- Google tag (gtag.js) -->
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29"></script>
+      <!-- Google tag (gtag.js): only on the live site, so Vercel previews and localhost don't mix test visits
+           into GA4. Page views are sent by the app on every route change (src/lib/analytics.ts). -->
       <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-CE4STCRD29');
+        if (/(^|\.)coldnerd\.com$/.test(location.hostname)) {
+          window.gtag = function () { dataLayer.push(arguments); };
+          var internal = false;
+          try { internal = !!localStorage.getItem('cn:internal'); } catch (e) {}
+          gtag('js', new Date());
+          gtag('config', 'G-CE4STCRD29', internal ? { send_page_view: false, traffic_type: 'internal' } : { send_page_view: false });
+          var ga = document.createElement('script');
+          ga.async = true;
+          ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29';
+          document.head.appendChild(ga);
+        }
       </script>
-      <script type="module" crossorigin src="/assets/index-Bmyo2rUX.js"></script>
+      <script type="module" crossorigin src="/assets/index-UXx5Qheu.js"></script>
       <link rel="stylesheet" crossorigin href="/assets/index-DQC9fUWk.css">
     </head>
 

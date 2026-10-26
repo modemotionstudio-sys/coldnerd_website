@@ -15,13 +15,21 @@
       <title>ColdNerd — AI Instagram Outreach & DM Automation Software</title>
       <meta name="description" content="Find prospects, send AI-personalized Instagram DMs, automate follow-ups and track replies with ColdNerd — Instagram outreach with built-in account safety." />
       <!-- seo:end -->
-      <!-- Google tag (gtag.js) -->
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29"></script>
+      <!-- Google tag (gtag.js): only on the live site, so Vercel previews and localhost don't mix test visits
+           into GA4. Page views are sent by the app on every route change (src/lib/analytics.ts). -->
       <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-CE4STCRD29');
+        if (/(^|\.)coldnerd\.com$/.test(location.hostname)) {
+          window.gtag = function () { dataLayer.push(arguments); };
+          var internal = false;
+          try { internal = !!localStorage.getItem('cn:internal'); } catch (e) {}
+          gtag('js', new Date());
+          gtag('config', 'G-CE4STCRD29', internal ? { send_page_view: false, traffic_type: 'internal' } : { send_page_view: false });
+          var ga = document.createElement('script');
+          ga.async = true;
+          ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29';
+          document.head.appendChild(ga);
+        }
       </script>
     </head>
 
