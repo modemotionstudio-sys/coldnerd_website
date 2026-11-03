@@ -449,13 +449,32 @@ export function seoPrerender(): Plugin {
         write(`${slug}.html`, inject(template, head, body));
       }
 
-      // App shell for pages that only render in the browser (login, sign-up, pricing, articles published
-      // since the last deploy…). It has no canonical, so it never claims to be the homepage.
-      write("app.html", inject(template, headTags({ title: "ColdNerd", description: GENERIC_DESCRIPTION }), ""));
+      // App shell for /dashboard and /admin (vercel.json rewrites). noindex, no canonical, and its own
+      // description so search engines don't see a copy of the homepage's.
+      write(
+        "app.html",
+        inject(
+          template,
+          headTags({
+            title: "ColdNerd App | Instagram Outreach & DM Automation",
+            description: "The ColdNerd app area: sign in to manage Instagram outreach campaigns, follow-ups and replies.",
+            robots: "noindex, follow",
+          }),
+          ""
+        )
+      );
       // Real 404 page: Vercel serves it with a 404 status for unknown URLs.
       write(
         "404.html",
-        inject(template, headTags({ title: "Page not found - ColdNerd", description: GENERIC_DESCRIPTION, robots: "noindex" }), "")
+        inject(
+          template,
+          headTags({
+            title: "Page not found | ColdNerd",
+            description: "This page doesn't exist on ColdNerd. Go to the homepage or the blog to find Instagram outreach guides.",
+            robots: "noindex",
+          }),
+          ""
+        )
       );
 
       // Homepage (written last because index.html is the template for everything above)

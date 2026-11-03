@@ -449,23 +449,23 @@ export const seoPagesInGroup = (group: SeoPage["group"]) => seoPages.filter((p) 
  */
 export const appPageMeta = {
   login: {
-    title: "Log in | ColdNerd",
+    title: "Log in to ColdNerd | Instagram Outreach & DM Automation",
     description: "Log in to your ColdNerd account to manage your Instagram outreach and DM automation campaigns.",
     noindex: true,
   },
   signup: {
-    title: "Create Your ColdNerd Account",
+    title: "Create Your ColdNerd Account | Instagram DM Automation",
     description: "Create your ColdNerd account to start AI-personalised Instagram outreach with automated follow-ups and built-in account safety.",
     noindex: true,
   },
   pricing: {
-    title: "ColdNerd Pricing: Instagram DM Automation Plans",
+    title: "ColdNerd Pricing: Instagram DM Automation Plans & Features",
     description:
       "See ColdNerd plans for AI Instagram outreach and DM automation, for freelancers, agencies and teams. Compare features and pick the right plan.",
     noindex: true,
   },
   "terms-and-conditions": {
-    title: "Terms & Privacy Policy | ColdNerd",
+    title: "Terms of Service & Privacy Policy | ColdNerd",
     description: "ColdNerd's terms of service and privacy policy: what data we collect, how it is used and your rights.",
     canonicalPath: "/terms-and-conditions",
   },
