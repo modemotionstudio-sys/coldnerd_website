@@ -1,4 +1,4 @@
-import{j as e,L as t,m as a}from"./index-Bo177iCg.js";import{A as s}from"./arrow-left-Dj8X1roq.js";const i="/logo-nav.webp",r=[{title:"1. Who We Are",content:`Cold Nerd ("we", "our", or "us") operates the website coldnerd.com and provides an AI-powered Instagram outreach automation platform ("the Service"). We are the data controller for information collected through our platform.
+import{j as e,L as t,m as a}from"./index-D4j3S0wN.js";import{A as s}from"./arrow-left-CTfe9ftp.js";const i="/logo-nav.webp",r=[{title:"1. Who We Are",content:`Cold Nerd ("we", "our", or "us") operates the website coldnerd.com and provides an AI-powered Instagram outreach automation platform ("the Service"). We are the data controller for information collected through our platform.
 
 For all payment and billing inquiries, Paddle.com Market Limited acts as the Merchant of Record and is an independent data controller for payment-related data.`},{title:"2. Information We Collect",content:`We collect the following categories of information:
 

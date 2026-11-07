@@ -10,6 +10,13 @@ declare global {
   }
 }
 
+// Waits until the page has loaded and the browser is idle, so the widget never slows the first view on phones.
+function whenIdle(fn: () => void) {
+  const idle = () => ("requestIdleCallback" in window ? window.requestIdleCallback(fn, { timeout: 3000 }) : setTimeout(fn, 1500));
+  if (document.readyState === "complete") idle();
+  else window.addEventListener("load", idle, { once: true });
+}
+
 // Loads Trustpilot's script once, then renders the widget into `el`.
 function loadTrustBox(el: HTMLElement) {
   if (window.Trustpilot) {
@@ -32,7 +39,8 @@ export function TrustpilotBadge() {
   const configured = isTrustpilotConfigured();
 
   useEffect(() => {
-    if (configured && ref.current) loadTrustBox(ref.current);
+    const el = ref.current;
+    if (configured && el) whenIdle(() => loadTrustBox(el));
   }, [configured]);
 
   if (!configured) return null;
@@ -42,8 +50,10 @@ export function TrustpilotBadge() {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 2.3, ease: "easeOut" }}
-      className="shrink-0 w-[240px]"
-      style={{ minHeight: TRUSTPILOT.height }}
+      // The Mini TrustBox is 150px tall with empty space at the bottom. On desktop the negative margins let it
+      // overlap that space instead of making the hero taller (which pushed the headline into the navbar).
+      className="shrink-0 w-[240px] lg:-mt-5 lg:-mb-[60px]"
+      style={{ height: TRUSTPILOT.height }}
     >
       <div
         ref={ref}
