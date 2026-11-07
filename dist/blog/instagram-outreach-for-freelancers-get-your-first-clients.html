@@ -27,7 +27,9 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.coldnerd.com/blog/instagram-outreach-for-freelancers-get-your-first-clients#article","headline":"Instagram Outreach for Freelancers: Get Your First Clients","description":"Learn how freelancers use Instagram outreach to land their first clients: profile setup, finding prospects, DM templates, follow-ups and turning replies into work.","image":"https://digzspnffmdrqpagxswi.supabase.co/storage/v1/object/public/blog-images/uploads/1792516466569-avwacx-pastel-creative-freelancer-workspace.png","datePublished":"2026-10-20T17:17:53.905775+00:00","dateModified":"2026-10-20T17:17:53.905775+00:00","articleSection":"General","author":{"@type":"Organization","name":"ColdNerd Team"},"publisher":{"@type":"Organization","name":"ColdNerd","url":"https://www.coldnerd.com","logo":{"@type":"ImageObject","url":"https://www.coldnerd.com/logo.png"}},"mainEntityOfPage":"https://www.coldnerd.com/blog/instagram-outreach-for-freelancers-get-your-first-clients"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.coldnerd.com"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.coldnerd.com/blog"},{"@type":"ListItem","position":3,"name":"Instagram Outreach for Freelancers: Get Your First Clients","item":"https://www.coldnerd.com/blog/instagram-outreach-for-freelancers-get-your-first-clients"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can I really get freelance clients from Instagram DMs?","acceptedAnswer":{"@type":"Answer","text":"Yes. Designers, editors, writers, developers and marketers land clients through Instagram every day. It works best with a clear niche, a strong profile and personal, value-first messages."}},{"@type":"Question","name":"How many DMs should a freelancer send per day?","acceptedAnswer":{"@type":"Answer","text":"Start small, around 10 to 20 thoughtful DMs a day on an established account, and increase slowly. Quality and consistency matter more than volume."}},{"@type":"Question","name":"Do I need a business account?","acceptedAnswer":{"@type":"Answer","text":"A professional or creator account is recommended. It looks more credible to prospects and gives you useful insights."}},{"@type":"Question","name":"What if I don't have a portfolio yet?","acceptedAnswer":{"@type":"Answer","text":"Do one or two small projects for real businesses at a discount or for free, and turn them into case studies. Even sample work for an imaginary brand is better than nothing."}},{"@type":"Question","name":"How long does it take to get the first client?","acceptedAnswer":{"@type":"Answer","text":"It varies by niche and offer. With daily outreach and good follow-ups, many freelancers start getting positive replies within the first couple of weeks."}},{"@type":"Question","name":"Is it okay to automate Instagram outreach?","acceptedAnswer":{"@type":"Answer","text":"Yes, if the tool behaves like a human: warmup, gradual limits, random timing and personalised messages. Avoid tools that blast the same message to everyone."}}]}]}</script>
     <!-- seo:end -->
       <!-- Google tag (gtag.js): only on the live site, so Vercel previews and localhost don't mix test visits
-           into GA4. Page views are sent by the app on every route change (src/lib/analytics.ts). -->
+           into GA4. Page views are sent by the app on every route change (src/lib/analytics.ts).
+           gtag.js itself is downloaded once the page has loaded and the browser is idle, so it doesn't slow
+           down the first view on phones; events sent before that wait in dataLayer and are not lost. -->
       <script>
         window.dataLayer = window.dataLayer || [];
         if (/(^|\.)coldnerd\.com$/.test(location.hostname)) {
@@ -36,13 +38,19 @@
           try { internal = !!localStorage.getItem('cn:internal'); } catch (e) {}
           gtag('js', new Date());
           gtag('config', 'G-CE4STCRD29', internal ? { send_page_view: false, traffic_type: 'internal' } : { send_page_view: false });
-          var ga = document.createElement('script');
-          ga.async = true;
-          ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29';
-          document.head.appendChild(ga);
+          var loadGa = function () {
+            var ga = document.createElement('script');
+            ga.async = true;
+            ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29';
+            document.head.appendChild(ga);
+          };
+          window.addEventListener('load', function () {
+            if ('requestIdleCallback' in window) requestIdleCallback(loadGa, { timeout: 3000 });
+            else setTimeout(loadGa, 1500);
+          });
         }
       </script>
-      <script type="module" crossorigin src="/assets/index-DZZBIOk1.js"></script>
+      <script type="module" crossorigin src="/assets/index-Bo177iCg.js"></script>
       <link rel="stylesheet" crossorigin href="/assets/index-DQC9fUWk.css">
     </head>
 

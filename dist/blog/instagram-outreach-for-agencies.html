@@ -27,7 +27,9 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.coldnerd.com/blog/instagram-outreach-for-agencies#article","headline":"Instagram Outreach for Agencies: Complete Guide (2026)","description":"Learn how agencies run Instagram outreach for themselves and their clients: targeting, DM scripts, account safety, reporting and pricing outreach as a service.","image":"https://digzspnffmdrqpagxswi.supabase.co/storage/v1/object/public/blog-images/uploads/1792424594423-bmegup-ai-powered-messaging-network.png","datePublished":"2026-10-19T15:44:01.635239+00:00","dateModified":"2026-10-19T15:44:01.635239+00:00","articleSection":"General","author":{"@type":"Organization","name":"ColdNerd Team"},"publisher":{"@type":"Organization","name":"ColdNerd","url":"https://www.coldnerd.com","logo":{"@type":"ImageObject","url":"https://www.coldnerd.com/logo.png"}},"mainEntityOfPage":"https://www.coldnerd.com/blog/instagram-outreach-for-agencies"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.coldnerd.com"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.coldnerd.com/blog"},{"@type":"ListItem","position":3,"name":"Instagram Outreach for Agencies: Complete Guide (2026)","item":"https://www.coldnerd.com/blog/instagram-outreach-for-agencies"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Does Instagram outreach still work for agencies in 2026?","acceptedAnswer":{"@type":"Answer","text":"Yes. Business owners are on Instagram every day, and a personal DM is still one of the cheapest ways to start a sales conversation. It works best when messages are relevant and follow-ups are consistent."}},{"@type":"Question","name":"Can I run outreach from my clients' Instagram accounts?","acceptedAnswer":{"@type":"Answer","text":"Yes, as long as the client agrees in writing and the account is warmed up first. Many agencies also use a dedicated outreach account for each client to protect the main brand profile."}},{"@type":"Question","name":"How many DMs can an agency send per day?","acceptedAnswer":{"@type":"Answer","text":"There's no single number. It depends on each account's age, history and how people respond. Start small on every account and increase gradually. A good tool manages these limits per account for you."}},{"@type":"Question","name":"Is Instagram DM automation safe for client accounts?","acceptedAnswer":{"@type":"Answer","text":"It can be, when the tool behaves like a real person: warmup, gradual ramp-up, random timing, daily caps and message variation. Avoid anything that blasts identical messages at high speed."}},{"@type":"Question","name":"How many client accounts can I manage with ColdNerd?","acceptedAnswer":{"@type":"Answer","text":"The Agency plan includes unlimited Instagram accounts and client workspaces, plus team members and API access."}},{"@type":"Question","name":"What should I charge for Instagram outreach as a service?","acceptedAnswer":{"@type":"Answer","text":"Most agencies use a monthly retainer, pay per lead, or a mix of both. Start with a 30-day pilot, prove results, then move clients onto a retainer."}},{"@type":"Question","name":"Ready to make Instagram your agency's growth engine?","acceptedAnswer":{"@type":"Answer","text":"Instagram outreach works for agencies because it's personal, cheap and measurable. Do it well for yourself and you'll never rely on referrals alone again. Do it well for clients and you've got a service they'll pay for month after month. The formula is simple: a sharp ICP, warmed-up accounts, human messages, steady follow-ups, fast replies and honest reporting. The hard part is doing it every day across every client without burning out. That's exactly what ColdNerd is for. Start your first agency campaign with ColdNerd and see how many conversations one dashboard can start."}}]}]}</script>
     <!-- seo:end -->
       <!-- Google tag (gtag.js): only on the live site, so Vercel previews and localhost don't mix test visits
-           into GA4. Page views are sent by the app on every route change (src/lib/analytics.ts). -->
+           into GA4. Page views are sent by the app on every route change (src/lib/analytics.ts).
+           gtag.js itself is downloaded once the page has loaded and the browser is idle, so it doesn't slow
+           down the first view on phones; events sent before that wait in dataLayer and are not lost. -->
       <script>
         window.dataLayer = window.dataLayer || [];
         if (/(^|\.)coldnerd\.com$/.test(location.hostname)) {
@@ -36,13 +38,19 @@
           try { internal = !!localStorage.getItem('cn:internal'); } catch (e) {}
           gtag('js', new Date());
           gtag('config', 'G-CE4STCRD29', internal ? { send_page_view: false, traffic_type: 'internal' } : { send_page_view: false });
-          var ga = document.createElement('script');
-          ga.async = true;
-          ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29';
-          document.head.appendChild(ga);
+          var loadGa = function () {
+            var ga = document.createElement('script');
+            ga.async = true;
+            ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29';
+            document.head.appendChild(ga);
+          };
+          window.addEventListener('load', function () {
+            if ('requestIdleCallback' in window) requestIdleCallback(loadGa, { timeout: 3000 });
+            else setTimeout(loadGa, 1500);
+          });
         }
       </script>
-      <script type="module" crossorigin src="/assets/index-DZZBIOk1.js"></script>
+      <script type="module" crossorigin src="/assets/index-Bo177iCg.js"></script>
       <link rel="stylesheet" crossorigin href="/assets/index-DQC9fUWk.css">
     </head>
 

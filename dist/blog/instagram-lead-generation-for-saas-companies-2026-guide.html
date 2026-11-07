@@ -27,7 +27,9 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.coldnerd.com/blog/instagram-lead-generation-for-saas-companies-2026-guide#article","headline":"Instagram Lead Generation for SaaS Companies (2026 Guide)","description":"Learn how SaaS companies use Instagram for lead generation: finding ideal customers, personalised DM outreach, demo booking, content funnels and the metrics that matter.","image":"https://digzspnffmdrqpagxswi.supabase.co/storage/v1/object/public/blog-images/uploads/1792601614592-udz33t-pastel-saas-productivity-dashboard-scene.png","datePublished":"2026-10-21T16:54:15.287703+00:00","dateModified":"2026-10-21T16:54:15.287703+00:00","articleSection":"General","author":{"@type":"Organization","name":"ColdNerd Team"},"publisher":{"@type":"Organization","name":"ColdNerd","url":"https://www.coldnerd.com","logo":{"@type":"ImageObject","url":"https://www.coldnerd.com/logo.png"}},"mainEntityOfPage":"https://www.coldnerd.com/blog/instagram-lead-generation-for-saas-companies-2026-guide"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.coldnerd.com"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.coldnerd.com/blog"},{"@type":"ListItem","position":3,"name":"Instagram Lead Generation for SaaS Companies (2026 Guide)","item":"https://www.coldnerd.com/blog/instagram-lead-generation-for-saas-companies-2026-guide"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can Instagram really generate B2B leads for SaaS?","acceptedAnswer":{"@type":"Answer","text":"Yes, especially when your customers are small businesses, creators or founders. Many of them use Instagram daily and run their business from it, which makes it an effective B2B lead source with precise targeting."}},{"@type":"Question","name":"How fast can a SaaS company get leads from Instagram?","acceptedAnswer":{"@type":"Answer","text":"Outbound DM campaigns can start conversations within days of launching. Content-only strategies usually take months to build momentum."}},{"@type":"Question","name":"Do we need to run Instagram ads?","acceptedAnswer":{"@type":"Answer","text":"No. Ads can help with retargeting later, but outbound outreach generates leads with zero ad spend."}},{"@type":"Question","name":"Should we DM from the brand account or a founder account?","acceptedAnswer":{"@type":"Answer","text":"A founder or team member account usually gets more replies because it feels personal. Keep the brand account for content and social proof."}},{"@type":"Question","name":"Is Instagram lead generation better than LinkedIn for SaaS?","acceptedAnswer":{"@type":"Answer","text":"It depends on your buyer. For enterprise software, LinkedIn wins. For tools that sell to small businesses, creators and ecommerce brands, Instagram often reaches buyers LinkedIn misses."}},{"@type":"Question","name":"Is automating Instagram DMs safe?","acceptedAnswer":{"@type":"Answer","text":"It can be when the tool behaves like a person: warmup, gradual limits, random timing and personalised messages. Avoid anything that blasts identical DMs."}}]}]}</script>
     <!-- seo:end -->
       <!-- Google tag (gtag.js): only on the live site, so Vercel previews and localhost don't mix test visits
-           into GA4. Page views are sent by the app on every route change (src/lib/analytics.ts). -->
+           into GA4. Page views are sent by the app on every route change (src/lib/analytics.ts).
+           gtag.js itself is downloaded once the page has loaded and the browser is idle, so it doesn't slow
+           down the first view on phones; events sent before that wait in dataLayer and are not lost. -->
       <script>
         window.dataLayer = window.dataLayer || [];
         if (/(^|\.)coldnerd\.com$/.test(location.hostname)) {
@@ -36,13 +38,19 @@
           try { internal = !!localStorage.getItem('cn:internal'); } catch (e) {}
           gtag('js', new Date());
           gtag('config', 'G-CE4STCRD29', internal ? { send_page_view: false, traffic_type: 'internal' } : { send_page_view: false });
-          var ga = document.createElement('script');
-          ga.async = true;
-          ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29';
-          document.head.appendChild(ga);
+          var loadGa = function () {
+            var ga = document.createElement('script');
+            ga.async = true;
+            ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29';
+            document.head.appendChild(ga);
+          };
+          window.addEventListener('load', function () {
+            if ('requestIdleCallback' in window) requestIdleCallback(loadGa, { timeout: 3000 });
+            else setTimeout(loadGa, 1500);
+          });
         }
       </script>
-      <script type="module" crossorigin src="/assets/index-DZZBIOk1.js"></script>
+      <script type="module" crossorigin src="/assets/index-Bo177iCg.js"></script>
       <link rel="stylesheet" crossorigin href="/assets/index-DQC9fUWk.css">
     </head>
 

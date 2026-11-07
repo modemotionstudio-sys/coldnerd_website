@@ -21,11 +21,13 @@ import { DownloadModal, openDownloadModal } from "../app/components/DownloadModa
 import { TrustpilotBadge } from "../app/components/TrustpilotBadge";
 import { isTrustpilotConfigured } from "../lib/trustpilot";
 import { ResourcesMenu, resourceGroups } from "../app/components/ResourcesMenu";
-import imgFrame10000056551 from "figma:asset/bb834f03157fd23888b46fc97bf375d1f17e227d.png";
-import imgDashboard1 from "figma:asset/92e21f3370ec8756b689948218a7dd293b611573.png";
-import imgMetricItem1 from "figma:asset/69ae9a7aff4b31a3755fc57599c1994537159505.png";
-import imgGroup24631 from "figma:asset/87700768d3203d3673956e074582825deecaf911.png";
-const imgWhatsAppImage20260226At124548AmRemovebgPreview1 = "/logo.png";
+import imgFrame10000056551 from "../assets/hero-messages-sent.webp";
+// Hero images: WebP copies of the original Figma PNGs (same look, ~75% smaller).
+import imgDashboard1 from "../assets/hero-dashboard-1200.webp";
+import imgDashboard1Small from "../assets/hero-dashboard-700.webp";
+import imgMetricItem1 from "../assets/hero-metric.webp";
+import imgGroup24631 from "../assets/hero-sequence.webp";
+const imgWhatsAppImage20260226At124548AmRemovebgPreview1 = "/logo-nav.webp";
 import imgPicture from "figma:asset/bd9689c999bf51911b8fb96771c3462efa79a4c7.png";
 import imgLaptopScreenWithAnalyticsDashboardStockTradingAndOnlineInvesting from "figma:asset/e7d4fbc9c4b7c8d74664b1d1d637a250ae4387d1.png";
 import imgEmailMarketingAndNewsletterWithNewMessage from "figma:asset/2d8b0fb23aaee37163996871e6bcd074ba03a3eb.png";
@@ -520,7 +522,14 @@ function HeroImages() {
           style={{ rotate: "-30.49deg" }}
         >
           <div className="relative w-full h-full rounded-[10px] overflow-hidden">
-            <img alt="" className="absolute h-full left-[-24%] max-w-none top-0 w-[124%] pointer-events-none" src={imgDashboard1} />
+            <img
+              alt=""
+              className="absolute h-full left-[-24%] max-w-none top-0 w-[124%] pointer-events-none"
+              src={imgDashboard1}
+              srcSet={`${imgDashboard1Small} 700w, ${imgDashboard1} 1200w`}
+              sizes="(max-width: 1023px) 90vw, 45vw"
+              fetchPriority="high"
+            />
           </div>
         </motion.div>
 

@@ -2,7 +2,7 @@ import { Link } from "react-router";
 import { LayoutDashboard } from "lucide-react";
 import { useIsManager } from "../lib/blog";
 
-const logo = "/logo.png";
+const logo = "/logo-nav.webp";
 
 export function BlogNavbar({
   backTo = "/",

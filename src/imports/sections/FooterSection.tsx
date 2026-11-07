@@ -10,7 +10,7 @@ const TikTok = ({ className }: { className?: string }) => (
 );
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
-import { comparisonLinks } from "../../seo/pages";
+import { comparisonLinks } from "../../seo/links";
 import type { User } from "@supabase/supabase-js";
 
 const footerLinks = {

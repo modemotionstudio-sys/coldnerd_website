@@ -32,7 +32,8 @@ function CardImage({ article, className }: { article: Article; className: string
       <div className={`${className} rounded-xl bg-gradient-to-br from-[#6c9dff] to-[#2a6ff3] w-3/4 h-3/4 opacity-80`} />
     );
   }
-  return <img src={article.cover_image_url} alt={article.title} loading="lazy" className={className} />;
+  // alt="": the card already shows the title right next to the image
+  return <img src={article.cover_image_url} alt="" loading="lazy" className={className} />;
 }
 
 function MobileBlogCard({ article }: { article: Article }) {

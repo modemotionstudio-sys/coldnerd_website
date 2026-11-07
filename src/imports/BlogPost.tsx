@@ -9,11 +9,11 @@ import {
   fetchPostBySlug,
   fetchPublishedPosts,
   formatPostDate,
-  sanitizeHtml,
   useIsManager,
   type BlogPost as Post,
 } from "../lib/blog";
 import { setPageMeta } from "../lib/seo";
+import { sanitizeHtml } from "../lib/sanitize";
 import { postPageTitle, tidyPostHtml } from "../lib/postHtml";
 import { guideHubs, hubForPost } from "../seo/pages";
 

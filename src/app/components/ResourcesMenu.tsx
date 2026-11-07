@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { BookOpen, ChevronDown, Scale } from "lucide-react";
-import { comparisonLinks, learnLinks } from "../../seo/pages";
+import { comparisonLinks, learnLinks } from "../../seo/links";
 
 const groups = [
   { title: "Learn", icon: BookOpen, links: learnLinks },

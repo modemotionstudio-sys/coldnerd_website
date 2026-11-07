@@ -27,7 +27,9 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.coldnerd.com/blog/best-instagram-outreach-tools#article","headline":"The Best Instagram Outreach Tools in 2026 (Compared)","description":"Compare the best Instagram outreach tools for 2026, including ColdNerd, ManyChat and PhantomBuster. See what each does best and how to choose the right one.","image":"https://digzspnffmdrqpagxswi.supabase.co/storage/v1/object/public/blog-images/uploads/1791188409069-r3dsw4-best-instagram-outreach-tools-3d.png","datePublished":"2026-10-05T08:21:00+00:00","dateModified":"2026-10-07T17:18:05.60347+00:00","articleSection":"Tools","author":{"@type":"Organization","name":"ColdNerd Team"},"publisher":{"@type":"Organization","name":"ColdNerd","url":"https://www.coldnerd.com","logo":{"@type":"ImageObject","url":"https://www.coldnerd.com/logo.png"}},"mainEntityOfPage":"https://www.coldnerd.com/blog/best-instagram-outreach-tools"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.coldnerd.com"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.coldnerd.com/blog"},{"@type":"ListItem","position":3,"name":"The Best Instagram Outreach Tools in 2026 (Compared)","item":"https://www.coldnerd.com/blog/best-instagram-outreach-tools"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the best tool for Instagram cold outreach?","acceptedAnswer":{"@type":"Answer","text":"For cold outreach specifically, you want a tool that combines prospect finding, AI personalisation, follow ups and account safety. ColdNerd was built to do all four in one place."}},{"@type":"Question","name":"Are Instagram outreach tools safe to use?","acceptedAnswer":{"@type":"Answer","text":"They can be when they act like a real person: gradual warmup, natural timing, daily limits and varied messages. Avoid tools that blast identical DMs at high speed."}},{"@type":"Question","name":"Do I need more than one tool?","acceptedAnswer":{"@type":"Answer","text":"Not always. Many teams use one outbound tool for new leads and one inbound tool for replies. Keep your stack as simple as you can."}},{"@type":"Question","name":"Ready to start?","acceptedAnswer":{"@type":"Answer","text":"The best outreach tool is the one that gets you real conversations without burning out you or your account. Try ColdNerd and launch your first AI powered Instagram outreach campaign in a few minutes."}}]}]}</script>
     <!-- seo:end -->
       <!-- Google tag (gtag.js): only on the live site, so Vercel previews and localhost don't mix test visits
-           into GA4. Page views are sent by the app on every route change (src/lib/analytics.ts). -->
+           into GA4. Page views are sent by the app on every route change (src/lib/analytics.ts).
+           gtag.js itself is downloaded once the page has loaded and the browser is idle, so it doesn't slow
+           down the first view on phones; events sent before that wait in dataLayer and are not lost. -->
       <script>
         window.dataLayer = window.dataLayer || [];
         if (/(^|\.)coldnerd\.com$/.test(location.hostname)) {
@@ -36,13 +38,19 @@
           try { internal = !!localStorage.getItem('cn:internal'); } catch (e) {}
           gtag('js', new Date());
           gtag('config', 'G-CE4STCRD29', internal ? { send_page_view: false, traffic_type: 'internal' } : { send_page_view: false });
-          var ga = document.createElement('script');
-          ga.async = true;
-          ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29';
-          document.head.appendChild(ga);
+          var loadGa = function () {
+            var ga = document.createElement('script');
+            ga.async = true;
+            ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29';
+            document.head.appendChild(ga);
+          };
+          window.addEventListener('load', function () {
+            if ('requestIdleCallback' in window) requestIdleCallback(loadGa, { timeout: 3000 });
+            else setTimeout(loadGa, 1500);
+          });
         }
       </script>
-      <script type="module" crossorigin src="/assets/index-DZZBIOk1.js"></script>
+      <script type="module" crossorigin src="/assets/index-Bo177iCg.js"></script>
       <link rel="stylesheet" crossorigin href="/assets/index-DQC9fUWk.css">
     </head>
 

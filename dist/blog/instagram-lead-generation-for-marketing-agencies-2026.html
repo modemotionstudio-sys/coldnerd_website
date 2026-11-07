@@ -27,7 +27,9 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.coldnerd.com/blog/instagram-lead-generation-for-marketing-agencies-2026#article","headline":"Instagram Lead Generation for Marketing Agencies (2026)","description":"Learn how marketing agencies generate leads on Instagram: niche offers, free audits, personalised DM outreach, inbound content and a simple process to sign clients.","image":"https://digzspnffmdrqpagxswi.supabase.co/storage/v1/object/public/blog-images/uploads/1793120115482-ck438d-ai-powered-communication-network.png","datePublished":"2026-10-27T16:58:54.593461+00:00","dateModified":"2026-10-27T16:58:54.593461+00:00","articleSection":"General","author":{"@type":"Organization","name":"ColdNerd Team"},"publisher":{"@type":"Organization","name":"ColdNerd","url":"https://www.coldnerd.com","logo":{"@type":"ImageObject","url":"https://www.coldnerd.com/logo.png"}},"mainEntityOfPage":"https://www.coldnerd.com/blog/instagram-lead-generation-for-marketing-agencies-2026"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.coldnerd.com"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.coldnerd.com/blog"},{"@type":"ListItem","position":3,"name":"Instagram Lead Generation for Marketing Agencies (2026)","item":"https://www.coldnerd.com/blog/instagram-lead-generation-for-marketing-agencies-2026"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is Instagram good for marketing agency lead generation?","acceptedAnswer":{"@type":"Answer","text":"Yes, especially if your clients are small and mid-sized businesses, local services, ecommerce brands or creators. Their marketing is public, they run their own accounts, and you can reach the decision maker directly."}},{"@type":"Question","name":"How many leads can an agency get from Instagram?","acceptedAnswer":{"@type":"Answer","text":"It depends on your niche, offer and consistency. Agencies that send personalised DMs every day and follow up properly usually build a steady flow of conversations within a few weeks."}},{"@type":"Question","name":"What's the best lead magnet for a marketing agency?","acceptedAnswer":{"@type":"Answer","text":"A short, personalised video audit of the prospect's Instagram is hard to beat. It shows your expertise and gives them real value straight away."}},{"@type":"Question","name":"Should agencies use outbound or inbound on Instagram?","acceptedAnswer":{"@type":"Answer","text":"Both. Outbound creates conversations quickly and predictably. Inbound content builds trust and makes your outbound messages land better."}},{"@type":"Question","name":"Do I need to run ads to get agency leads on Instagram?","acceptedAnswer":{"@type":"Answer","text":"No. Outbound DMs and good content can generate leads with no ad budget. Ads can be added later for retargeting."}},{"@type":"Question","name":"Is it safe to automate Instagram lead generation?","acceptedAnswer":{"@type":"Answer","text":"It can be, when the tool behaves like a real person with warmup, gradual limits, random timing and personalised messages."}}]}]}</script>
     <!-- seo:end -->
       <!-- Google tag (gtag.js): only on the live site, so Vercel previews and localhost don't mix test visits
-           into GA4. Page views are sent by the app on every route change (src/lib/analytics.ts). -->
+           into GA4. Page views are sent by the app on every route change (src/lib/analytics.ts).
+           gtag.js itself is downloaded once the page has loaded and the browser is idle, so it doesn't slow
+           down the first view on phones; events sent before that wait in dataLayer and are not lost. -->
       <script>
         window.dataLayer = window.dataLayer || [];
         if (/(^|\.)coldnerd\.com$/.test(location.hostname)) {
@@ -36,13 +38,19 @@
           try { internal = !!localStorage.getItem('cn:internal'); } catch (e) {}
           gtag('js', new Date());
           gtag('config', 'G-CE4STCRD29', internal ? { send_page_view: false, traffic_type: 'internal' } : { send_page_view: false });
-          var ga = document.createElement('script');
-          ga.async = true;
-          ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29';
-          document.head.appendChild(ga);
+          var loadGa = function () {
+            var ga = document.createElement('script');
+            ga.async = true;
+            ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29';
+            document.head.appendChild(ga);
+          };
+          window.addEventListener('load', function () {
+            if ('requestIdleCallback' in window) requestIdleCallback(loadGa, { timeout: 3000 });
+            else setTimeout(loadGa, 1500);
+          });
         }
       </script>
-      <script type="module" crossorigin src="/assets/index-DZZBIOk1.js"></script>
+      <script type="module" crossorigin src="/assets/index-Bo177iCg.js"></script>
       <link rel="stylesheet" crossorigin href="/assets/index-DQC9fUWk.css">
     </head>
 

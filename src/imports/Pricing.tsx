@@ -8,7 +8,7 @@ import { plans } from "../lib/pricingPlans";
 import { PricingComparison } from "../app/components/PricingComparison";
 import type { User } from "@supabase/supabase-js";
 
-const imgLogo = "/logo.png";
+const imgLogo = "/logo-nav.webp";
 
 
 function PricingCard({ plan, isYearly, isActive, onActivate, onBuyNow }: { plan: typeof plans[0]; isYearly: boolean; isActive: boolean; onActivate: () => void; onBuyNow: () => void }) {
@@ -182,6 +182,9 @@ export default function Pricing() {
             <span className={`text-sm font-medium transition-colors ${!isYearly ? "text-gray-900" : "text-gray-400"}`}>Monthly</span>
             <button
               onClick={() => setIsYearly(!isYearly)}
+              role="switch"
+              aria-checked={isYearly}
+              aria-label="Yearly billing"
               className={`relative w-14 h-7 rounded-full transition-colors duration-300 ${isYearly ? "bg-[#2a6ff3]" : "bg-gray-300"}`}
             >
               <motion.div

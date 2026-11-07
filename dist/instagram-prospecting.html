@@ -27,7 +27,9 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://www.coldnerd.com/instagram-prospecting","url":"https://www.coldnerd.com/instagram-prospecting","name":"Instagram Prospecting: Find Qualified Leads Fast | ColdNerd","description":"How to prospect on Instagram: find the right accounts by niche, hashtag and followers, qualify them, and turn them into conversations.","isPartOf":{"@type":"WebSite","name":"ColdNerd","url":"https://www.coldnerd.com"},"publisher":{"@type":"Organization","name":"ColdNerd","url":"https://www.coldnerd.com","logo":"https://www.coldnerd.com/logo.png"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.coldnerd.com"},{"@type":"ListItem","position":2,"name":"Instagram Prospecting","item":"https://www.coldnerd.com/instagram-prospecting"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is Instagram prospecting allowed?","acceptedAnswer":{"@type":"Answer","text":"Viewing public profiles and messaging people is normal Instagram use. Keep your outreach relevant, respectful and within sensible volumes."}},{"@type":"Question","name":"How big should a prospect list be?","acceptedAnswer":{"@type":"Answer","text":"Quality matters more than size. A few hundred well-qualified prospects usually outperform thousands of random accounts."}},{"@type":"Question","name":"What is AI profile analysis?","acceptedAnswer":{"@type":"Answer","text":"It's ColdNerd's feature that reads a prospect's bio and posts to understand who they are and what to mention in a personalized message. It's limited on Starter and full on Growth and Agency."}}]}]}</script>
     <!-- seo:end -->
       <!-- Google tag (gtag.js): only on the live site, so Vercel previews and localhost don't mix test visits
-           into GA4. Page views are sent by the app on every route change (src/lib/analytics.ts). -->
+           into GA4. Page views are sent by the app on every route change (src/lib/analytics.ts).
+           gtag.js itself is downloaded once the page has loaded and the browser is idle, so it doesn't slow
+           down the first view on phones; events sent before that wait in dataLayer and are not lost. -->
       <script>
         window.dataLayer = window.dataLayer || [];
         if (/(^|\.)coldnerd\.com$/.test(location.hostname)) {
@@ -36,13 +38,19 @@
           try { internal = !!localStorage.getItem('cn:internal'); } catch (e) {}
           gtag('js', new Date());
           gtag('config', 'G-CE4STCRD29', internal ? { send_page_view: false, traffic_type: 'internal' } : { send_page_view: false });
-          var ga = document.createElement('script');
-          ga.async = true;
-          ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29';
-          document.head.appendChild(ga);
+          var loadGa = function () {
+            var ga = document.createElement('script');
+            ga.async = true;
+            ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29';
+            document.head.appendChild(ga);
+          };
+          window.addEventListener('load', function () {
+            if ('requestIdleCallback' in window) requestIdleCallback(loadGa, { timeout: 3000 });
+            else setTimeout(loadGa, 1500);
+          });
         }
       </script>
-      <script type="module" crossorigin src="/assets/index-DZZBIOk1.js"></script>
+      <script type="module" crossorigin src="/assets/index-Bo177iCg.js"></script>
       <link rel="stylesheet" crossorigin href="/assets/index-DQC9fUWk.css">
     </head>
 

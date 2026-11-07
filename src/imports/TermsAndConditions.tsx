@@ -2,7 +2,7 @@ import { Link } from "react-router";
 import { motion } from "motion/react";
 import { ArrowLeft } from "lucide-react";
 
-const imgLogo = "/logo.png";
+const imgLogo = "/logo-nav.webp";
 
 const sections = [
   {

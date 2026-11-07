@@ -3,13 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import Home from "../imports/Home";
-import Dashboard from "../imports/Frame1000005560";
-import Login from "../imports/Login";
-import Signup from "../imports/Signup";
-import Blog from "../imports/Blog";
-import BlogPost from "../imports/BlogPost";
-import SeoPage from "../imports/SeoPage";
-import { appPageMeta, seoPages } from "../seo/pages";
+import { appPageMeta, seoPageList } from "../seo/links";
 import { ManagerRoute } from "../cms/ManagerRoute";
 
 // CMS pages (and the rich-text editor) load only when a manager opens them.
@@ -26,11 +20,8 @@ function CmsPage({ children, protect = true }: { children: React.ReactNode; prot
   const page = <Suspense fallback={fallback}>{children}</Suspense>;
   return protect ? <ManagerRoute>{page}</ManagerRoute> : page;
 }
-import Pricing from "../imports/Pricing";
-import TermsAndConditions from "../imports/TermsAndConditions";
 import { gaPageView } from "../lib/analytics";
 import { setPageMeta, usePageMeta } from "../lib/seo";
-import NotFound from "../imports/NotFound";
 
 const pageVariants = {
   initial: { opacity: 0, y: 15 },
@@ -116,6 +107,35 @@ function FrozenOutlet() {
   return frozen;
 }
 
+/**
+ * Every page except the homepage is downloaded only when it's opened, so phones
+ * get a much smaller first download. react-router loads the page before it
+ * navigates, so page transitions look the same. After the homepage has loaded,
+ * the other pages are fetched in the background (see preloadPages).
+ */
+const pages = {
+  dashboard: () => import("../imports/Frame1000005560"),
+  login: () => import("../imports/Login"),
+  signup: () => import("../imports/Signup"),
+  blog: () => import("../imports/Blog"),
+  blogPost: () => import("../imports/BlogPost"),
+  seoPage: () => import("../imports/SeoPage"),
+  pricing: () => import("../imports/Pricing"),
+  terms: () => import("../imports/TermsAndConditions"),
+  notFound: () => import("../imports/NotFound"),
+};
+
+const lazyElement =
+  <P,>(load: () => Promise<{ default: React.ComponentType<P> }>, render: (Page: React.ComponentType<P>) => React.ReactNode) =>
+  async () => ({ element: render((await load()).default) });
+
+/** Fetches the other pages once the browser is idle, so later clicks open instantly. */
+export function preloadPages() {
+  const run = () => Object.values(pages).forEach((load) => load().catch(() => {}));
+  if ("requestIdleCallback" in window) window.requestIdleCallback(run, { timeout: 8000 });
+  else setTimeout(run, 4000);
+}
+
 export const router = createBrowserRouter([
   {
     element: <AnimatedLayout />,
@@ -126,22 +146,22 @@ export const router = createBrowserRouter([
       },
       {
         path: "/dashboard",
-        element: <Meta title="Dashboard demo - ColdNerd" noindex><Dashboard /></Meta>,
+        lazy: lazyElement(pages.dashboard, (Dashboard) => <Meta title="Dashboard demo - ColdNerd" noindex><Dashboard /></Meta>),
       },
       {
         path: "/login",
-        element: <Meta {...appPageMeta.login}><Login /></Meta>,
+        lazy: lazyElement(pages.login, (Login) => <Meta {...appPageMeta.login}><Login /></Meta>),
       },
       {
         path: "/blog",
-        element: <Blog />,
+        lazy: lazyElement(pages.blog, (Blog) => <Blog />),
       },
       {
         path: "/blog/:slug",
-        element: <BlogPost />,
+        lazy: lazyElement(pages.blogPost, (BlogPost) => <BlogPost />),
       },
       // SEO landing pages (/instagram-outreach, /for-agencies, …)
-      ...seoPages.map((p) => ({ path: `/${p.slug}`, element: <SeoPage slug={p.slug} /> })),
+      ...seoPageList.map((p) => ({ path: `/${p.slug}`, lazy: lazyElement(pages.seoPage, (SeoPage) => <SeoPage slug={p.slug} />) })),
       {
         path: "/admin/login",
         element: <CmsPage protect={false}><CmsLogin /></CmsPage>,
@@ -160,29 +180,29 @@ export const router = createBrowserRouter([
       },
       {
         path: "/signup",
-        element: <Meta {...appPageMeta.signup}><Signup /></Meta>,
+        lazy: lazyElement(pages.signup, (Signup) => <Meta {...appPageMeta.signup}><Signup /></Meta>),
       },
       {
         path: "/pricing",
         // Behind sign-up by the owner's choice, so kept out of search results.
-        element: (
+        lazy: lazyElement(pages.pricing, (Pricing) => (
           <Meta {...appPageMeta.pricing}>
             <ProtectedRoute><Pricing /></ProtectedRoute>
           </Meta>
-        ),
+        )),
       },
       {
         path: "/terms-and-conditions",
         // Public so visitors and search engines can read the Terms & Privacy Policy.
-        element: (
+        lazy: lazyElement(pages.terms, (TermsAndConditions) => (
           <Meta {...appPageMeta["terms-and-conditions"]}>
             <TermsAndConditions />
           </Meta>
-        ),
+        )),
       },
       {
         path: "*",
-        element: <NotFound />,
+        lazy: lazyElement(pages.notFound, (NotFound) => <NotFound />),
       },
     ],
   },

@@ -27,7 +27,9 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.coldnerd.com/blog/instagram-dm-automation-what-to-automate#article","headline":"Instagram DM Automation: What to Automate and What Not To","description":"What you can and can't automate in Instagram DMs: Meta's messaging rules, comment-to-DM limits, what should stay human, and a simple test for every task.","image":"https://digzspnffmdrqpagxswi.supabase.co/storage/v1/object/public/blog-images/uploads/1792082664801-u5z91x-balanced-ai-communication.png","datePublished":"2026-10-15T16:52:46.930181+00:00","dateModified":"2026-10-26T10:31:43.984668+00:00","articleSection":"General","author":{"@type":"Organization","name":"ColdNerd Team"},"publisher":{"@type":"Organization","name":"ColdNerd","url":"https://www.coldnerd.com","logo":{"@type":"ImageObject","url":"https://www.coldnerd.com/logo.png"}},"mainEntityOfPage":"https://www.coldnerd.com/blog/instagram-dm-automation-what-to-automate"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.coldnerd.com"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.coldnerd.com/blog"},{"@type":"ListItem","position":3,"name":"Instagram DM Automation: What to Automate and What Not To","item":"https://www.coldnerd.com/blog/instagram-dm-automation-what-to-automate"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is Instagram DM automation allowed?","acceptedAnswer":{"@type":"Answer","text":"Some of it is clearly allowed. Meta's official Messaging API supports automated replies to people who message you, comment-to-DM private replies and similar inbound flows, within set rules. Instagram's Terms of Use and Community Guidelines restrict automated data collection, fake engagement and repeated unwanted commercial contact, so how a tool works matters."}},{"@type":"Question","name":"What is the 24-hour messaging window on Instagram?","acceptedAnswer":{"@type":"Answer","text":"After someone messages a business account, tools using Meta's API have 24 hours to respond. Human agent replies can be tagged to allow more time, and messages started from Click-to-Instagram Direct ads can have a window of up to seven days."}},{"@type":"Question","name":"How many messages can a comment-to-DM automation send?","acceptedAnswer":{"@type":"Answer","text":"Under Meta's private reply rules, one message per comment, sent within seven days of the comment. You can only continue the conversation if the person replies, within 24 hours of their reply."}},{"@type":"Question","name":"Do I have to tell people they're talking to a bot?","acceptedAnswer":{"@type":"Answer","text":"Where the law requires it, yes. Meta's documentation mentions California and Germany specifically, and recommends disclosing automated chats as best practice everywhere."}},{"@type":"Question","name":"What should I never automate on Instagram?","acceptedAnswer":{"@type":"Answer","text":"Fake engagement such as auto-likes or follow-unfollow, identical mass messages, extra messages outside Meta's rules, automated account creation, data collection the Terms of Use don't allow, and real sales or complaint conversations."}},{"@type":"Question","name":"Can AI write my Instagram DMs?","acceptedAnswer":{"@type":"Answer","text":"AI can draft personalised messages well from real profile data, but someone should review them, every message for a new campaign and a regular sample after that, so mistakes don't go out at scale."}}]}]}</script>
     <!-- seo:end -->
       <!-- Google tag (gtag.js): only on the live site, so Vercel previews and localhost don't mix test visits
-           into GA4. Page views are sent by the app on every route change (src/lib/analytics.ts). -->
+           into GA4. Page views are sent by the app on every route change (src/lib/analytics.ts).
+           gtag.js itself is downloaded once the page has loaded and the browser is idle, so it doesn't slow
+           down the first view on phones; events sent before that wait in dataLayer and are not lost. -->
       <script>
         window.dataLayer = window.dataLayer || [];
         if (/(^|\.)coldnerd\.com$/.test(location.hostname)) {
@@ -36,13 +38,19 @@
           try { internal = !!localStorage.getItem('cn:internal'); } catch (e) {}
           gtag('js', new Date());
           gtag('config', 'G-CE4STCRD29', internal ? { send_page_view: false, traffic_type: 'internal' } : { send_page_view: false });
-          var ga = document.createElement('script');
-          ga.async = true;
-          ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29';
-          document.head.appendChild(ga);
+          var loadGa = function () {
+            var ga = document.createElement('script');
+            ga.async = true;
+            ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29';
+            document.head.appendChild(ga);
+          };
+          window.addEventListener('load', function () {
+            if ('requestIdleCallback' in window) requestIdleCallback(loadGa, { timeout: 3000 });
+            else setTimeout(loadGa, 1500);
+          });
         }
       </script>
-      <script type="module" crossorigin src="/assets/index-DZZBIOk1.js"></script>
+      <script type="module" crossorigin src="/assets/index-Bo177iCg.js"></script>
       <link rel="stylesheet" crossorigin href="/assets/index-DQC9fUWk.css">
     </head>
 

@@ -27,7 +27,9 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.coldnerd.com/blog/write-instagram-cold-dms-that-get-replies#article","headline":"How to Write Instagram Cold DMs That Get Replies","description":"How to write Instagram cold DMs people actually answer: line-by-line structure, opener types, easy questions, 6 before-and-after rewrites and a checklist.","image":"https://digzspnffmdrqpagxswi.supabase.co/storage/v1/object/public/blog-images/uploads/1792172033397-f9d243-playful-3d-messaging-icon-scene.png","datePublished":"2026-10-16T17:35:51.91082+00:00","dateModified":"2026-10-26T10:31:43.984668+00:00","articleSection":"General","author":{"@type":"Organization","name":"ColdNerd Team"},"publisher":{"@type":"Organization","name":"ColdNerd","url":"https://www.coldnerd.com","logo":{"@type":"ImageObject","url":"https://www.coldnerd.com/logo.png"}},"mainEntityOfPage":"https://www.coldnerd.com/blog/write-instagram-cold-dms-that-get-replies"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.coldnerd.com"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.coldnerd.com/blog"},{"@type":"ListItem","position":3,"name":"How to Write Instagram Cold DMs That Get Replies","item":"https://www.coldnerd.com/blog/write-instagram-cold-dms-that-get-replies"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do you write a cold DM on Instagram?","acceptedAnswer":{"@type":"Answer","text":"Open with a specific, recent detail from their profile, add one sentence linking it to a common problem, and end with a simple question they can answer in a few words. Keep it to two to four lines, with no link and no pitch."}},{"@type":"Question","name":"How long should an Instagram cold DM be?","acceptedAnswer":{"@type":"Answer","text":"Two to four short lines, readable on a phone without scrolling. Longer messages raise the effort of replying and look more like spam."}},{"@type":"Question","name":"What's a good opening line for a cold DM?","acceptedAnswer":{"@type":"Answer","text":"One that could only be sent to that person: a specific post, a recent launch or change, something their audience is asking about, or a detail about how their business works. Avoid generic praise like \"love your content\"."}},{"@type":"Question","name":"Should I pitch my service in the first DM?","acceptedAnswer":{"@type":"Answer","text":"No. The first message's only job is to get a reply. Describe a problem they might recognise, ask a question, and explain what you do once they're interested."}},{"@type":"Question","name":"What question should I end a cold DM with?","acceptedAnswer":{"@type":"Answer","text":"A specific question that can be answered with a yes, a no or a few words, and doesn't ask for their time or money. For example: \"Are you editing these yourself?\" or \"Want me to send a quick idea?\""}},{"@type":"Question","name":"What should I say in a follow-up DM?","acceptedAnswer":{"@type":"Answer","text":"Keep the first follow-up short and light, and make the second one useful, such as a quick idea or example, before leaving the door open. Stop after two, and stop immediately if they reply or say no."}}]}]}</script>
     <!-- seo:end -->
       <!-- Google tag (gtag.js): only on the live site, so Vercel previews and localhost don't mix test visits
-           into GA4. Page views are sent by the app on every route change (src/lib/analytics.ts). -->
+           into GA4. Page views are sent by the app on every route change (src/lib/analytics.ts).
+           gtag.js itself is downloaded once the page has loaded and the browser is idle, so it doesn't slow
+           down the first view on phones; events sent before that wait in dataLayer and are not lost. -->
       <script>
         window.dataLayer = window.dataLayer || [];
         if (/(^|\.)coldnerd\.com$/.test(location.hostname)) {
@@ -36,13 +38,19 @@
           try { internal = !!localStorage.getItem('cn:internal'); } catch (e) {}
           gtag('js', new Date());
           gtag('config', 'G-CE4STCRD29', internal ? { send_page_view: false, traffic_type: 'internal' } : { send_page_view: false });
-          var ga = document.createElement('script');
-          ga.async = true;
-          ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29';
-          document.head.appendChild(ga);
+          var loadGa = function () {
+            var ga = document.createElement('script');
+            ga.async = true;
+            ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29';
+            document.head.appendChild(ga);
+          };
+          window.addEventListener('load', function () {
+            if ('requestIdleCallback' in window) requestIdleCallback(loadGa, { timeout: 3000 });
+            else setTimeout(loadGa, 1500);
+          });
         }
       </script>
-      <script type="module" crossorigin src="/assets/index-DZZBIOk1.js"></script>
+      <script type="module" crossorigin src="/assets/index-Bo177iCg.js"></script>
       <link rel="stylesheet" crossorigin href="/assets/index-DQC9fUWk.css">
     </head>
 

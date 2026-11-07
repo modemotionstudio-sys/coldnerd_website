@@ -27,7 +27,9 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","@id":"https://www.coldnerd.com/blog/instagram-cold-outreach-the-complete-guide#article","headline":"Instagram Cold Outreach: The Complete Guide","description":"How to do cold outreach on Instagram: find prospects, write DMs that get replies, follow up and avoid spam filters, with real examples.","image":"https://digzspnffmdrqpagxswi.supabase.co/storage/v1/object/public/blog-images/uploads/1791375050673-o1zvhi-chatgpt-image-oct-7-2026-04-59-33-pm.png","datePublished":"2026-10-08T11:03:43.361438+00:00","dateModified":"2026-10-26T10:31:43.984668+00:00","articleSection":"General","author":{"@type":"Organization","name":"ColdNerd Team"},"publisher":{"@type":"Organization","name":"ColdNerd","url":"https://www.coldnerd.com","logo":{"@type":"ImageObject","url":"https://www.coldnerd.com/logo.png"}},"mainEntityOfPage":"https://www.coldnerd.com/blog/instagram-cold-outreach-the-complete-guide"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.coldnerd.com"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.coldnerd.com/blog"},{"@type":"ListItem","position":3,"name":"Instagram Cold Outreach: The Complete Guide","item":"https://www.coldnerd.com/blog/instagram-cold-outreach-the-complete-guide"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is Instagram cold outreach still effective?","acceptedAnswer":{"@type":"Answer","text":"Yes, when it's targeted and personal. Generic mass DMs get ignored and can get your account limited. Short, relevant messages to well chosen prospects, with a couple of polite follow ups, still start real conversations."}},{"@type":"Question","name":"How many cold DMs should I send per day on Instagram?","acceptedAnswer":{"@type":"Answer","text":"There's no official limit, but a sensible starting point is 10 to 20 a day on a new account, building up slowly. Established, active accounts can usually handle more. Spreading messages across the day matters as much as the total."}},{"@type":"Question","name":"Why do my cold DMs go to the requests folder?","acceptedAnswer":{"@type":"Answer","text":"Messages from accounts someone doesn't follow usually land in message requests. Light engagement before you DM (following, liking, a genuine comment) makes your name familiar and improves the odds they open it."}},{"@type":"Question","name":"Should I put a link in my first Instagram DM?","acceptedAnswer":{"@type":"Answer","text":"No. Links in a first message look spammy and can hurt deliverability. Wait until they reply, then share the link."}},{"@type":"Question","name":"Can I automate Instagram cold outreach safely?","acceptedAnswer":{"@type":"Answer","text":"You can reduce risk a lot by using a tool that warms up your account, keeps daily volume natural, varies every message and pauses when people reply. Avoid any tool that promises to \"bypass\" Instagram limits or blast identical DMs at high speed."}},{"@type":"Question","name":"What's the best tool for Instagram cold outreach?","acceptedAnswer":{"@type":"Answer","text":"For outbound specifically, you want prospect finding, AI personalisation, automatic follow ups and account safety in one place. That's what ColdNerd does, starting at $27 a month."}},{"@type":"Question","name":"Ready to start your first campaign?","acceptedAnswer":{"@type":"Answer","text":"Instagram cold outreach comes down to a simple idea: talk to the right people, say something that's actually about them, and follow up like a human. You can do all of this by hand. Or you can let ColdNerd find your prospects, personalise every DM with AI and handle the follow ups while you focus on the conversations that turn into clients. Launch your first campaign in a few minutes."}}]}]}</script>
     <!-- seo:end -->
       <!-- Google tag (gtag.js): only on the live site, so Vercel previews and localhost don't mix test visits
-           into GA4. Page views are sent by the app on every route change (src/lib/analytics.ts). -->
+           into GA4. Page views are sent by the app on every route change (src/lib/analytics.ts).
+           gtag.js itself is downloaded once the page has loaded and the browser is idle, so it doesn't slow
+           down the first view on phones; events sent before that wait in dataLayer and are not lost. -->
       <script>
         window.dataLayer = window.dataLayer || [];
         if (/(^|\.)coldnerd\.com$/.test(location.hostname)) {
@@ -36,13 +38,19 @@
           try { internal = !!localStorage.getItem('cn:internal'); } catch (e) {}
           gtag('js', new Date());
           gtag('config', 'G-CE4STCRD29', internal ? { send_page_view: false, traffic_type: 'internal' } : { send_page_view: false });
-          var ga = document.createElement('script');
-          ga.async = true;
-          ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29';
-          document.head.appendChild(ga);
+          var loadGa = function () {
+            var ga = document.createElement('script');
+            ga.async = true;
+            ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29';
+            document.head.appendChild(ga);
+          };
+          window.addEventListener('load', function () {
+            if ('requestIdleCallback' in window) requestIdleCallback(loadGa, { timeout: 3000 });
+            else setTimeout(loadGa, 1500);
+          });
         }
       </script>
-      <script type="module" crossorigin src="/assets/index-DZZBIOk1.js"></script>
+      <script type="module" crossorigin src="/assets/index-Bo177iCg.js"></script>
       <link rel="stylesheet" crossorigin href="/assets/index-DQC9fUWk.css">
     </head>
 

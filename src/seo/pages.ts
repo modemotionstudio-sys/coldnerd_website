@@ -443,45 +443,8 @@ export const seoPages: SeoPage[] = [
 export const seoPageBySlug = (slug: string) => seoPages.find((p) => p.slug === slug);
 export const seoPagesInGroup = (group: SeoPage["group"]) => seoPages.filter((p) => p.group === group);
 
-/**
- * Head tags for pages that only render in the browser. The same values are
- * pre-rendered into their static HTML, so crawlers see them without JavaScript.
- */
-export const appPageMeta = {
-  login: {
-    title: "Log in to ColdNerd | Instagram Outreach & DM Automation",
-    description: "Log in to your ColdNerd account to manage your Instagram outreach and DM automation campaigns.",
-    noindex: true,
-  },
-  signup: {
-    title: "Create Your ColdNerd Account | Instagram DM Automation",
-    description: "Create your ColdNerd account to start AI-personalised Instagram outreach with automated follow-ups and built-in account safety.",
-    noindex: true,
-  },
-  pricing: {
-    title: "ColdNerd Pricing: Instagram DM Automation Plans & Features",
-    description:
-      "See ColdNerd plans for AI Instagram outreach and DM automation, for freelancers, agencies and teams. Compare features and pick the right plan.",
-    noindex: true,
-  },
-  "terms-and-conditions": {
-    title: "Terms of Service & Privacy Policy | ColdNerd",
-    description: "ColdNerd's terms of service and privacy policy: what data we collect, how it is used and your rights.",
-    canonicalPath: "/terms-and-conditions",
-  },
-} satisfies Record<string, { title: string; description: string; noindex?: boolean; canonicalPath?: string }>;
-
-/** Comparison articles (published through the blog CMS). */
-export const comparisonLinks = [
-  { label: "ColdNerd vs ManyChat", href: "/blog/coldnerd-vs-manychat" },
-  { label: "ColdNerd vs PhantomBuster", href: "/blog/coldnerd-vs-phantombuster" },
-  { label: "Best Instagram Outreach Tools", href: "/blog/best-instagram-outreach-tools" },
-];
-
-/** "Learn" guides, in menu order. */
-export const learnLinks = seoPages
-  .filter((p) => p.group === "learn")
-  .map((p) => ({ label: p.label, href: `/${p.slug}` }));
+// Menu/footer links and browser-only page heads live in links.ts (small, needed on every page).
+export { appPageMeta, comparisonLinks, learnLinks } from "./links";
 
 /**
  * Internal linking plan: each feature page ("hub") lists its guides in a

@@ -27,7 +27,9 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://www.coldnerd.com/instagram-outreach","url":"https://www.coldnerd.com/instagram-outreach","name":"Instagram Outreach: 2026 Guide, Templates & Free Tool","description":"Learn Instagram outreach that gets replies: find the right prospects, write personal DMs, follow up and stay safe. Step-by-step guide with examples.","isPartOf":{"@type":"WebSite","name":"ColdNerd","url":"https://www.coldnerd.com"},"publisher":{"@type":"Organization","name":"ColdNerd","url":"https://www.coldnerd.com","logo":"https://www.coldnerd.com/logo.png"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.coldnerd.com"},{"@type":"ListItem","position":2,"name":"Instagram Outreach","item":"https://www.coldnerd.com/instagram-outreach"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is Instagram outreach the same as spam?","acceptedAnswer":{"@type":"Answer","text":"No. Spam is irrelevant, identical messages sent in bulk. Good outreach is targeted, personalized and offers value to the recipient."}},{"@type":"Question","name":"How many DMs should I send per day?","acceptedAnswer":{"@type":"Answer","text":"It depends on your account's age and history. Start low on new accounts, increase gradually and keep volume consistent. ColdNerd manages warmup and daily limits automatically."}},{"@type":"Question","name":"What's a good reply rate for Instagram outreach?","acceptedAnswer":{"@type":"Answer","text":"It varies by niche and offer. Highly targeted, personalized campaigns typically perform far better than generic ones — test and track your own numbers."}},{"@type":"Question","name":"Can I do Instagram outreach for B2B?","acceptedAnswer":{"@type":"Answer","text":"Yes. Many founders, agency owners and local business owners are active on Instagram, making it a strong B2B channel when your targeting is precise."}}]}]}</script>
     <!-- seo:end -->
       <!-- Google tag (gtag.js): only on the live site, so Vercel previews and localhost don't mix test visits
-           into GA4. Page views are sent by the app on every route change (src/lib/analytics.ts). -->
+           into GA4. Page views are sent by the app on every route change (src/lib/analytics.ts).
+           gtag.js itself is downloaded once the page has loaded and the browser is idle, so it doesn't slow
+           down the first view on phones; events sent before that wait in dataLayer and are not lost. -->
       <script>
         window.dataLayer = window.dataLayer || [];
         if (/(^|\.)coldnerd\.com$/.test(location.hostname)) {
@@ -36,13 +38,19 @@
           try { internal = !!localStorage.getItem('cn:internal'); } catch (e) {}
           gtag('js', new Date());
           gtag('config', 'G-CE4STCRD29', internal ? { send_page_view: false, traffic_type: 'internal' } : { send_page_view: false });
-          var ga = document.createElement('script');
-          ga.async = true;
-          ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29';
-          document.head.appendChild(ga);
+          var loadGa = function () {
+            var ga = document.createElement('script');
+            ga.async = true;
+            ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-CE4STCRD29';
+            document.head.appendChild(ga);
+          };
+          window.addEventListener('load', function () {
+            if ('requestIdleCallback' in window) requestIdleCallback(loadGa, { timeout: 3000 });
+            else setTimeout(loadGa, 1500);
+          });
         }
       </script>
-      <script type="module" crossorigin src="/assets/index-DZZBIOk1.js"></script>
+      <script type="module" crossorigin src="/assets/index-Bo177iCg.js"></script>
       <link rel="stylesheet" crossorigin href="/assets/index-DQC9fUWk.css">
     </head>
 

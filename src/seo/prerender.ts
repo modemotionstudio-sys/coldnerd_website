@@ -18,6 +18,7 @@ import { plans } from "../lib/pricingPlans";
 import { seedPosts } from "../lib/blogSeed";
 import { homeFaqs } from "../lib/faqData";
 import { recentlyUpdated, submitIndexNow } from "./indexnow";
+import { seoPageList } from "./links";
 import { extractFaqs, postPageTitle, publicSlug, tidyPostHtml } from "../lib/postHtml";
 
 // Sitemap <lastmod> for pages whose text lives in the code. Update when you change that page's content.
@@ -420,6 +421,11 @@ export function seoPrerender(): Plugin {
         fs.mkdirSync(path.dirname(full), { recursive: true });
         fs.writeFileSync(full, html);
       };
+
+      // links.ts repeats the SEO page slugs/labels (for the small homepage download); keep them in sync.
+      const listed = seoPageList.map((p) => `${p.slug}|${p.label}|${p.group}`).join();
+      if (listed !== seoPages.map((p) => `${p.slug}|${p.label}|${p.group}`).join())
+        throw new Error("[seo] src/seo/links.ts seoPageList does not match the pages in src/seo/pages.ts");
 
       const posts = await publishedPosts();
 

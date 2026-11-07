@@ -4,7 +4,7 @@ import { supabase } from "../lib/supabase";
 import { checkIsManager } from "../lib/blog";
 import { motion } from "motion/react";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-const imgWhatsAppImage20260226At124548AmRemovebgPreview1 = "/logo.png";
+const imgWhatsAppImage20260226At124548AmRemovebgPreview1 = "/logo-nav.webp";
 
 
 export default function Login() {

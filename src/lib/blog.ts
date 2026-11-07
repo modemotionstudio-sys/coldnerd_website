@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import DOMPurify from "dompurify";
 import { supabase } from "./supabase";
-import { seedPosts } from "./blogSeed";
 import { publicSlug } from "./postHtml";
 
 export type PostStatus = "draft" | "published";
@@ -79,10 +77,13 @@ export async function fetchPublishedPosts(
   if (error) console.warn("[blog] falling back to starter articles:", error.message);
   if (!error && data && data.length > 0) return (data as unknown as BlogPost[]).map(withPublicSlug);
 
-  let posts = orderPosts(seedPosts, ordering);
+  let posts = orderPosts(await starterPosts(), ordering);
   if (opts.featuredOnly) posts = posts.filter((p) => p.featured);
   return (opts.limit ? posts.slice(0, opts.limit) : posts).map(withPublicSlug);
 }
+
+/** The bundled starter articles, downloaded only when they are needed (database empty or unreachable). */
+const starterPosts = () => import("./blogSeed").then((m) => m.seedPosts);
 
 const withPublicSlug = <T extends { slug: string }>(p: T): T => ({ ...p, slug: publicSlug(p.slug) });
 
@@ -92,7 +93,7 @@ export async function fetchPostBySlug(slug: string): Promise<BlogPost | null> {
   const { data, error } = await supabase.from(TABLE).select("*").in("slug", candidates).limit(1);
   if (error) console.warn("[blog] falling back to starter articles:", error.message);
   if (!error && data?.length) return withPublicSlug(data[0] as BlogPost);
-  const seed = seedPosts.find((p) => candidates.includes(p.slug));
+  const seed = (await starterPosts()).find((p) => candidates.includes(p.slug));
   return seed ? withPublicSlug(seed) : null;
 }
 
@@ -166,7 +167,7 @@ export async function savePositions(ids: string[]) {
 }
 
 export async function importStarterPosts() {
-  const rows: BlogPostInput[] = seedPosts.map(({ id: _id, created_at: _c, updated_at: _u, ...rest }) => rest);
+  const rows: BlogPostInput[] = (await starterPosts()).map(({ id: _id, created_at: _c, updated_at: _u, ...rest }) => rest);
   const { error } = await supabase.from(TABLE).upsert(rows, { onConflict: "slug", ignoreDuplicates: true });
   if (error) throw friendlyError(error);
 }
@@ -281,23 +282,6 @@ export function estimateReadTime(html: string) {
 export function formatPostDate(iso: string | null) {
   if (!iso) return "";
   return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-}
-
-const ALLOWED_IFRAME_SRC = /^https:\/\/(www\.)?(youtube\.com|youtube-nocookie\.com)\/embed\//;
-
-DOMPurify.addHook("uponSanitizeElement", (node, data) => {
-  if (data.tagName === "iframe") {
-    const src = (node as Element).getAttribute?.("src") ?? "";
-    if (!ALLOWED_IFRAME_SRC.test(src)) node.parentNode?.removeChild(node);
-  }
-});
-
-/** Sanitises editor HTML before rendering it on the public site. Only YouTube iframes survive. */
-export function sanitizeHtml(html: string) {
-  return DOMPurify.sanitize(html, {
-    ADD_TAGS: ["iframe"],
-    ADD_ATTR: ["target", "rel", "allow", "allowfullscreen", "frameborder"],
-  });
 }
 
 export const categoryColors: Record<string, string> = {
