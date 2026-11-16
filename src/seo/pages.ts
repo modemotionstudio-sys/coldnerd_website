@@ -7,11 +7,39 @@
  * footer link in FooterSection.tsx.
  */
 
+/** A two-size WebP illustration in public/: `${src}-800.webp` and `${src}-1600.webp` (16:9). */
+export interface SeoImage {
+  src: string;
+  alt: string;
+}
+
+/** A diagram drawn in HTML (crawlable, sharp on every screen) in the style of the content PDFs. */
+export interface SeoFigure {
+  /** cards: 3 numbered cards · grid: 2×2 numbered cards · funnel: bars by value · flow: 2 steps, then 2 outcomes */
+  kind: "cards" | "grid" | "funnel" | "flow";
+  title: string;
+  subtitle: string;
+  items: { title: string; text?: string; value?: number }[];
+  caption: string;
+}
+
+/** One piece of a section, rendered in order. */
+export type SeoBlock =
+  | { p: string }
+  | { h3: string }
+  | { quote: string }
+  | { list: string[] }
+  | { figure: SeoFigure }
+  | { image: SeoImage }
+  | { callout: string; href: string };
+
 export interface SeoSection {
   heading: string;
   body?: string[];
   bullets?: string[];
   steps?: { title: string; text: string }[];
+  /** Richer layout (used instead of body/bullets/steps): paragraphs, H3s, templates, diagrams, images, links. */
+  blocks?: SeoBlock[];
 }
 
 export interface SeoFaq {
@@ -24,13 +52,23 @@ export interface SeoPage {
   /** Footer / link label */
   label: string;
   group: "learn" | "solutions" | "company";
+  /** Date the page text last changed (sitemap lastmod). */
+  updated?: string;
   metaTitle: string;
   metaDescription: string;
+  /** Social share image (og:image), path in public/. */
+  shareImage?: string;
   eyebrow: string;
   h1: string;
   intro: string;
+  /** Large illustration shown under the page header. */
+  heroImage?: SeoImage;
   sections: SeoSection[];
+  /** FAQ heading (default "Frequently asked questions"). */
+  faqHeading?: string;
   faqs: SeoFaq[];
+  /** Highlighted link after the FAQs. */
+  closing?: { text: string; href: string };
   related: string[];
 }
 
@@ -110,64 +148,182 @@ export const seoPages: SeoPage[] = [
     slug: "instagram-outreach",
     label: "Instagram Outreach",
     group: "learn",
-    metaTitle: "Instagram Outreach: 2026 Guide, Templates & Free Tool",
+    updated: "2026-11-16",
+    metaTitle: "Instagram Outreach: Strategy & DM Templates | ColdNerd",
     metaDescription:
-      "Learn Instagram outreach that gets replies: find the right prospects, write personal DMs, follow up and stay safe. Step-by-step guide with examples.",
-    eyebrow: "Learn",
-    h1: "Instagram Outreach: How to Start Conversations That Turn Into Customers",
+      "Learn how to find the right prospects on Instagram, write first DMs and follow-ups, and track which conversations turn into booked calls.",
+    shareImage: "/images/guides/instagram-outreach-prospect-list-og.jpg",
+    eyebrow: "Outreach guide",
+    h1: "Instagram Outreach: A Practical Guide to Getting Clients",
     intro:
-      "Instagram outreach is the practice of proactively messaging the right people on Instagram to build relationships, land clients, find partners or book sales calls. Done well, it's one of the most direct and cost-effective growth channels available. This guide covers how to do it — and how to scale it without losing the personal touch.",
+      "Instagram outreach is the practice of starting relevant conversations with potential clients or partners on Instagram. A good first DM gives the recipient a clear reason to respond, even if they have never heard of you. Start with one audience, one offer and one next step so you can see what gets a response.",
+    heroImage: {
+      src: "/images/guides/instagram-outreach-prospect-list",
+      alt: "A shortlist of Instagram prospects with a personalised first DM ready to send",
+    },
     sections: [
       {
-        heading: "What is Instagram outreach?",
-        body: [
-          "Instagram outreach means starting conversations instead of waiting for them. Rather than relying only on posts and ads, you reach out directly via DMs to prospects who match your ideal customer: business owners, creators, potential partners or buyers.",
-          "Because Instagram is where many people spend their attention, a thoughtful DM can reach decision-makers faster than email — and often feels more personal.",
+        heading: "1. Define who to contact and why now",
+        blocks: [
+          {
+            p: "Write your audience as a sentence your team could use to make a decision. A video editing agency might look for Pilates studio owners who have announced an upcoming class launch and already publish short instructor demos. The audience is the studio owner. The timing signal is the launch. The offer is turning one existing clip into a short launch Reel.",
+          },
+          {
+            figure: {
+              kind: "cards",
+              title: "Would you send this DM?",
+              subtitle: "A three-question check before you start a conversation",
+              items: [
+                { title: "Buyer fit", text: "Pilates studio owner who publishes instructor videos" },
+                { title: "Public signal", text: "The studio announced a new beginner class" },
+                { title: "Useful next step", text: "Offer two ideas for a short launch Reel" },
+              ],
+              caption: "Three checks for an Instagram prospect: buyer fit, a recent public signal and a useful next step.",
+            },
+          },
         ],
       },
       {
-        heading: "Why Instagram outreach works",
-        bullets: [
-          "Direct access: most profiles accept message requests, and DMs are read on mobile.",
-          "Context: you can see someone's content before messaging, so personalization is easy.",
-          "Low cost: no ad spend — just time, or software that saves it.",
-          "Relationship signals: conversations improve how often your content appears for that person.",
+        heading: "2. Build a shortlist with evidence",
+        blocks: [
+          {
+            p: "Look at public business profiles, industry directories, event speaker lists, local business pages and partnerships. Record the profile URL, decision maker or business contact, the public signal you noticed, and the date you checked it. Recent activity can tell you where to look, while follower count alone tells you little about budget or intent.",
+          },
+          {
+            p: "Before writing, confirm that the business fits your offer, that your observation is accurate, and that you can explain the connection in one sentence. Skip accounts with no clear fit, people who have declined, and prospects already in a conversation with your team.",
+          },
+          { callout: "Ready to build a list? Read the Instagram prospecting guide.", href: "/instagram-prospecting" },
         ],
       },
       {
-        heading: "A proven Instagram outreach process",
-        steps: [
-          { title: "Define your ideal prospect", text: "Be specific about niche, size, location and the problem you solve. The tighter the target, the better your reply rate." },
-          { title: "Build a targeted list", text: "Source prospects from competitor followers, engaged likers and commenters, and niche hashtags." },
-          { title: "Warm up before you pitch", text: "Engage with a post or story first so your name is familiar when your DM arrives." },
-          { title: "Send a personalized first message", text: "Reference something real, explain why you're reaching out and ask a low-pressure question. No hard pitch." },
-          { title: "Follow up", text: "Many replies come from the second or third touch. Space follow-ups a few days apart and add value each time." },
-          { title: "Measure and iterate", text: "Track reply and positive-reply rates per message and keep improving the best performers." },
+        heading: "3. Write a first DM that earns a reply",
+        blocks: [
+          {
+            p: "Use three parts: a verified observation, a connection to a specific outcome, and a small question. You can offer something easy to assess, such as two ideas or a short outline. Save a calendar link, portfolio reel or long pitch for when the person asks for more.",
+          },
+          {
+            figure: {
+              kind: "cards",
+              title: "Anatomy of a first DM",
+              subtitle: "A video editor reaches out to a Pilates studio",
+              items: [
+                { title: "Verified observation", text: "Hey Priya, saw you're launching a beginner class next month." },
+                { title: "Relevant offer", text: "Your instructor demo gave me two ideas for a short launch Reel." },
+                { title: "Small question", text: "Want me to send them here?" },
+              ],
+              caption: "An annotated first DM shows the public signal, a relevant offer and a question the prospect can answer quickly.",
+            },
+          },
+          { h3: "Template for a freelancer or agency" },
+          {
+            quote:
+              "Hey [name], saw that [public launch or announcement]. I edit short videos for [relevant niche], and your [existing asset] gave me an idea for [specific outcome]. Want me to send two quick concepts here?",
+          },
+          { h3: "Template for a local B2B service" },
+          {
+            quote:
+              "Hi [name], congrats on opening [location]. I work with [type of business] on [specific outcome]. I noticed [verified public detail] and had one idea for [opportunity]. Would a short note here be useful?",
+          },
+          { h3: "Template for a creator partnership" },
+          {
+            quote:
+              "Hey [name], your post on [specific topic] made me think of a short [format] we could make together for [shared audience]. I can handle [your contribution]. Want the two-sentence outline?",
+          },
+          {
+            p: "Read the DM aloud. If the opening would work on 20 unrelated accounts, make it more specific. If you name a problem you cannot verify, present it as a question. If you offer an example, prepare it before anyone replies.",
+          },
         ],
       },
       {
-        heading: "Instagram outreach best practices",
-        bullets: [
-          "Keep first messages short — two to four sentences.",
-          "Personalize the opening line for every prospect.",
-          "Never send identical copy to large lists.",
-          "Ramp volume gradually on new or quiet accounts.",
-          "Stop following up as soon as someone replies or declines.",
+        heading: "4. Follow up only when you have something to add",
+        blocks: [
+          {
+            p: "If someone hasn't replied and a follow-up is appropriate, wait a few business days and send one useful extra. For the Pilates studio, you could share an example hook: “One idea for the launch Reel: open with three seconds of the class in motion, then put the date on screen before the first instruction.”",
+          },
+          {
+            p: "A silent thread can end there. Close it in your tracker instead of chasing the person across channels. If someone declines or asks you to stop, update your shared contact list so another teammate doesn't message them again.",
+          },
+          {
+            figure: {
+              kind: "cards",
+              title: "What to do after the first DM",
+              subtitle: "Use the recipient's response to choose the next action",
+              items: [
+                { title: "Interested", text: "Send what you promised, then ask one fit question." },
+                { title: "Declines", text: "Acknowledge and close the thread." },
+                { title: "No reply", text: "If appropriate, send one useful follow-up. Then close." },
+              ],
+              caption: "Workflow for an interested reply, a decline or silence after an Instagram outreach message.",
+            },
+          },
         ],
       },
       {
-        heading: "Scaling Instagram outreach with ColdNerd",
-        body: [
-          "Manual outreach works until it doesn't — finding prospects, writing messages and tracking follow-ups quickly takes hours a day. ColdNerd automates prospect discovery, writes AI-personalized messages, schedules follow-ups and enforces safe sending limits across multiple accounts, so you can scale from dozens to thousands of conversations.",
+        heading: "5. Turn interest into the right next step",
+        blocks: [
+          {
+            p: "If they say “send it,” share what you promised in the DM. Then ask one question that helps you understand fit, such as “Is the goal trial bookings, or awareness for the new class?” Once you understand the goal, suggest a short call only if it would help both sides make a decision.",
+          },
+          { h3: "A reply you can adapt" },
+          {
+            quote:
+              "Here are the two hooks I had in mind. The first leads with the class experience. The second leads with the timetable. Which feels closer to your launch? If you want help choosing footage, I can walk through it with you in 15 minutes.",
+          },
+          {
+            p: "Keep one owner on the thread. Record what you promised, your next action and its date. Use clear statuses such as ready, contacted, replied, interested, call booked and closed so a teammate can pick up where you left off.",
+          },
+          {
+            image: {
+              src: "/images/guides/instagram-outreach-conversation",
+              alt: "Two people reviewing an Instagram conversation together on a laptop",
+            },
+          },
+        ],
+      },
+      {
+        heading: "6. Measure outcomes by audience and offer",
+        blocks: [
+          {
+            p: "Compare batches from the week you first contacted each prospect. Pick a consistent reply window, such as seven days, and count each person once. Use a spreadsheet with columns for audience segment, offer, first-contact date, reply status, positive reply, call booked and outcome. Mark “positive” only when there is actual interest or a request for more information.",
+          },
+          {
+            figure: {
+              kind: "funnel",
+              title: "Track the path to booked calls",
+              subtitle: "Illustrative example using 40 unique contacts",
+              items: [
+                { title: "Contacted", value: 40 },
+                { title: "Replied", value: 8 },
+                { title: "Positive replies", value: 4 },
+                { title: "Booked calls", value: 2 },
+              ],
+              caption: "Illustrative funnel from 40 contacted prospects to 8 replies, 4 positive replies and 2 booked calls.",
+            },
+          },
+          {
+            p: "The illustration uses example data. Reply rate is 8 ÷ 40 = 20%. Positive reply rate is 4 ÷ 40 = 10%. Booked call rate is 2 ÷ 40 = 5%. In your records, separate interested replies from declines and log calls held separately from calls booked.",
+          },
+          {
+            p: "Few replies? Recheck the audience and the specificity of the opening. Plenty of replies but little interest? Test whether the offer solves a problem that matters now. Interested replies with few bookings? Review what happens after they ask for more. Change one variable at a time and treat small samples as directional.",
+          },
         ],
       },
     ],
+    faqHeading: "Instagram outreach FAQs",
     faqs: [
-      { q: "Is Instagram outreach the same as spam?", a: "No. Spam is irrelevant, identical messages sent in bulk. Good outreach is targeted, personalized and offers value to the recipient." },
-      { q: "How many DMs should I send per day?", a: "It depends on your account's age and history. Start low on new accounts, increase gradually and keep volume consistent. ColdNerd manages warmup and daily limits automatically." },
-      { q: "What's a good reply rate for Instagram outreach?", a: "It varies by niche and offer. Highly targeted, personalized campaigns typically perform far better than generic ones — test and track your own numbers." },
-      { q: "Can I do Instagram outreach for B2B?", a: "Yes. Many founders, agency owners and local business owners are active on Instagram, making it a strong B2B channel when your targeting is precise." },
+      {
+        q: "Is Instagram outreach useful for B2B?",
+        a: "It's a fit when buyers actively use business profiles and publicly share useful context. If buyers rarely check their DMs, choose the contact channel they make available.",
+      },
+      {
+        q: "How many DMs should I send per day?",
+        a: "There's no universal safe number. Your starting point should be how many prospects you can research and respond to thoughtfully. Respect Instagram's rules and stop if the platform restricts an action.",
+      },
     ],
+    closing: {
+      text: "Start with a shortlist you can review. Explore ColdNerd for prospect discovery and message drafting.",
+      href: "/what-is-coldnerd",
+    },
     related: ["instagram-prospecting", "instagram-lead-generation", "instagram-dm-automation"],
   },
   {
@@ -287,57 +443,185 @@ export const seoPages: SeoPage[] = [
     slug: "instagram-dm-automation",
     label: "Instagram DM Automation",
     group: "learn",
-    metaTitle: "Instagram DM Automation: Automate DMs Safely | ColdNerd",
+    updated: "2026-11-16",
+    metaTitle: "Instagram DM Automation: Workflows & Setup | ColdNerd",
     metaDescription:
-      "Automate Instagram DMs without risking your account: AI-personalised messages, paced sending, follow-ups and reply tracking in one tool.",
-    eyebrow: "Learn",
-    h1: "Instagram DM Automation: Personal Messages, Automated Safely",
+      "Learn what to automate in Instagram DMs, how comment-to-DM and inbound replies work, and how to test workflows before you switch them on.",
+    shareImage: "/images/guides/instagram-dm-automation-inbox-og.jpg",
+    eyebrow: "Automation guide",
+    h1: "Instagram DM Automation: A Practical Setup Guide",
     intro:
-      "Instagram DM automation uses software to send, schedule and follow up on direct messages so you can reach more people without typing every message by hand. The key is automating the repetitive work while keeping every message personal and your accounts safe.",
+      "Instagram DM automation uses rules or software to answer common messages, share requested resources and assign conversations. Define what triggers the message, what the recipient expects and who takes over when automation ends.",
+    heroImage: {
+      src: "/images/guides/instagram-dm-automation-inbox",
+      alt: "An Instagram DM inbox with conversations listed and a reply in progress",
+    },
     sections: [
       {
-        heading: "What can you automate in Instagram DMs?",
-        bullets: [
-          "Finding and organizing prospects to message.",
-          "Writing personalized first messages from each prospect's profile.",
-          "Sending messages with human-like timing.",
-          "Follow-up sequences for people who haven't replied.",
-          "Stopping sequences when someone responds.",
-          "Tracking sends, replies and reply rates.",
+        heading: "Inbound automation, comment-to-DM and outbound outreach",
+        blocks: [
+          {
+            figure: {
+              kind: "cards",
+              title: "What starts the conversation?",
+              subtitle: "Identify the entry point before you pick an Instagram DM tool",
+              items: [
+                { title: "Inbound DM", text: "Someone sends your account a message." },
+                { title: "Comment-to-DM", text: "Someone leaves an eligible comment on your content." },
+                { title: "Outbound outreach", text: "Your business decides whom to contact." },
+              ],
+              caption: "Three Instagram messaging workflows compare an inbound DM, an eligible comment and a business-initiated outreach conversation.",
+            },
+          },
+          { h3: "Inbound DM replies" },
+          {
+            p: "The person messages your professional account first. You can reply to “PRICING” with a price guide, answer a common question or route the thread to a teammate.",
+          },
+          { h3: "Comment-to-DM" },
+          {
+            p: "Someone comments on an eligible post or Reel. A private reply can deliver the resource named in the post. If the person replies, you can continue the exchange within the rules for that messaging path.",
+          },
+          { h3: "Outbound outreach" },
+          {
+            p: "The business chooses whom to contact and starts the conversation. The standard Instagram Send API requires the recipient to have messaged your professional account first. Before enabling outbound sending, ask the tool provider what sending method it uses and what rules and permissions apply.",
+          },
+          { callout: "Planning business-initiated conversations? Read the Instagram outreach guide.", href: "/instagram-outreach" },
         ],
       },
       {
-        heading: "Outbound DM automation vs. auto-reply bots",
-        body: [
-          "Auto-reply tools respond when someone comments a keyword or messages you first — useful for inbound engagement. Outbound DM automation, which ColdNerd focuses on, starts new conversations with prospects you choose. Many businesses use both.",
+        heading: "How to set up comment-to-DM automation",
+        blocks: [
+          {
+            p: "Start with one post and one expected result. A studio could publish a Reel with “Comment CLASS for the beginner timetable.” Configure a matching trigger for that Reel, set an owner for replies, and send the timetable in the first private reply.",
+          },
+          {
+            figure: {
+              kind: "flow",
+              title: "From a comment to a useful reply",
+              subtitle: "Example: deliver a Pilates studio's beginner timetable",
+              items: [
+                { title: "Comment", text: "Someone comments CLASS." },
+                { title: "Private reply", text: "Send the timetable they asked for." },
+                { title: "Recipient replies", text: "Route class questions to a teammate." },
+                { title: "No response", text: "Send nothing further." },
+              ],
+              caption: "Comment-to-DM sequence sends the requested timetable, then routes a reply to a person or closes the flow if there is no response.",
+            },
+          },
+          {
+            p: "Meta's private reply rules allow one initial private reply for an eligible comment. For posts and Reels, send it within seven days of the comment. Continue only if the recipient responds, and keep ordinary automated follow-ups within the 24-hour messaging window following their message. Instagram Live has a separate rule tied to the live broadcast. Check Meta's current documentation and the tool's permissions when configuring a flow.",
+          },
+          { h3: "Example first response" },
+          {
+            quote:
+              "Thanks for commenting CLASS. Here's the beginner timetable: [link]. If you'd like help picking a class, reply with the day that works for you.",
+          },
+          { h3: "Example human handoff" },
+          {
+            p: "If the person says they're free Saturday and asks whether a class suits beginners, assign the thread to a teammate. Pass along the requested resource, available day and open question so the person doesn't have to repeat anything.",
+          },
+          {
+            p: "Give each workflow a clear end. Close it after the requested resource is sent unless the person replies and the conversation is eligible to continue. A new campaign or tag should never reopen a thread after an opt-out.",
+          },
+          {
+            callout: "Meta's Instagram private reply rules",
+            href: "https://developers.facebook.com/documentation/business-messaging/instagram-messaging/features/private-replies",
+          },
         ],
       },
       {
-        heading: "How to automate Instagram DMs safely",
-        steps: [
-          { title: "Warm up accounts", text: "New or quiet accounts should ramp activity gradually before running campaigns." },
-          { title: "Respect daily limits", text: "Consistent, moderate volume is safer than sudden spikes." },
-          { title: "Use human-like timing", text: "Randomized delays and activity spread through the day look natural." },
-          { title: "Personalize and vary messages", text: "Identical copy sent to many people is a spam signal — and gets fewer replies." },
-          { title: "Watch for warnings", text: "If Instagram shows an action warning, pause and lower volume." },
+        heading: "Test the workflow before you enable it",
+        blocks: [
+          {
+            p: "Use a test account and publish a test post where appropriate. Confirm which Instagram professional account is connected, which event starts the flow, what permissions the integration has and who owns the inbox. Give the person responsible for the inbox a way to pause the flow if it behaves unexpectedly.",
+          },
+          {
+            figure: {
+              kind: "grid",
+              title: "Four tests before you go live",
+              subtitle: "Check what the recipient sees and what your team can control",
+              items: [
+                { title: "Correct keyword", text: "One correct message" },
+                { title: "Repeat event", text: "No duplicate messages" },
+                { title: "Recipient reply", text: "A teammate takes over" },
+                { title: "Opt-out", text: "Suppress queued messages" },
+              ],
+              caption: "Pre-launch tests cover the correct keyword, repeat events, a customer reply and a request to stop.",
+            },
+          },
+          { h3: "Test the normal path and the edge cases" },
+          {
+            list: [
+              "Expected keyword: The right person gets exactly one response with the correct link.",
+              "Wrong or missing keyword: No campaign message is sent.",
+              "Repeat comment or event: The same person and campaign don't generate duplicate messages.",
+              "Recipient reply: The queued automation yields to the teammate handling the conversation.",
+              "Opt-out or expired window: A queued message is suppressed and the reason is recorded.",
+              "Failed link or action restriction: The operator can see the issue and pause the affected flow.",
+            ],
+          },
+          { h3: "Keep AI drafts grounded in what you know" },
+          {
+            p: "Review replies if they mention pricing, eligibility, deadlines or information unique to a customer. Give the person taking over the last inbound message and the resource already sent. Limit stored data to what the workflow needs and keep permissions scoped to the teammates who work on it.",
+          },
+          {
+            p: "Keep a record of each run's trigger, message status, handoff, and any reason it stopped. Review duplicates, wrong answers and missed handoffs alongside response and completion rates. A flow that drives more replies can still create more work if nobody is available to handle them.",
+          },
+          {
+            image: {
+              src: "/images/guides/instagram-dm-automation-checklist",
+              alt: "A pre-launch checklist next to a phone running an automated Instagram DM workflow",
+            },
+          },
         ],
       },
       {
-        heading: "Instagram DM automation with ColdNerd",
-        body: [
-          "ColdNerd combines AI personalization with built-in safety: automatic warmup, daily limits and human-like sending. Follow-ups run on schedule and stop when a prospect replies. On the Agency plan you can also send humanized voice-note DMs and manage team members and client workspaces.",
+        heading: "Choose an Instagram DM tool based on the job",
+        blocks: [
+          {
+            p: "Match the tool to your main task: answer support questions, deliver a requested resource or manage outreach for clients.",
+          },
+          {
+            figure: {
+              kind: "cards",
+              title: "Match the tool to the task",
+              subtitle: "Ask the provider to demonstrate your actual workflow",
+              items: [
+                { title: "Support team", text: "Shared inbox and a clear owner for each conversation" },
+                { title: "Creator", text: "Comment trigger and private resource delivery" },
+                { title: "Outreach agency", text: "Prospect review, draft approval and campaign reporting" },
+              ],
+              caption: "Tool requirements for support teams, creators sharing resources and agencies managing outreach.",
+            },
+          },
+          {
+            p: "Ask the provider to demo your trigger, permissions, reply handling, opt-outs and pause controls. Check which features your plan includes and which depend on Instagram's messaging rules.",
+          },
         ],
       },
     ],
+    faqHeading: "Instagram DM automation FAQs",
     faqs: [
-      { q: "Is Instagram DM automation safe?", a: "Automation always carries some risk, but it can be reduced significantly with warmup, sensible daily limits, human-like timing and genuinely personalized messages — all built into ColdNerd." },
-      { q: "Will automated DMs sound robotic?", a: "Not with AI personalization. ColdNerd writes each message using details from the prospect's own profile and content." },
-      { q: "Can I automate voice-note DMs?", a: "Yes, humanized voice notes are available on the Agency plan." },
-      { q: "How many DMs can I automate?", a: "Starter includes 3,000 DMs per month. Growth and Agency include unlimited DMs." },
+      {
+        q: "Is Instagram DM automation allowed?",
+        a: "It depends on the sending method, permissions and use case. Review Meta's requirements for the workflow you want before enabling automated sending.",
+      },
+      {
+        q: "Is there a universal daily DM limit?",
+        a: "There's no universal safe daily number. A vendor's plan allowance and Meta's rules for a particular messaging path are separate limits.",
+      },
+      {
+        q: "Can I automate AI replies or voice notes?",
+        a: "If your tool supports AI drafts or voice notes, check the message for accuracy. Use a voice you have permission to use and make the sender's identity clear.",
+      },
+      {
+        q: "Where does ColdNerd fit?",
+        a: "ColdNerd focuses on outbound campaign work, including prospect discovery, AI-assisted draft personalization, follow-up scheduling and campaign reporting. Review the sending method before enabling automatic delivery.",
+      },
     ],
+    closing: { text: "Compare ColdNerd plans and features.", href: "/#pricing" },
     related: ["instagram-outreach", "what-is-coldnerd", "for-agencies"],
   },
-
   // ---------------------------------------------------------------- Solutions
   {
     slug: "for-agencies",

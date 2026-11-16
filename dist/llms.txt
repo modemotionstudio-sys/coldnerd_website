@@ -6,10 +6,10 @@
 - [What Is ColdNerd?](https://www.coldnerd.com/what-is-coldnerd): ColdNerd is AI-powered Instagram outreach software that finds prospects, writes personalized DMs, sends follow-ups and tracks replies — with built-in account safety.
 
 ## Learn
-- [Instagram Outreach](https://www.coldnerd.com/instagram-outreach): Learn Instagram outreach that gets replies: find the right prospects, write personal DMs, follow up and stay safe. Step-by-step guide with examples.
+- [Instagram Outreach](https://www.coldnerd.com/instagram-outreach): Learn how to find the right prospects on Instagram, write first DMs and follow-ups, and track which conversations turn into booked calls.
 - [Instagram Prospecting](https://www.coldnerd.com/instagram-prospecting): How to prospect on Instagram: find the right accounts by niche, hashtag and followers, qualify them, and turn them into conversations.
 - [Instagram Lead Generation](https://www.coldnerd.com/instagram-lead-generation): Generate leads from Instagram with outbound DMs, smart follow-ups and content that converts. See how ColdNerd turns Instagram conversations into qualified leads.
-- [Instagram DM Automation](https://www.coldnerd.com/instagram-dm-automation): Automate Instagram DMs without risking your account: AI-personalised messages, paced sending, follow-ups and reply tracking in one tool.
+- [Instagram DM Automation](https://www.coldnerd.com/instagram-dm-automation): Learn what to automate in Instagram DMs, how comment-to-DM and inbound replies work, and how to test workflows before you switch them on.
 
 ## Solutions
 - [For Agencies](https://www.coldnerd.com/for-agencies): Run Instagram outreach for multiple clients from one dashboard: prospecting, AI-personalised DMs, follow-ups and reporting per account.
@@ -21,6 +21,12 @@
 - Agency ($197/month, $158/month billed yearly): Unlimited Instagram accounts, Everything in Growth, Voice notes, Team members, Client workspaces, API access, Advanced analytics, Dedicated support
 
 ## Blog articles
+- [Best Instagram Outreach Tools for Agencies (2026)](https://www.coldnerd.com/blog/best-instagram-outreach-tools-for-agencies): Compare the best Instagram outreach tools for agencies in 2026: outbound vs inbound, multi-account features, safety, pricing models and how to choose.
+- [How AI Can Personalize Instagram Cold Outreach (2026)](https://www.coldnerd.com/blog/how-ai-can-personalize-instagram-cold-outreach-2026): Learn how AI personalizes Instagram cold outreach: the signals it reads, levels of personalization, real DM examples and how to keep it human and safe.
+- [AI Agents vs Instagram Automation Tools (2026)](https://www.coldnerd.com/blog/ai-agents-vs-instagram-automation-tools-2026): AI agents vs Instagram automation tools: what each does, where general agents fall short for outreach, and when a dedicated tool is the smarter choice.
+- [AI cold DMs vs manual outreach](https://www.coldnerd.com/blog/ai-cold-dms-vs-manual-outreach): AI cold DMs vs manual Instagram outreach: compare time, cost, personalisation, replies and safety, and learn when to use each or combine both.
+- [AI Instagram Outreach: How It Works (2026 Guide)](https://www.coldnerd.com/blog/ai-instagram-outreach-how-it-works): Learn how AI Instagram outreach works step by step: how AI finds prospects, reads profiles, writes personal DMs, sends safely and follows up for you.
+- [AI Instagram Prospecting: Find and Qualify Leads Faster](https://www.coldnerd.com/blog/ai-instagram-prospecting-find-and-qualify-leads-faster): Learn how to automate Instagram prospecting with AI: find ideal prospects, score profiles, personalise DMs and follow up at scale without risking your account.
 - [How to Turn Instagram Followers Into Qualified Leads (2026)](https://www.coldnerd.com/blog/how-to-turn-instagram-followers-into-qualified-leads-2026): Learn how to turn Instagram followers into qualified leads: spot buying signals, fix your profile, post content that converts and start the right DM conversations.
 - [Instagram Outreach for B2B Businesses: 2026 Guide](https://www.coldnerd.com/blog/instagram-outreach-for-b2b-businesses-2026-guide): Learn how B2B businesses use Instagram outreach to reach decision makers: targeting, profile setup, DM templates, follow-ups and turning replies into deals.
 - [Instagram Lead Generation for Coaches and Consultants (2026)](https://www.coldnerd.com/blog/instagram-lead-generation-for-coaches-and-consultants): Learn how coaches and consultants get leads on Instagram: a clear niche, a profile that converts, content that attracts, personalised DMs and booked discovery calls.

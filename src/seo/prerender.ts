@@ -13,7 +13,17 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Plugin } from "vite";
-import { SITE_URL, appPageMeta, guidesForPage, hubForPost, seoPages, type SeoPage } from "./pages";
+import {
+  SITE_URL,
+  appPageMeta,
+  guidesForPage,
+  hubForPost,
+  seoPages,
+  type SeoBlock,
+  type SeoFigure,
+  type SeoImage,
+  type SeoPage,
+} from "./pages";
 import { plans } from "../lib/pricingPlans";
 import { seedPosts } from "../lib/blogSeed";
 import { homeFaqs } from "../lib/faqData";
@@ -73,6 +83,30 @@ function siteNav() {
     .join("")}</ul></nav>`;
 }
 
+const imgHtml = (img: SeoImage) =>
+  `<img src="${img.src}-1600.webp" srcset="${img.src}-800.webp 800w, ${img.src}-1600.webp 1600w" sizes="(max-width: 900px) 100vw, 812px" width="1600" height="900" alt="${esc(img.alt)}" />`;
+
+/** A field-guide diagram as plain, crawlable HTML (the app draws the styled version). */
+function figureHtml(fig: SeoFigure) {
+  const items = fig.items
+    .map((i) => `<li><strong>${esc(i.title)}</strong>${i.value !== undefined ? `: ${i.value}` : ""}${i.text ? ` - ${esc(i.text)}` : ""}</li>`)
+    .join("");
+  return `<figure><p><strong>${esc(fig.title)}</strong></p><p>${esc(fig.subtitle)}</p><ol>${items}</ol><figcaption>${esc(fig.caption)}</figcaption></figure>`;
+}
+
+function blockHtml(b: SeoBlock) {
+  if ("p" in b) return `<p class="text-lg text-gray-600 leading-relaxed mb-4">${esc(b.p)}</p>`;
+  if ("h3" in b) return `<h3 class="text-xl font-bold text-gray-900 mt-6 mb-2">${esc(b.h3)}</h3>`;
+  if ("quote" in b) return `<blockquote class="mb-4">${esc(b.quote)}</blockquote>`;
+  if ("list" in b) return `<ul class="list-disc pl-6 space-y-2 text-gray-700">${b.list.map((i) => `<li>${esc(i)}</li>`).join("")}</ul>`;
+  if ("figure" in b) return figureHtml(b.figure);
+  if ("image" in b) return imgHtml(b.image);
+  return calloutHtml(b.callout, b.href);
+}
+
+const calloutHtml = (text: string, href: string) =>
+  `<p class="mt-6"><a class="text-[#2a6ff3] font-semibold" href="${esc(href)}"${href.startsWith("/") ? "" : ` rel="noopener"`}>${esc(text)}</a></p>`;
+
 function renderPageBody(page: SeoPage, posts: PublishedPost[]) {
   const sections = page.sections
     .map((s) => {
@@ -85,13 +119,14 @@ function renderPageBody(page: SeoPage, posts: PublishedPost[]) {
             .map((st) => `<li><strong>${esc(st.title)}.</strong> ${esc(st.text)}</li>`)
             .join("")}</ol>`
         : "";
-      return `<section class="py-8"><h2 class="text-2xl font-bold text-gray-900 mb-4">${esc(s.heading)}</h2>${body}${bullets}${steps}</section>`;
+      const blocks = (s.blocks ?? []).map(blockHtml).join("");
+      return `<section class="py-8"><h2 class="text-2xl font-bold text-gray-900 mb-4">${esc(s.heading)}</h2>${body}${bullets}${steps}${blocks}</section>`;
     })
     .join("");
   const faqs = page.faqs.length
-    ? `<section class="py-8"><h2 class="text-2xl font-bold text-gray-900 mb-4">Frequently asked questions</h2>${page.faqs
+    ? `<section class="py-8"><h2 class="text-2xl font-bold text-gray-900 mb-4">${esc(page.faqHeading ?? "Frequently asked questions")}</h2>${page.faqs
         .map((f) => `<h3 class="font-semibold text-gray-900 mt-4">${esc(f.q)}</h3><p class="text-gray-600">${esc(f.a)}</p>`)
-        .join("")}</section>`
+        .join("")}${page.closing ? calloutHtml(page.closing.text, page.closing.href) : ""}</section>`
     : "";
   const guides = guidesForPage(page.slug, posts);
   const guideList = guides.length
@@ -99,7 +134,7 @@ function renderPageBody(page: SeoPage, posts: PublishedPost[]) {
         .map((g) => `<li><a class="text-[#2a6ff3]" href="/blog/${g.slug}">${esc(g.title)}</a></li>`)
         .join("")}</ul></section>`
     : "";
-  return `<div class="bg-white min-h-screen"><header class="max-w-[860px] mx-auto px-4 pt-32 pb-6 text-center"><p class="text-[#2a6ff3] font-semibold mb-3">${esc(page.eyebrow)}</p><h1 class="text-4xl font-bold text-gray-900 mb-5">${esc(page.h1)}</h1><p class="text-xl text-gray-600">${esc(page.intro)}</p><p class="mt-6"><a class="text-[#2a6ff3] font-semibold" href="/signup">Get started with ColdNerd</a></p></header><main class="max-w-[860px] mx-auto px-4">${sections}${guideList}${faqs}</main>${siteNav()}</div>`;
+  return `<div class="bg-white min-h-screen"><header class="max-w-[860px] mx-auto px-4 pt-32 pb-6 text-center"><p class="text-[#2a6ff3] font-semibold mb-3">${esc(page.eyebrow)}</p><h1 class="text-4xl font-bold text-gray-900 mb-5">${esc(page.h1)}</h1><p class="text-xl text-gray-600">${esc(page.intro)}</p><p class="mt-6"><a class="text-[#2a6ff3] font-semibold" href="/signup">Get started with ColdNerd</a></p></header><main class="max-w-[860px] mx-auto px-4">${page.heroImage ? imgHtml(page.heroImage) : ""}${sections}${guideList}${faqs}</main>${siteNav()}</div>`;
 }
 
 function pageJsonLd(page: SeoPage) {
@@ -432,7 +467,13 @@ export function seoPrerender(): Plugin {
       // SEO landing pages
       for (const page of seoPages) {
         const url = `${SITE_URL}/${page.slug}`;
-        const head = headTags({ title: page.metaTitle, description: page.metaDescription, url, extra: pageJsonLd(page) });
+        const head = headTags({
+          title: page.metaTitle,
+          description: page.metaDescription,
+          url,
+          image: page.shareImage ? `${SITE_URL}${page.shareImage}` : undefined,
+          extra: pageJsonLd(page),
+        });
         write(`${page.slug}.html`, inject(template, head, renderPageBody(page, posts)));
       }
 
@@ -496,7 +537,7 @@ export function seoPrerender(): Plugin {
       const newestPost = posts.reduce((d, p) => (p.updated_at > d ? p.updated_at : d), "").slice(0, 10);
       const urls = [
         { loc: `${SITE_URL}/`, lastmod: HOME_UPDATED, priority: "1.0" },
-        ...seoPages.map((p) => ({ loc: `${SITE_URL}/${p.slug}`, lastmod: SEO_PAGES_UPDATED, priority: "0.8" })),
+        ...seoPages.map((p) => ({ loc: `${SITE_URL}/${p.slug}`, lastmod: p.updated ?? SEO_PAGES_UPDATED, priority: "0.8" })),
         { loc: `${SITE_URL}/blog`, lastmod: newestPost || HOME_UPDATED, priority: "0.7" },
         ...indexable.map((p) => ({ loc: `${SITE_URL}/blog/${p.slug}`, lastmod: p.updated_at.slice(0, 10), priority: "0.6" })),
         { loc: `${SITE_URL}/terms-and-conditions`, lastmod: TERMS_UPDATED, priority: "0.3" },
